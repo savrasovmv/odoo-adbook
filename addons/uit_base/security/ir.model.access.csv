@@ -1,0 +1,10 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_public_ad_organizacion,access_public_ad_organizacion,model_ad_organizacion,,1,0,0,0
+access_public_ad_branch,access_public_ad_branch,model_ad_branch,,1,0,0,0
+access_public_ad_department,access_public_ad_department,model_ad_department,,1,0,0,0
+access_public_ad_employer,access_public_ad_employer,model_ad_employer,,1,0,0,0
+access_ad_organizacion,access_ad_organizacion,model_ad_organizacion,base.group_user,1,1,1,1
+access_ad_branch,access_ad_branch,model_ad_branch,base.group_user,1,1,1,1
+access_ad_department,access_ad_department,model_ad_department,base.group_user,1,1,1,1
+access_ad_employer,access_ad_employer,model_ad_employer,base.group_user,1,1,1,1
+access_ad_sync_employer_wizard,access_ad_sync_employer_wizard,model_ad_sync_employer_wizard,base.group_user,1,1,1,1

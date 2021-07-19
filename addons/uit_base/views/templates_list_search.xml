@@ -1,0 +1,55 @@
+<odoo>
+
+    <template id="adbook_list_search" name="adbook_list_search">
+               
+      
+        <div class="tabcontent" style="display: block;">
+  
+            <table border="1" align="center">
+                <thead>
+                <tr class="first">
+                    <th>Фото</th>
+                    <th>ФИО</th>
+                    <th>Подразделение</th>
+                    <th>Филиал</th>
+                    <th>Должность</th>
+                    <th>Внутренний номер</th>
+                    <th>Мобильный телефон 1</th>
+                    <th>Мобильный телефон 2</th>
+                    <th>Электронная почта</th>
+                </tr>
+                </thead>
+                <tbody>
+                    
+                    <t t-foreach="employer_list" t-as="employer">
+                        
+                        <tr height="90px">
+                            <td align="center"  width="90px" height="90px" style="padding:0"> 
+                                <t t-if="employer.photo">
+                                            
+                                    <span t-field="employer.photo"  t-options="{'widget': 'image', 'style':'width: 90px;height: 90px'}" class="photo"/>
+                                </t>
+                            </td>
+
+                            <td class="empl-name"><t t-esc="employer.name"/></td>
+                            <td><t t-esc="employer.department_id.name"/></td>
+                            <td><t t-esc="employer.branch_id.name"/></td>
+                            <td><t t-esc="employer.title"/></td>
+                            <td align="center"><t t-esc="employer.ip_phone"/></td>
+                            <td align="center" ><t t-esc="employer.phone"/></td>
+                            <td align="center" ><t t-esc="employer.sec_phone"/></td>
+                            <td ><a href="mailto:{{employer.email}}"><t t-esc="employer.email"/></a></td>
+                        </tr>
+
+                            
+                    </t>
+                </tbody>
+
+            </table>
+        </div>
+
+
+        
+    </template>
+
+</odoo>
