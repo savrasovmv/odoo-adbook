@@ -9,6 +9,7 @@
             <menuitem id="ad_branch_menu_action" action="ad_branch_action"/>
             <menuitem id="ad_department_menu_action" action="ad_department_action"/>
             <menuitem id="ad_sync_employer_wizard_menu_action" action="ad_sync_employer_wizard_action"/>
+            <menuitem id="ad_mailbox_menu_action" action="ad_mailbox_action"/>
         </menuitem>
 
         <menuitem id="ad_settings_first_level_menu" name="Настройки">

@@ -257,6 +257,8 @@ class Employer(models.Model):
 
         return file_name
 
+    
+
 
 
     #     #Подключение к серверу AD

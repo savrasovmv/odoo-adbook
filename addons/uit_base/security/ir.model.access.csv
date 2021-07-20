@@ -8,3 +8,4 @@ access_ad_branch,access_ad_branch,model_ad_branch,base.group_user,1,1,1,1
 access_ad_department,access_ad_department,model_ad_department,base.group_user,1,1,1,1
 access_ad_employer,access_ad_employer,model_ad_employer,base.group_user,1,1,1,1
 access_ad_sync_employer_wizard,access_ad_sync_employer_wizard,model_ad_sync_employer_wizard,base.group_user,1,1,1,1
+access_ad_mailbox,access_ad_mailbox,model_ad_mailbox,base.group_user,1,1,1,1
