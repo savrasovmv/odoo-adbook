@@ -55,6 +55,9 @@
                                 </group>
                                 <group string="Тех. инф.">
                                     <field name="username"/>
+                                    <field name="distinguished_name"/>
+                                    <field name="user_account_control"/>
+                                    <field name="user_account_control_result"/>
                                     <field name="object_SID"/>
                                 </group>
                             </group>

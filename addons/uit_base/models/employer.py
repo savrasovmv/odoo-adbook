@@ -46,6 +46,31 @@ class Department(models.Model):
 
 
 
+flags = [
+    [0x0001, 'SCRIPT'],
+    [0x0002, 'ACCOUNTDISABLE'],
+    [0x0008, 'HOMEDIR_REQUIRED'],
+    [0x0010, 'LOCKOUT'],
+    [0x0020, 'PASSWD_NOTREQD'],
+    [0x0040, 'PASSWD_CANT_CHANGE'],
+    [0x0080, 'ENCRYPTED_TEXT_PWD_ALLOWED'],
+    [0x0100, 'TEMP_DUPLICATE_ACCOUNT'],
+    [0x0200, 'NORMAL_ACCOUNT'],
+    [0x0800, 'INTERDOMAIN_TRUST_ACCOUNT'],
+    [0x1000, 'WORKSTATION_TRUST_ACCOUNT'],
+    [0x2000, 'SERVER_TRUST_ACCOUNT'],
+    [0x10000, 'DONT_EXPIRE_PASSWORD'],
+    [0x20000, 'MNS_LOGON_ACCOUNT'],
+    [0x40000, 'SMARTCARD_REQUIRED'],
+    [0x80000, 'TRUSTED_FOR_DELEGATION'],
+    [0x100000, 'NOT_DELEGATED'],
+    [0x200000, 'USE_DES_KEY_ONLY'],
+    [0x400000, 'DONT_REQ_PREAUTH'],
+    [0x800000, 'PASSWORD_EXPIRED'],
+    [0x1000000, 'TRUSTED_TO_AUTH_FOR_DELEGATION'],
+    [0x04000000, 'PARTIAL_SECRETS_ACCOUNT'],
+  ]
+
 
 class Employer(models.Model):
     _name = "ad.employer"
@@ -68,7 +93,10 @@ class Employer(models.Model):
     email = fields.Char(u'E-mail')
 
     username = fields.Char(u'sAMAccountName')
-    object_SID = fields.Char(u'AD objectSID', old_name='uid')
+    object_SID = fields.Char(u'AD objectSID')
+    distinguished_name = fields.Char(u'AD distinguishedName')
+    user_account_control = fields.Char(u'AD userAccountControl')
+    user_account_control_result = fields.Char(u'AD userAccountControl result', compute="_get_user_account_control_result")
 
     photo = fields.Binary('Фото', default=None)
 
@@ -112,6 +140,20 @@ class Employer(models.Model):
         for record in self:
             if record.branch_id:
                 record.organization_id = record.branch_id.organization_id
+
+    def _get_user_account_control_result(self):
+        for record in self:
+            if record.user_account_control:
+                print("UAC", int(record.user_account_control, 16))
+                print("UAC", hex(int(record.user_account_control)))
+                print("UAC", int(record.user_account_control))
+                result = ''
+                for value in flags:
+                    if (int(record.user_account_control) | int(value[0])) == int(record.user_account_control):
+                        print("+++", value[0])
+                        print("+++", int(value[0]))
+                        result += value[1] + ','
+                record.user_account_control_result = result
 
     def action_update_from_ldap(self):
         pass
@@ -352,7 +394,7 @@ class AdSyncEmployer(models.TransientModel):
             }
             return notification
 
-        attributes = ['cn', 'title', 'ipPhone', 'mobile', 'mail', 'department', 'sn', 'memberof', 'distinguishedName', 'homePhone', 'whenChanged', 'objectSID', 'sAMAccountName', 'thumbnailPhoto']
+        attributes = ['cn', 'title', 'ipPhone', 'mobile', 'mail', 'department', 'sn', 'memberof', 'distinguishedName', 'homePhone', 'whenChanged', 'objectSID', 'sAMAccountName', 'thumbnailPhoto', 'userAccountControl']
         res = c.search(search_base=LDAP_SEARCH_BASE,
                     search_filter=LDAP_SEARCH_FILTER,
                     search_scope=SUBTREE,
@@ -424,6 +466,16 @@ class AdSyncEmployer(models.TransientModel):
 
             #Search Employer
             e_search = self.env['ad.employer'].search([('object_SID', '=', empl['objectSID'])],limit=1)
+
+
+
+
+            uic = int(empl['userAccountControl'].value) or 512
+            active = True
+            # Если пользователь отключен, ACCOUNTDISABLE	0x0002	2
+            if uic | 2 == uic:
+                active = False 
+            
             vals = {
                     'name': empl_name,
                     'branch_id': branch_id,
@@ -435,7 +487,10 @@ class AdSyncEmployer(models.TransientModel):
                     'email': empl['mail'].value,
                     'username': empl['sAMAccountName'].value,
                     'object_SID': empl['objectSID'].value,
-                    'photo': thumbnailPhoto
+                    'distinguished_name': empl['distinguishedName'].value,
+                    'user_account_control': empl['userAccountControl'].value,
+                    'photo': thumbnailPhoto,
+                    'active': active
                     # 'photo': base64.b64decode(empl['thumbnailPhoto'].value)
 
                 }

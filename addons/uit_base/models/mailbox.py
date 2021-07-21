@@ -77,24 +77,24 @@ class Mailbox(models.Model):
 
         # self.message_post(self.body_text)
 
-        new_mailbox = self.create(vals)
+        #new_mailbox = self.create(vals)
 
 
         # print("+++++++++++ MESSAGE", defaults)
         # print("+++++++++++ MESSAGE", msg)
 
-        return new_mailbox
+        #return new_mailbox
         # defaults.update(custom_values or {})
-        # # res = super(Mailbox, self.with_context(mail_create_nosubscribe=True)).message_new(msg, custom_values=defaults)
-        # return res
+        res = super(Mailbox, self).message_new(msg, custom_values=vals)
+        return res
     
     # @api.model
     # def create(self,vals):
     #     res=super(Mailbox,self.with_context(mail_create_nosubscribe=True)).create(vals)
     #     return res
     
-    def _creation_subtype(self):
-        return self#.env.ref('uit_base.ad_mailbox_new')
+    # def _creation_subtype(self):
+    #     return self#.env.ref('uit_base.ad_mailbox_new')
 
 
 # Пример полей сообщения
