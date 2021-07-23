@@ -1006,7 +1006,7 @@ msgstr ""
 #. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.survey_form
 msgid "Back Button"
-msgstr ""
+msgstr "Кнопка Назад"
 
 #. module: survey
 #: model:ir.model.fields,field_description:survey.field_survey_survey__background_image
@@ -3429,7 +3429,7 @@ msgstr "Дата и время начала"
 #. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.survey_survey_view_search
 msgid "State"
-msgstr "Стутус"
+msgstr "Статус"
 
 #. module: survey
 #: model:ir.model.fields,field_description:survey.field_survey_user_input__state
@@ -4515,7 +4515,7 @@ msgstr ""
 #. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.survey_form
 msgid "e.g. Satisfaction Survey"
-msgstr ""
+msgstr "например: Анкета"
 
 #. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.certification_report_view_classic
