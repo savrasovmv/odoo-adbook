@@ -44,6 +44,20 @@ class Department(models.Model):
     is_view_adbook = fields.Boolean(string='Отоброжать в справочнике контактов', default=True)
     sequence = fields.Integer(string=u"Сортировка", help="Сортировка")
 
+class AdGroup(models.Model):
+    _name = "ad.group"
+    _description = "Группы AD"
+    _order = "name"
+
+    name = fields.Char(u'Наименование', required=True)
+
+    distinguished_name = fields.Char(u'AD distinguishedName')
+    account_name = fields.Char(u'sAMAccountName')
+    object_SID = fields.Char(u'AD objectSID')
+    is_ldap = fields.Boolean('LDAP?', default=False)
+
+    active = fields.Boolean('Active', default=True)
+
 
 
 flags = [
@@ -79,7 +93,7 @@ class Employer(models.Model):
 
     name = fields.Char(u'ФИО', required=True)
     active = fields.Boolean('Active', default=True)
-    is_ldap = fields.Boolean('LDAP?', default=True)
+    is_ldap = fields.Boolean('LDAP?', default=False)
 
     organization_id = fields.Many2one("ad.organizacion", string="Организация", compute="_compute_organization", store=True)
     branch_id = fields.Many2one("ad.branch", string="Подразделение")
@@ -362,8 +376,9 @@ class AdSyncEmployer(models.TransientModel):
         LDAP_SSL = self.env['ir.config_parameter'].sudo().get_param('ldap_ssl')
         LDAP_SEARCH_BASE = self.env['ir.config_parameter'].sudo().get_param('ldap_search_base')
         LDAP_SEARCH_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_filter')
+        LDAP_SEARCH_GROUP_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_group_filter')
 
-        if LDAP_HOST and LDAP_PORT and LDAP_USER and LDAP_PASS and LDAP_SSL and LDAP_SEARCH_BASE and LDAP_SEARCH_FILTER:
+        if LDAP_HOST and LDAP_PORT and LDAP_USER and LDAP_PASS and LDAP_SSL and LDAP_SEARCH_BASE and LDAP_SEARCH_FILTER and LDAP_SEARCH_GROUP_FILTER:
             pass
         else:
             notification = {
@@ -395,13 +410,37 @@ class AdSyncEmployer(models.TransientModel):
             return notification
 
         attributes = ['cn', 'title', 'ipPhone', 'mobile', 'mail', 'department', 'sn', 'memberof', 'distinguishedName', 'homePhone', 'whenChanged', 'objectSID', 'sAMAccountName', 'thumbnailPhoto', 'userAccountControl']
-        res = c.search(search_base=LDAP_SEARCH_BASE,
-                    search_filter=LDAP_SEARCH_FILTER,
-                    search_scope=SUBTREE,
-                    attributes=attributes)
+        
+        total_entries = 0
+        
+        res = c.search(
+                        search_base=LDAP_SEARCH_BASE,
+                        search_filter=LDAP_SEARCH_FILTER,
+                        search_scope=SUBTREE,
+                        attributes=attributes,
+                        paged_size = 500
+                    )
         print("------------------------------------")
-        print(res)
+        total_entries += len(c.response)
+        cookie = c.result['controls']['1.2.840.113556.1.4.319']['value']['cookie']
         empl_list = c.entries
+        page = 1
+        while cookie:
+            print("search page = ", page)
+            res = c.search(
+                            search_base=LDAP_SEARCH_BASE,
+                            search_filter=LDAP_SEARCH_FILTER,
+                            search_scope=SUBTREE,
+                            attributes=attributes,
+                            paged_size = 500,
+                            paged_cookie = cookie
+                        )
+            total_entries += len(c.response)
+            cookie = c.result['controls']['1.2.840.113556.1.4.319']['value']['cookie']
+            empl_list += c.entries
+
+        print("total_entries = ", total_entries)
+
         n = 0
         message_error = ''
         message_branch = ''
@@ -411,17 +450,20 @@ class AdSyncEmployer(models.TransientModel):
         for empl in empl_list:
 
             empl_name = empl['cn'].value
+            if empl_name == "Перепелкин Сергей Александрович":
+                print("+++++++++++++++++++++++++++", empl_name)
+
             if len(empl_name) == 0:
                 message_error += "Не указано CN поля для записи %s, пропускаю \n" % str(empl) 
                 break
             n += 1
             #if n>5: break
-            print(empl)
+            #print(empl)
             #Search Branch
             distinguishedName = empl['distinguishedName'].value
             if empl['distinguishedName'].value:
                 branch_name = distinguishedName.split(',OU=')[1]
-                print("Branch = ", branch_name)
+                #print("Branch = ", branch_name)
                 branch_search = self.env['ad.branch'].search([('ad_name', '=', branch_name)],limit=1)
                 if not branch_search:
                     branch_id = self.env['ad.branch'].create({
@@ -440,7 +482,7 @@ class AdSyncEmployer(models.TransientModel):
             if empl['department'].value:
                 department_name = empl['department'].value
                 if len(department_name)>0:
-                    print("department_name = ", department_name)
+                    #print("department_name = ", department_name)
                     department_search = self.env['ad.department'].search([('name', '=', department_name)],limit=1)
                     if not department_search:
                         department_id = self.env['ad.department'].create({
@@ -465,12 +507,17 @@ class AdSyncEmployer(models.TransientModel):
                 thumbnailPhoto = None
 
             #Search Employer
-            e_search = self.env['ad.employer'].search([('object_SID', '=', empl['objectSID'])],limit=1)
+            e_search = self.env['ad.employer'].search([
+                                        ('object_SID', '=', empl['objectSID']),
+                                        '|',
+                                        ('active', '=', False), 
+                                        ('active', '=', True)
+                                    ],limit=1)
 
 
 
-
-            uic = int(empl['userAccountControl'].value) or 512
+            # 514 отключенный пользователь
+            uic = int(empl['userAccountControl'].value or '514')
             active = True
             # Если пользователь отключен, ACCOUNTDISABLE	0x0002	2
             if uic | 2 == uic:
@@ -490,19 +537,20 @@ class AdSyncEmployer(models.TransientModel):
                     'distinguished_name': empl['distinguishedName'].value,
                     'user_account_control': empl['userAccountControl'].value,
                     'photo': thumbnailPhoto,
-                    'active': active
+                    'active': active,
+                    'is_ldap': True,
                     # 'photo': base64.b64decode(empl['thumbnailPhoto'].value)
 
                 }
             if len(e_search)>0 :
-                print('Обновление ', e_search.name)
+                #print('Обновление ', e_search.name)
                 message_empl_update += empl_name + '\n'
                 e_search.write(vals)
             else:
-                print('Создание  ', empl_name)
+                #print('Создание  ', empl_name)
                 message_empl_create += empl_name + '\n'
                 self.env['ad.employer'].create(vals)
-            print(vals)
+            #print(vals)
         # if res:
         #     emp = c.response[0]
         #     print(emp)
@@ -516,7 +564,7 @@ class AdSyncEmployer(models.TransientModel):
             # self.ou = dn.split(',OU=')[1]
             # self.ip_phone = atr['ipPhone']
 
-        result =''
+        result ='Всего получено из АД %s записей \n' % total_entries
         if not message_error == '':
             result = "\n Обновление прошло с предупреждениями: \n \n" + message_error
         else:
@@ -529,7 +577,7 @@ class AdSyncEmployer(models.TransientModel):
             result += "\n Создны новые сотрудники: \n" + message_empl_create
         if not message_empl_update == '':
             result += "\n Обновлены сотрудники: \n" + message_empl_update
-        print("result sync: ", result)
+        #print("result sync: ", result)
 
         self.result = result 
 
@@ -545,14 +593,122 @@ class AdSyncEmployer(models.TransientModel):
 							} 
 				}
         
-        # notification = {
-        #     'type': 'ir.actions.client',
-        #     'tag': 'display_notification',
-        #     'params': {
-        #         'title': ('Успех'),
-        #         'message': 'Запись обновлена',
-        #         'type':'success',  #types: success,warning,danger,info
-        #         'sticky': False,  #True/False will display for few seconds if false
-        #     },
-        # }
-        # return notification
+    # Синхронизация групп
+    def ad_sync_group_action(self):
+         #     #Подключение к серверу AD
+        LDAP_HOST = self.env['ir.config_parameter'].sudo().get_param('ldap_host')
+        LDAP_PORT = self.env['ir.config_parameter'].sudo().get_param('ldap_port')
+        LDAP_USER = self.env['ir.config_parameter'].sudo().get_param('ldap_user')
+        LDAP_PASS = self.env['ir.config_parameter'].sudo().get_param('ldap_password')
+        LDAP_SSL = self.env['ir.config_parameter'].sudo().get_param('ldap_ssl')
+        LDAP_SEARCH_BASE = self.env['ir.config_parameter'].sudo().get_param('ldap_search_base')
+        LDAP_SEARCH_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_filter')
+        LDAP_SEARCH_GROUP_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_group_filter')
+
+        if LDAP_HOST and LDAP_PORT and LDAP_USER and LDAP_PASS and LDAP_SSL and LDAP_SEARCH_BASE and LDAP_SEARCH_FILTER and LDAP_SEARCH_GROUP_FILTER:
+            pass
+        else:
+            notification = {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': ('Прерванно'),
+                    'message': 'Нет учетных данных для подключения',
+                    'type':'warning',  #types: success,warning,danger,info
+                    'sticky': False,  #True/False will display for few seconds if false
+                },
+            }
+            return notification
+        try:
+            ldap_server = Server(host=LDAP_HOST, port=int(LDAP_PORT), use_ssl=LDAP_SSL, get_info='ALL', connect_timeout=10)
+            c = Connection(ldap_server, user=LDAP_USER, password=LDAP_PASS, auto_bind=True)
+        except Exception as e:
+            print("ERROR connect AD: ", str(e))
+            notification = {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': ('Ошибка'),
+                    'message': 'Невозможно соединиться с AD. Ошибка: ' + str(e),
+                    'type':'warning',  #types: success,warning,danger,info
+                    'sticky': False,  #True/False will display for few seconds if false
+                },
+            }
+            return notification
+
+        attributes = ['cn', 'distinguishedName', 'whenChanged', 'objectSID', 'sAMAccountName']
+        
+        total_entries = 0
+        
+        res = c.search(
+                        search_base=LDAP_SEARCH_BASE,
+                        search_filter=LDAP_SEARCH_GROUP_FILTER,
+                        search_scope=SUBTREE,
+                        attributes=attributes,
+                    )
+        print("------------------------------------")
+        total_entries += len(c.response)
+        group_list = c.entries
+
+        print("total_entries = ", total_entries)
+
+        n = 0
+        message_error = ''
+        message_update = ''
+        message_create = ''
+        for group in group_list:
+
+            group_name = group['cn'].value
+
+            if len(group_name) == 0:
+                message_error += "Не указано CN поля для записи %s, пропускаю \n" % str(group) 
+                break
+
+            #Search Group
+            g_search = self.env['ad.group'].search([
+                                        ('object_SID', '=', group['objectSID']),
+                                        '|',
+                                        ('active', '=', False), 
+                                        ('active', '=', True)
+                                    ],limit=1)
+
+            
+            vals = {
+                    'name': group_name,
+                    'account_name': group['sAMAccountName'].value,
+                    'object_SID': group['objectSID'].value,
+                    'distinguished_name': group['distinguishedName'].value,
+                    'active': True,
+                    'is_ldap': True,
+                }
+            if len(g_search)>0 :
+                message_update += group_name + '\n'
+                g_search.write(vals)
+            else:
+                message_create += group_name + '\n'
+                self.env['ad.group'].create(vals)
+        
+
+        result ='Всего получено из АД %s записей \n' % total_entries
+        if not message_error == '':
+            result = "\n Обновление прошло с предупреждениями: \n \n" + message_error
+        else:
+            result = "\n Обновление прошло успешно \n \n"
+        if not message_create == '':
+            result += "\n Создны новые группы: \n" + message_create
+        if not message_update == '':
+            result += "\n Обновлены группы: \n" + message_update
+
+        self.result = result 
+
+        return {
+				'name': 'Message',
+				'type': 'ir.actions.act_window',
+				'view_type': 'form',
+				'view_mode': 'form',
+				'res_model': 'ad.sync_employer_wizard',
+				'target':'new',
+				'context':{
+							'default_result':self.result,
+							} 
+				}

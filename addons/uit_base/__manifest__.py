@@ -21,6 +21,8 @@
         'views/branch_views.xml',
         'views/department_views.xml',
         'views/employer_views.xml',
+        'views/ad_group_views.xml',
+        'views/set_group_views.xml',
         'views/mailbox_views.xml',
         'views/ad_sync_wizard_view.xml',
         'views/settings_view.xml',

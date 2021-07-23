@@ -12,7 +12,8 @@ class Settings(models.TransientModel):
     ldap_user = fields.Char(u'Пользователь ldap', default='')
     ldap_password = fields.Char(u'Пароль ldap', default='')
     ldap_search_base = fields.Char(u'search_base', default='')
-    ldap_search_filter = fields.Char(u'ldap_search_filter', default='')
+    ldap_search_filter = fields.Char(u'ldap_search_filter', default='(|(objectClass=user)(objectClass=user))')
+    ldap_search_group_filter = fields.Char(u'ldap_search_group_filter', default='(objectClass=group)')
 
     
     @api.model
@@ -27,6 +28,7 @@ class Settings(models.TransientModel):
                 'ldap_password': conf.get_param('ldap_password'),
                 'ldap_search_base': conf.get_param('ldap_search_base'),
                 'ldap_search_filter': conf.get_param('ldap_search_filter'),
+                'ldap_search_group_filter': conf.get_param('ldap_search_group_filter'),
                 
         })
         return res
@@ -42,3 +44,4 @@ class Settings(models.TransientModel):
         conf.set_param('ldap_password', str(self.ldap_password))
         conf.set_param('ldap_search_base', str(self.ldap_search_base))
         conf.set_param('ldap_search_filter', str(self.ldap_search_filter))
+        conf.set_param('ldap_search_group_filter', str(self.ldap_search_group_filter))

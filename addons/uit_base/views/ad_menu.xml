@@ -12,6 +12,11 @@
             <menuitem id="ad_mailbox_menu_action" action="ad_mailbox_action"/>
         </menuitem>
 
+         <menuitem id="ad_group_first_level_menu" name="Группы">
+            <menuitem id="ad_group_menu_action" action="ad_group_action"/>
+            <menuitem id="ad_set_group_menu_action" action="ad_set_group_action"/>
+        </menuitem>
+
         <menuitem id="ad_settings_first_level_menu" name="Настройки">
             <menuitem id="ad_settings_menu_action" action="ad_settings_action"/>
         </menuitem>

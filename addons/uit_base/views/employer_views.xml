@@ -12,7 +12,8 @@
                 <field name="ip_phone"/>
                 <field name="email"/>
                 <separator/>
-                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <filter string="Отключенные" name="inactive" domain="[('active', '=', False)]"/>
+                <filter string="Все" name="inactive" domain="['|',('active', '=', False), ('active', '=', True)]"/>
             </search>
         </field>
     </record>
@@ -29,38 +30,31 @@
                 <sheet>
                     <notebook>
                         <page string="Основные">  
-                            <group>
-                                <group string="Основные данные">
+                            <group col="6">
+                                <group string="Основные данные" colspan="4">
                                     <field name="name"/>
                                     <field name="organization_id"/>
                                     <field name="branch_id"/>
                                     <field name="department_id"/>
                                     <field name="title"/>
                                     <field name="birthday"/>
+                                    <field name="is_ldap"/>
                                     <field name="active"/>
                                 </group>
-                                <group string="Справочник">
+                                <group string="Справочник контактов" colspan="2" >
                                     <field name="photo" widget="image"/>
-                                    <field name="is_view_adbook"/>
+                                    <field name="is_view_adbook" string="Показывать"/>
                                     <field name="sequence"/>
                                 </group>
                             </group>
                         
-                            <group>
-                                <group string="Контакты">
-                                    <field name="ip_phone"/>
-                                    <field name="phone"/>
-                                    <field name="sec_phone"/>
-                                    <field name="email"/>
-                                </group>
-                                <group string="Тех. инф.">
-                                    <field name="username"/>
-                                    <field name="distinguished_name"/>
-                                    <field name="user_account_control"/>
-                                    <field name="user_account_control_result"/>
-                                    <field name="object_SID"/>
-                                </group>
+                            <group string="Контакты">
+                                <field name="ip_phone"/>
+                                <field name="phone"/>
+                                <field name="sec_phone"/>
+                                <field name="email"/>
                             </group>
+                                
 
                             <group string="Текущее состояние">
                                 <field name="is_fired"/>
@@ -95,6 +89,16 @@
                                 <field name="is_rem_ad_block"/>
                             </group>
 
+                        </page>
+
+                        <page string="Техническая информация">  
+                            <group string="">
+                                <field name="username"/>
+                                <field name="distinguished_name"/>
+                                <field name="user_account_control"/>
+                                <field name="user_account_control_result"/>
+                                <field name="object_SID"/>
+                            </group>
                         </page>
                     </notebook>
                     
