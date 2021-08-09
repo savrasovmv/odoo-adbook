@@ -12,6 +12,7 @@
         </xpath>
         <xpath expr="//head/t[@t-call-assets][last()]" position="after">
             <t t-call-assets="survey.survey_assets" lazy_load="True"/>
+            <!-- <script src="/survey/static/src/js/disabled_copy.js"></script> -->
         </xpath>
         <xpath expr="//header" position="before">
             <t t-set="no_header" t-value="True"/>
@@ -62,6 +63,11 @@
     </template>
 
     <template id="survey_fill_header" name="Survey: main page header">
+        <t t-if="survey.is_disabled_copy==True">
+            <xpath expr="//head/t[@t-call-assets][last()]" position="after">
+                <script src="/survey/static/src/js/disabled_copy.js"></script>
+            </xpath>
+        </t>
         <div class="o_survey_nav pt16 mb-2">
             <div class="container m-0 p-0">
                 <div class="row">

@@ -97,6 +97,7 @@
                                     </div>
                                     <field name="questions_selection" widget="radio" />
                                     <field name="users_can_go_back" string="Back Button" attrs="{'invisible': [('questions_layout', '=', 'one_page')]}"/>
+                                    <field name="is_disabled_copy" />
                                 </group>
                                 <group string="Candidates" name="candidates">
                                     <field name="access_mode"/>
@@ -107,6 +108,8 @@
                                         <field name="is_attempts_limited" nolabel="1"/>
                                         <field name="attempts_limit" attrs="{'invisible': [('is_attempts_limited', '=', False)]}" nolabel="1" class="oe_inline" /> <span attrs="{'invisible': [('is_attempts_limited', '=', False)]}"> attempts</span>
                                     </div>
+                                    <separator string="Соискатели" colspan="2"/>
+                                    <field name="is_request_name" attrs="{'invisible': [('access_mode', '!=', 'public')]}"/>
                                 </group>
                                 <group string="Scoring" name="scoring">
                                     <field name="scoring_type" widget="radio" />

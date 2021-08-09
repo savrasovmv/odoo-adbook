@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <odoo>
 
+
     <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
     <record id="ad_group_action" model="ir.actions.act_window">
         <field name="name">Группы AD</field>

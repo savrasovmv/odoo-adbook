@@ -262,7 +262,7 @@ publicWidget.registry.SurveyResultChart = publicWidget.Widget.extend({
             options: {
                 title: {
                     display: true,
-                    text: _.str.sprintf(_t("Overall Performance %.2f%s"), parseFloat(scoring_percentage), '%'),
+                    text: _.str.sprintf(_t("Результат выполнения %.2f%s"), parseFloat(scoring_percentage), '%'),
                 },
             }
         };

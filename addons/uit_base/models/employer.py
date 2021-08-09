@@ -57,6 +57,7 @@ class AdGroup(models.Model):
     is_ldap = fields.Boolean('LDAP?', default=False)
 
     active = fields.Boolean('Active', default=True)
+    is_managed = fields.Boolean('Управляемая', default=False, help="Включите, для управления вхождения сотрудника в эту группу в форме Сотрудника")
 
 
 
@@ -146,6 +147,18 @@ class Employer(models.Model):
     is_vpn = fields.Boolean(string='vpn')
     is_vip = fields.Boolean(string='vip')
 
+    employer_group_line = fields.One2many('ad.employer_group_line', 'employer_id', string=u"Строка Группы AD")
+
+
+    # @api.depends("is_yaware")
+    # def _is_yaware_yaware(self):
+    #     self.is_usb_block = self.is_yaware
+
+    def update_group_list(self):
+        for empl in self:
+            group_list = self.env['ad.group'].search([
+                                                ('active', '=', True),
+                                                ('is_managed', '=', True),])
 
 
 
@@ -314,47 +327,21 @@ class Employer(models.Model):
         return file_name
 
     
+class EmployerGroupLine(models.Model):
+    _name = "ad.employer_group_line"
+    _description = "Строка Установка групп пользователя"
+    _order = "name"
 
+    name = fields.Char(u'Наименование', compute="_get_name")
+    group_id = fields.Many2one("ad.group", string="Группа AD")
+    is_enable = fields.Boolean(string='Включена?')
 
+    employer_id = fields.Many2one('ad.employer',
+		ondelete='cascade', string=u"Сотрудник", required=True)
 
-    #     #Подключение к серверу AD
-    #     LDAP_HOST = self.env['ir.config_parameter'].sudo().get_param('ldap_host')
-    #     LDAP_PORT = self.env['ir.config_parameter'].sudo().get_param('ldap_port')
-    #     LDAP_USER = self.env['ir.config_parameter'].sudo().get_param('ldap_user')
-    #     LDAP_PASS = self.env['ir.config_parameter'].sudo().get_param('ldap_password')
-    #     LDAP_SSL = self.env['ir.config_parameter'].sudo().get_param('ldap_ssl')
-    #     ldap_search_base = self.env['ir.config_parameter'].sudo().get_param('ldap_search_base')
-
-    #     if LDAP_HOST and LDAP_PORT and LDAP_USER and LDAP_PASS and LDAP_SSL and ldap_search_base:
-    #         pass
-    #     else:
-    #         return False
-
-    #     ldap_server = Server(host=LDAP_HOST, port=int(LDAP_PORT), use_ssl=LDAP_SSL, get_info='ALL')
-    #     c = Connection(ldap_server, user=LDAP_USER, password=LDAP_PASS)
-    #     c.bind()
-    #     filter = '(&(objectClass=person)(sAMAccountName=' + self.username + '))'
-    #     res = c.search(search_base=ldap_search_base,
-    #                 search_filter=filter,
-    #                 search_scope=SUBTREE,
-    #                 attributes=['cn','department', 'title', 'ou', 'ipPhone', 'distinguishedName' ])
-    #     print("------------------------------------")
-    #     print(res)
-    #     if res:
-    #         emp = c.response[0]
-    #         print(emp)
-    #         atr = emp['attributes']
-    #         dn = emp['dn']
-    #         print(atr)
-    #         department = atr['department']
-    #         self.name = atr['cn']
-    #         self.department = atr['department']
-    #         self.title = atr['title']
-    #         self.ou = dn.split(',OU=')[1]
-    #         self.ip_phone = atr['ipPhone']
-
-       
-    #     return True
+    @api.depends("group_id")
+    def _get_name(self):
+        self.name = self.group_id.name
 
 
 

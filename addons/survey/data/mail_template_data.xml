@@ -43,6 +43,60 @@
             <field name="auto_delete" eval="True"/>
         </record>
 
+
+        <!-- Форма при регистрации внешних пользователей -->
+        <record id="mail_template_public_user_input_invite" model="mail.template">
+            <field name="name">Survey: для Соискателей</field>
+            <field name="model_id" ref="model_survey_user_input" />
+             <field name="subject">Регистрация ${object.survey_id.title} <!-- 
+                % if object.survey_id.certification:
+                    тестирование 
+                % else:
+                    опросе 
+                % endif -->
+                <!-- ${object.survey_id.title} -->
+            </field>
+            <field name="email_to">${(object.partner_id.email_formatted or object.email) |safe}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px; font-size: 13px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Уважаемый(ая) ${object.partner_id.name or 'участник'}<br/><br/>
+
+                        Вы получили это письмо, потому что указали свои контакты в форме регистрации
+                        % if object.survey_id.certification:
+                            тестирования:
+                        % else:
+                            опроса:
+                        % endif
+                        ${object.survey_id.title}
+                        <div style="margin: 16px 0px 16px 0px;">
+                            <a href="${(object.get_start_url()) | safe}"
+                                style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
+                                % if object.survey_id.certification:
+                                    Начать Тестирование
+                                % else:
+                                    Начать Опрос
+                                % endif
+                            </a>
+                        </div>
+                        
+
+                        % if object.deadline:
+                            Пожалуйста, пройдите до ${format_date(object.deadline)}.<br/><br/>
+                        % endif
+                        Благодарим за Ваше участие.
+                        <br/>
+                        Если вы получили это письмо по ошибке, просто игнорируйте его.
+                        <p style="font-size: 10px; color: #667585;">
+                        Это письмо было отправлено с адреса, который не принимает входящие сообщения. Пожалуйста, не отвечайте на это сообщение
+                        </p>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
         <!-- Certification Email template -->
         <record id="mail_template_certification" model="mail.template">
             <field name="name">Survey: Send certification by email</field>

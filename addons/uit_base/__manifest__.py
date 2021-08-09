@@ -37,7 +37,8 @@
     ],
 
     'js': [
-        #'static/src/js/adbook.js',
+        #'static/src/js/toggle_widget.js',
+        # 'static/src/js/disabled_copy.js',
     ],
 
     'css': [

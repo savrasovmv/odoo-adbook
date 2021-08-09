@@ -3,3 +3,4 @@
 
 from . import main
 from . import survey_session_manage
+from . import survey_reg_public

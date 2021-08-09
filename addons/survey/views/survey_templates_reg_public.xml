@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+    <template id="reg_public" name="Survey Reg Publig" inherit_id="web.frontend_layout" primary="True">
+        <xpath expr="//div[@id='wrapwrap']" position="before">
+            <!--TODO DBE Fix me : If one day, there is a survey_livechat bridge module, put this in that module-->
+            <t t-set="no_livechat" t-value="True"/>
+        </xpath>
+        <xpath expr="//div[@id='wrapwrap']" position="attributes">
+            <attribute name="t-att-style" add="('height: 100%; overflow: auto; background: url(' + '/web/image/survey.survey/%s/background_image' % survey.id + ') no-repeat fixed center; box-shadow: inset 0 0 0 10000px rgba(255,255,255,.7); background-size: cover;') if survey and survey.background_image else 'height: 100%; overflow: auto;'"/>
+        </xpath>
+        <xpath expr="//head/t[@t-call-assets][last()]" position="after">
+            <t t-call-assets="survey.survey_reg_public_assets" lazy_load="True"/>
+        </xpath>
+        <xpath expr="//header" position="before">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+        </xpath>
+        <xpath expr="//header" position="after">
+            <div id="wrap" class="oe_structure oe_empty"/>
+        </xpath>
+    </template>
+
+    
+
+
+    <!-- Survey Home page - Регистрация -->
+    <template id="survey_reg_public" name="Survey: Регистрация">
+        <!-- <t t-call="survey.layout"> -->
+        <t t-call="survey.reg_public">
+
+            <div class="wrap o_survey_wrap pb16 d-flex">
+                <div class="container  d-flex flex-column">
+                    <div class="d-flex flex-grow-1 align-items-center">
+                        <div class="col-lg-12">
+                            <form t-att-action="'/survey/reg/%s' % (survey.access_token)" method="post" data-success_page="/thanks">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    
+                                <div class="text-center mb32">
+                                    <h3>Для прохождения
+                                        <t t-if="survey.scoring_type == 'no_scoring'">
+                                            опроса:
+                                        </t>
+                                        <t t-else="">
+                                            тестирования:
+                                        </t>
+                                    </h3>
+                                    <h3><t t-esc="survey.title"/></h3>
+                                    <h3>введите Ваше ФИО и e-mail</h3>
+                                </div>
+
+                                <div class="d-flex justify-content-center align-items-center ">
+                                    <div class="column">
+                                    <div class="form-group">
+                                        <label for="fio">ФИО</label>
+                                        <input id="fio" name="fio" type="text" placeholder="Иванов Иван Иванович" required="required" autofocus="autofocus" class="form-control"  autocapitalize="words"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="email">E-mail</label>
+                                        <input id="email" name="email" type="text" placeholder="ivanov@example.ru" required="required"  class="form-control"  autocapitalize="off"/>
+                                        
+                                    </div>
+                                    </div>
+                                    
+                                    <!-- <div class="offset-md-4 col-md-4 text-center">
+                                            <input id="fio" name="fio" type="text" placeholder="например: Иванов Иван Иванович" required/>
+                                    </div>
+                                    <div class="offset-md-4 col-md-4 text-center">
+                                            <input id="email" name="email" type="text" placeholder="ivanov@example.ru" required/>
+                                    </div> -->
+                                </div>
+                                <div class="text-center mt32 p-2">
+                                
+                                    <button type="submit" class="btn btn-primary">Продолжить</button>
+                                </div>
+                                
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Survey Home page - Верификация -->
+    <template id="survey_reg_public_verify" name="Survey: Верификация">
+        <!-- <t t-call="survey.layout"> -->
+        <t t-call="survey.reg_public">
+
+            <div class="wrap o_survey_wrap pb16 d-flex">
+                <div class="container o_survey_reg_access d-flex flex-column">
+                    <div class="d-flex flex-grow-1 align-items-center">
+                        <div class="col-lg-12">
+                            <!-- <form t-att-action="'/survey/reg/%s' % (survey_token)" method="post" data-success_page="/thanks"> -->
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    
+                                <div class="text-center mb32">
+                                    <h3>На адрес <t t-esc="email"/> отправлена информация о дальнейших действиях.</h3> 
+                                    <h3>Письмо придет в течение двух минут</h3> 
+                                    <p></p>
+                                    <div class="text-left mb32">
+                                        <p> Что делать, если письмо не пришло:</p>
+                                        <p> - Убедитесь, что e-mail указан верно;</p>
+                                        <p> - Проверьте папку "Спам";</p>
+                                        <p> - Повторите попытку ввода информации через пять минут, повторно перейдя по ссылке полученной в первом письме;</p>
+                                        <p> - Напишите контактному лицу, опишите вашу проблему.</p>
+                                    </div>
+                                </div>
+                                <!-- <div class="row">
+                                    <div class="offset-md-4 col-md-4 text-center">
+                                            <input id="verify_code" name="verify_code" type="text" />
+                                    </div>
+                                </div>
+                                <div class="text-center mt32 p-2">
+                                
+                                    <button type="submit" class="btn btn-primary">Продолжить</button>
+                                </div> -->
+                                
+                            <!-- </form> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+   
+
+</data>
+</odoo>

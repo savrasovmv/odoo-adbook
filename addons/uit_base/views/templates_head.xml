@@ -4,6 +4,7 @@
         <xpath expr="." position="inside">
 
             <link href="/uit_base/static/src/css/uit_base.css" rel="stylesheet"/>
+            <!-- <script src="/uit_base/static/src/js/disabled_copy.js"></script> -->
 
         </xpath>
         <title>Справочник контактов ЭТС</title>

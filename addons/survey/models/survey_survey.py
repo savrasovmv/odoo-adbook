@@ -154,6 +154,9 @@ class Survey(models.Model):
     # conditional questions management
     has_conditional_questions = fields.Boolean("Contains conditional questions", compute="_compute_has_conditional_questions")
 
+    is_disabled_copy = fields.Boolean(string='Запретить копирование в браузере', default=True)
+    is_request_name = fields.Boolean(string='Запросить ФИО и email', default=False, help="Для идентификации участника, перед началом прохождения опроса, будет запрошео ФИО и email, на основании которых создастся партнер")
+
     _sql_constraints = [
         ('access_token_unique', 'unique(access_token)', 'Access token should be unique'),
         ('session_code_unique', 'unique(session_code)', 'Session code should be unique'),

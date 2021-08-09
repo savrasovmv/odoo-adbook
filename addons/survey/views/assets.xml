@@ -65,5 +65,17 @@
             <script type="text/javascript" src="/survey/static/tests/tours/survey_session_manage_test.js"></script>
         </xpath>
     </template>
+
+    <!-- Регистраци -->
+    <template id="survey_reg_public_assets" name="Survey Reg assets">
+
+        <script type="text/javascript" src="/web/static/src/js/fields/field_utils.js"></script>
+        <script type="text/javascript" src="/survey/static/src/js/survey_reg_public_access.js"></script>
+        <t t-call="web._assets_helpers">
+            <t t-call="web._assets_frontend_helpers"/>
+        </t>
+        <link rel="stylesheet" type="text/scss" href="/survey/static/src/scss/survey_form.scss"/>
+        <link rel="stylesheet" type="text/scss" href="/survey/static/src/scss/survey_views.scss"/>
+    </template>
 </data>
 </odoo>

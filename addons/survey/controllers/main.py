@@ -197,12 +197,15 @@ class Survey(http.Controller):
             values['graph_data'] = json.dumps(answer._prepare_statistics()[0])
         return values
 
+
+
+
     # ------------------------------------------------------------
     # TAKING SURVEY ROUTES
     # ------------------------------------------------------------
 
     @http.route('/survey/start/<string:survey_token>', type='http', auth='public', website=True)
-    def survey_start(self, survey_token, answer_token=None, email=False, **post):
+    def survey_start(self, survey_token, answer_token=None, email=False, partner_id=False, **post):
         """ Start a survey by providing
          * a token linked to a survey;
          * a token linked to an answer or generate a new token if access is allowed;
@@ -217,11 +220,13 @@ class Survey(http.Controller):
 
         survey_sudo, answer_sudo = access_data['survey_sudo'], access_data['answer_sudo']
         if not answer_sudo:
+            if not email and survey_sudo.is_request_name:
+                return request.render("survey.survey_reg_public", {'survey': survey_sudo})
             try:
                 answer_sudo = survey_sudo._create_answer(user=request.env.user, email=email)
             except UserError:
                 answer_sudo = False
-
+        print("answer_sudo1111 === ", answer_sudo)
         if not answer_sudo:
             try:
                 survey_sudo.with_user(request.env.user).check_access_rights('read')
@@ -230,7 +235,7 @@ class Survey(http.Controller):
                 return werkzeug.utils.redirect("/")
             else:
                 return request.render("survey.survey_403_page", {'survey': survey_sudo})
-
+        print("answer_sudo2222 === ", answer_sudo)
         return request.redirect('/survey/%s/%s' % (survey_sudo.access_token, answer_sudo.access_token))
 
     def _prepare_survey_data(self, survey_sudo, answer_sudo, **post):

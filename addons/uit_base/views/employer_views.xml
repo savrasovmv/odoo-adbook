@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <odoo>
+    
     <record id="ad_employer_view_search" model="ir.ui.view">
         <field name="name">ad.employer.view.search</field>
         <field name="model">ad.employer</field>
@@ -28,7 +29,9 @@
                     
                 </header>
                 <sheet>
+                
                     <notebook>
+                    
                         <page string="Основные">  
                             <group col="6">
                                 <group string="Основные данные" colspan="4">
@@ -39,7 +42,9 @@
                                     <field name="title"/>
                                     <field name="birthday"/>
                                     <field name="is_ldap"/>
-                                    <field name="active"/>
+                                    <field name="active"  widget="boolean_toggle"/>
+                                    <!-- <button name="toggle_active"  type="object" class="oe_stat_button" icon="fa-archive">
+</button> -->
                                 </group>
                                 <group string="Справочник контактов" colspan="2" >
                                     <field name="photo" widget="image"/>
@@ -71,23 +76,35 @@
                         <page string="Установки">  
 
                             <group string="Установки">
-                                <field name="is_yaware"/>
-                                <field name="is_mailarchiva"/>
-                                <field name="is_phone_rec"/>
-                                <field name="is_iw"/>
-                                <field name="is_backup"/>
-                                <field name="is_vpn"/>
-                                <field name="is_vip"/>
+                                <field name="is_yaware" widget="boolean_toggle"/>
+                                <field name="is_mailarchiva" widget="boolean_toggle"/>
+                                <field name="is_phone_rec" widget="boolean_toggle"/>
+                                <field name="is_iw" widget="boolean_toggle"/>
+                                <field name="is_backup" widget="boolean_toggle"/>
+                                <field name="is_vpn" widget="boolean_toggle"/>
+                                <field name="is_vip" widget="boolean_toggle"/>
                             </group>
 
                             <group string="Блокировки">
-                                <field name="is_usb_block"/>
-                                <field name="is_socnet_block"/>
-                                <field name="is_mesg_block"/>
-                                <field name="is_cloud_block"/>
-                                <field name="is_email_block"/>
-                                <field name="is_rem_ad_block"/>
+                                <field name="is_usb_block" widget="boolean_toggle"/>
+                                <field name="is_socnet_block" widget="boolean_toggle"/>
+                                <field name="is_mesg_block" widget="boolean_toggle"/>
+                                <field name="is_cloud_block" widget="boolean_toggle"/>
+                                <field name="is_email_block" widget="boolean_toggle"/>
+                                <field name="is_rem_ad_block" widget="boolean_toggle"/>
                             </group>
+
+                            <notebook>
+                                <page string="Назначить группы AD">
+                                    <field name="employer_group_line">
+                                        <tree editable="botton">
+                                            <field name="group_id"/>
+                                            <field name="is_enable" widget="boolean_toggle"/>
+
+                                        </tree>
+                                    </field> 
+                                </page>
+                            </notebook> 
 
                         </page>
 

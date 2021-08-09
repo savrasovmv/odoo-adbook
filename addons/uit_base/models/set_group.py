@@ -13,7 +13,7 @@ class SetGroup(models.Model):
     branch_id = fields.Many2one("ad.branch", string="Подразделение")
     department_id = fields.Many2one("ad.department", string="Управление/отдел")
 
-    set_group_line = fields.One2many('ad.set_group_line', 'set_group_id', string=u"Строка Реализация молока")
+    set_group_line = fields.One2many('ad.set_group_line', 'set_group_id', string=u"Строка Установка групп пользователям")
 
 
 class SetGroupLine(models.Model):
@@ -21,10 +21,14 @@ class SetGroupLine(models.Model):
     _description = "Строка Установка групп пользователям"
     _order = "name"
 
-    name = fields.Char(u'Наименование', required=True)
+    name = fields.Char(u'Наименование', compute="_get_name")
     group_id = fields.Many2one("ad.group", string="Группа AD")
 
     set_group_id = fields.Many2one('ad.set_group',
 		ondelete='cascade', string=u"Установка групп пользователям", required=True)
+
+    @api.depends("group_id")
+    def _get_name(self):
+        self.name = self.group_id.name
 
      
