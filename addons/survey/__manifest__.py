@@ -22,6 +22,7 @@ sent mails with personal token for the invitation of the survey.
         'mail',
         'web_tour',
         'gamification'],
+    "external_dependencies": {"python": ["email_validator"]},
     'data': [
         'views/survey_report_templates.xml',
         'views/survey_reports.xml',

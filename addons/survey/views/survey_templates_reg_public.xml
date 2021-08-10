@@ -89,23 +89,34 @@
         <t t-call="survey.reg_public">
 
             <div class="wrap o_survey_wrap pb16 d-flex">
-                <div class="container o_survey_reg_access d-flex flex-column">
+                <div class="container d-flex flex-column">
                     <div class="d-flex flex-grow-1 align-items-center">
                         <div class="col-lg-12">
                             <!-- <form t-att-action="'/survey/reg/%s' % (survey_token)" method="post" data-success_page="/thanks"> -->
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                    
+                                   
                                 <div class="text-center mb32">
-                                    <h3>На адрес <t t-esc="email"/> отправлена информация о дальнейших действиях.</h3> 
-                                    <h3>Письмо придет в течение двух минут</h3> 
-                                    <p></p>
-                                    <div class="text-left mb32">
-                                        <p> Что делать, если письмо не пришло:</p>
-                                        <p> - Убедитесь, что e-mail указан верно;</p>
-                                        <p> - Проверьте папку "Спам";</p>
-                                        <p> - Повторите попытку ввода информации через пять минут, повторно перейдя по ссылке полученной в первом письме;</p>
-                                        <p> - Напишите контактному лицу, опишите вашу проблему.</p>
-                                    </div>
+                                    <t t-if="error == True">
+                                        <h3> Указанный адрес <t t-esc="email"/> имеет не верный формат. Нажмите назад и проверьте введенные значения ФИО и E-mail </h3>
+                                        <div class="text-left mb32">
+                                            <p> Ошибка:</p>
+                                            <p> <t t-esc="text_error"/></p>
+                                            
+                                        </div>
+
+                                    </t>
+                                    <t t-else="">
+                                        <h3>На адрес <t t-esc="email"/> отправлена информация о дальнейших действиях.</h3> 
+                                        <h3>Письмо придет в течение нескольких минут</h3> 
+                                        <p></p>
+                                        <div class="text-left mb32">
+                                            <p> Что делать, если письмо не пришло:</p>
+                                            <p> - Убедитесь, что e-mail указан верно;</p>
+                                            <p> - Проверьте папку "Спам";</p>
+                                            <p> - Повторите попытку ввода информации через пять минут, повторно перейдя по ссылке полученной в первом письме;</p>
+                                            <p> - Напишите контактному лицу, опишите вашу проблему.</p>
+                                        </div>
+                                    </t>
                                 </div>
                                 <!-- <div class="row">
                                     <div class="offset-md-4 col-md-4 text-center">

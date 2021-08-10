@@ -70,7 +70,7 @@
     <template id="survey_reg_public_assets" name="Survey Reg assets">
 
         <script type="text/javascript" src="/web/static/src/js/fields/field_utils.js"></script>
-        <script type="text/javascript" src="/survey/static/src/js/survey_reg_public_access.js"></script>
+        <!-- <script type="text/javascript" src="/survey/static/src/js/survey_reg_public_access.js"></script> -->
         <t t-call="web._assets_helpers">
             <t t-call="web._assets_frontend_helpers"/>
         </t>

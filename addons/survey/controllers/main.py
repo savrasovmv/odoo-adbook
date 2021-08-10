@@ -220,13 +220,13 @@ class Survey(http.Controller):
 
         survey_sudo, answer_sudo = access_data['survey_sudo'], access_data['answer_sudo']
         if not answer_sudo:
+            #Если это внешний пользователь переводим на форму регистрации
             if not email and survey_sudo.is_request_name:
                 return request.render("survey.survey_reg_public", {'survey': survey_sudo})
             try:
                 answer_sudo = survey_sudo._create_answer(user=request.env.user, email=email)
             except UserError:
                 answer_sudo = False
-        print("answer_sudo1111 === ", answer_sudo)
         if not answer_sudo:
             try:
                 survey_sudo.with_user(request.env.user).check_access_rights('read')
@@ -235,7 +235,6 @@ class Survey(http.Controller):
                 return werkzeug.utils.redirect("/")
             else:
                 return request.render("survey.survey_403_page", {'survey': survey_sudo})
-        print("answer_sudo2222 === ", answer_sudo)
         return request.redirect('/survey/%s/%s' % (survey_sudo.access_token, answer_sudo.access_token))
 
     def _prepare_survey_data(self, survey_sudo, answer_sudo, **post):

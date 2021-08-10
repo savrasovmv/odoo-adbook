@@ -11,6 +11,8 @@ from odoo import fields, http
 from odoo.http import request
 from odoo.tools import is_html_empty
 
+from email_validator import EmailSyntaxError, EmailUndeliverableError, validate_email
+
 
 class RegPublicUser(http.Controller):
     def _fetch_from_token(self, survey_token):
@@ -41,9 +43,18 @@ class RegPublicUser(http.Controller):
 
     @http.route('/survey/reg/<string:survey_token>', type='http', auth='public', website=True, methods=['POST'])
     def survey_reg(self, survey_token, fio=False, email=False, **kw):
-        print("------------------", fio)
-        print("------------------", email)
-        print("------------------", kw)
+        # print("------------------", fio)
+        # print("------------------", email)
+        # print("------------------", kw)
+        if not fio or not email:
+            print("++++ НЕТ ФИО")
+            return request.render("survey.survey_reg_public_verify", {'email': "", "error": True, "text_error": "Не указано ФИО или e-mail"})
+        try:
+            validate_email(email)
+        except Exception as error:
+            print("++++ Не верный адрес")
+            return request.render("survey.survey_reg_public_verify", {'email': email, "error": True, "text_error": str(error)})    
+        
 
         partner_info = {
             'name': fio,
@@ -56,8 +67,8 @@ class RegPublicUser(http.Controller):
         if len(partner) == 0:
             partner = sudo_partner.create(partner_info)
             #partner = sudo_partner.search([('id', '=', partner_id)], limit=1)
-        else:
-            partner_id = partner.id
+        # else:
+        #     partner_id = partner.id
 
 
         survey = self._fetch_from_token(survey_token)
@@ -74,11 +85,11 @@ class RegPublicUser(http.Controller):
                                         'template_id': template.id,
                                         #'author_id': 45,
                                         })
-        print("++++sudo_invite", sudo_invite)
+        # print("++++sudo_invite", sudo_invite)
         #sudo_invite[0]._compute_subject()
         sudo_invite.sudo().action_invite()
         
-        return request.render("survey.survey_reg_public_verify", {'survey_token': survey_token, 'name': fio, 'email': email, 'partner': partner})
+        return request.render("survey.survey_reg_public_verify", {'email': email, "error": False})
         #return request.redirect('/survey/start/%s?email=%s&partner_id=%s' % (survey_token, email, partner[0].id))
         #return request.render("survey.survey_confirm_registration", {'survey_token': survey_token, 'name': fio, 'email': email, 'partner': partner})
         #return request.redirect('/survey/start/%s?email=%s' % (survey_token, email))
@@ -89,14 +100,14 @@ class RegPublicUser(http.Controller):
     # QUICK ACCESS SURVEY ROUTES
     # ------------------------------------------------------------
 
-    @http.route('/survey/reg/check_code/<string:code>', type='json', auth='public', website=True)
-    def survey_check_session_code(self, code):
-        """ Проверяет введенный код с кодом отправленным в письме"""
-        print("+++++++ survey_check_session_code", code)
-        survey = self._fetch_from_session_code(code)
-        if survey:
-            return {"survey_url": "/survey/start/%s" % survey.access_token}
+    # @http.route('/survey/reg/check_code/<string:code>', type='json', auth='public', website=True)
+    # def survey_check_session_code(self, code):
+    #     """ Проверяет введенный код с кодом отправленным в письме"""
+    #     print("+++++++ survey_check_session_code", code)
+    #     survey = self._fetch_from_session_code(code)
+    #     if survey:
+    #         return {"survey_url": "/survey/start/%s" % survey.access_token}
 
-        return {"error": "survey_wrong"}
+    #     return {"error": "survey_wrong"}
 
    
