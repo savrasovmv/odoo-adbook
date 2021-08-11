@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_survey_configuration" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.survey</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form" />
+        <field name="priority" eval="90" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div
+                    class="app_settings_block"
+                    data-string="survey"
+                    string="Опросы"
+                    data-key="survey"
+                >
+                    <h2>Опросы</h2>
+                    <div class="col-lg-6 o_setting_box" id="survey">
+                        <div class="o_setting_right_pane" id="survey">
+                            <label for="survey_reg_email"/>
+                            <div class="text-muted">
+                                С этого адреса будут отправляться сообщения при запросе ФИО и email в форме регистрации
+                            </div>
+                            <div class="text-muted">
+                                Должен быть настроен сервер Postfix, и настроен сервер исходящей почты localhost
+                            </div>
+                            <field name="survey_reg_email" class="col-lg-4"/>
+                            <button name="%(base.action_ir_mail_server_list)d" icon="fa-arrow-right" type="action" string="Сервер отправки почты" class="btn-link"/>
+
+                        </div>
+                    </div>
+                    
+                        
+                </div>
+            </xpath>
+        </field>
+    </record>
+    <record id="action_survey_configuration" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_id" ref="view_survey_configuration" />
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'survey'}</field>
+    </record>
+   
+</odoo>

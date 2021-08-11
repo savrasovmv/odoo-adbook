@@ -7,3 +7,4 @@ from . import survey_user
 from . import badge
 from . import challenge
 from . import res_partner
+from . import res_settings

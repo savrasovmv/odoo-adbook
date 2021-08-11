@@ -74,7 +74,12 @@ class RegPublicUser(http.Controller):
         survey = self._fetch_from_token(survey_token)
         #if partner_id:
         MAIL_CATCHALL_DOMAIN = request.env['ir.config_parameter'].sudo().get_param('mail.catchall.domain')
-        email_from = "no-reply@" + MAIL_CATCHALL_DOMAIN
+        # email_from = "no-reply@" + MAIL_CATCHALL_DOMAIN
+
+        email_from = request.env['ir.config_parameter'].sudo().get_param('survey_reg_email')
+
+        if not email_from:
+            return request.render("survey.survey_reg_public_error", {})
 
         template = request.env.ref('survey.mail_template_public_user_input_invite', raise_if_not_found=False)
 

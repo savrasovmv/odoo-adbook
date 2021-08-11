@@ -136,6 +136,31 @@
         </t>
     </template>
 
+
+    <!-- Survey Home page - Ошибка -->
+    <template id="survey_reg_public_error" name="Survey: Ошибка">
+        <!-- <t t-call="survey.layout"> -->
+        <t t-call="survey.reg_public">
+
+            <div class="wrap o_survey_wrap pb16 d-flex">
+                <div class="container d-flex flex-column">
+                    <div class="d-flex flex-grow-1 align-items-center">
+                        <div class="col-lg-12">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                   
+                                <div class="text-center mb32">
+                                   
+                                        <h3> Произошла ошибка :-( </h3>
+                                        
+                                </div>
+                               
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
    
 
 </data>
