@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="base.res_config_settings_view_form" />
         <field name="arch" type="xml">
             <xpath expr="//div[hasclass('settings')]" position="inside">
-                <div class="app_settings_block" data-string="UIT" string="UIT" data-key="UIT" groups="base.group_user">
+                <div class="app_settings_block" data-string="UIT" string="UIT" data-key="UIT">
 
                     <h2>LDAP синхронизация пользователей</h2>
                     <div class="row mt16 o_settings_container">
