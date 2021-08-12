@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<odoo>
+
+     <menuitem id="menu_adbook_sync_root" name="Синхронизация">
+
+        <menuitem id="adbook_sync_first_level_menu" name="1С:ЗУП">
+          
+        </menuitem>
+
+        <menuitem id="adbook_sync_ad_first_level_menu" name="Active Directory" groups="base.group_erp_manager">
+            <menuitem id="adbook_sync_ad_sync_menu_action" action="adbook_sync_ad_sync_wizard_action" groups="base.group_erp_manager"/>
+            <menuitem id="adbook_sync_ad_group_menu_action" action="adbook_sync_ad_group_action"/>
+            <menuitem id="adbook_sync_ad_sync_log_menu_action" action="adbook_sync_ad_sync_log_action"/>
+        </menuitem>
+
+         
+        <menuitem id="adbook_sync_settings_first_level_menu" name="Настройки">
+            <menuitem id="adbook_sync_settings_menu_action" action="adbook_sync_settings_action"/>
+        </menuitem>
+
+    </menuitem>
+
+</odoo>

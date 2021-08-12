@@ -1,0 +1,4 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ad_sync_wizard,access_ad_sync_wizard,model_ad_sync_wizard,base.group_erp_manager,1,1,1,1
+access_ad_group,access_ad_group,model_ad_group,base.group_erp_manager,1,1,1,1
+access_ad_sync_log,access_ad_sync_log,model_ad_sync_log,base.group_erp_manager,1,1,1,1
