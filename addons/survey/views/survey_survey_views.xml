@@ -108,7 +108,7 @@
                                         <field name="is_attempts_limited" nolabel="1"/>
                                         <field name="attempts_limit" attrs="{'invisible': [('is_attempts_limited', '=', False)]}" nolabel="1" class="oe_inline" /> <span attrs="{'invisible': [('is_attempts_limited', '=', False)]}"> attempts</span>
                                     </div>
-                                    <separator string="Соискатели" colspan="2"/>
+                                    <separator string="Соискатели" colspan="2" attrs="{'invisible': [('access_mode', '!=', 'public')]}"/>
                                     <field name="is_request_name" attrs="{'invisible': [('access_mode', '!=', 'public')]}"/>
                                 </group>
                                 <group string="Scoring" name="scoring">

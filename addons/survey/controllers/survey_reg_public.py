@@ -43,16 +43,12 @@ class RegPublicUser(http.Controller):
 
     @http.route('/survey/reg/<string:survey_token>', type='http', auth='public', website=True, methods=['POST'])
     def survey_reg(self, survey_token, fio=False, email=False, **kw):
-        # print("------------------", fio)
-        # print("------------------", email)
-        # print("------------------", kw)
+
         if not fio or not email:
-            print("++++ НЕТ ФИО")
             return request.render("survey.survey_reg_public_verify", {'email': "", "error": True, "text_error": "Не указано ФИО или e-mail"})
         try:
             validate_email(email)
         except Exception as error:
-            print("++++ Не верный адрес")
             return request.render("survey.survey_reg_public_verify", {'email': email, "error": True, "text_error": str(error)})    
         
 
@@ -66,15 +62,10 @@ class RegPublicUser(http.Controller):
         partner_id = False
         if len(partner) == 0:
             partner = sudo_partner.create(partner_info)
-            #partner = sudo_partner.search([('id', '=', partner_id)], limit=1)
-        # else:
-        #     partner_id = partner.id
 
 
         survey = self._fetch_from_token(survey_token)
-        #if partner_id:
-        MAIL_CATCHALL_DOMAIN = request.env['ir.config_parameter'].sudo().get_param('mail.catchall.domain')
-        # email_from = "no-reply@" + MAIL_CATCHALL_DOMAIN
+        # MAIL_CATCHALL_DOMAIN = request.env['ir.config_parameter'].sudo().get_param('mail.catchall.domain')
 
         email_from = request.env['ir.config_parameter'].sudo().get_param('survey_reg_email')
 

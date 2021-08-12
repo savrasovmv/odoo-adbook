@@ -221,7 +221,7 @@ class Survey(http.Controller):
         survey_sudo, answer_sudo = access_data['survey_sudo'], access_data['answer_sudo']
         if not answer_sudo:
             #Если это внешний пользователь переводим на форму регистрации
-            if not email and survey_sudo.is_request_name:
+            if not email and survey_sudo.is_request_name and survey_sudo.access_mode=="public":
                 return request.render("survey.survey_reg_public", {'survey': survey_sudo})
             try:
                 answer_sudo = survey_sudo._create_answer(user=request.env.user, email=email)
