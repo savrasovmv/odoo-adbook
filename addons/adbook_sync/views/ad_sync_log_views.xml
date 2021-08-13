@@ -5,10 +5,10 @@
         <field name="name">ad.sync_log.form</field>
         <field name="model">ad.sync_log</field>
         <field name="arch" type="xml">
-            <form string="Журна синхронизации AD" create="false" edit="false">
+            <form string="Журна синхронизации" create="false" edit="false">
                 <sheet>
                   <group>
-                    <field name="create_date" string="Дата"/>  
+                    <field name="date" string="Дата"/>  
                     <field name="name"/>  
                     <field name="is_error"/>  
                     <field name="result"/>
@@ -23,8 +23,9 @@
         <field name="model">ad.sync_log</field>
         <field name="arch" type="xml">
             <tree create="false" edit="false">
-                <field name="create_date" string="Дата"/>
+                <field name="date" string="Дата"/>
                 <field name="name"/>
+                <field name="obj"/>
                 <field name="is_error"/>  
 
             </tree>
@@ -33,7 +34,7 @@
 
     <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
     <record id="adbook_sync_ad_sync_log_action" model="ir.actions.act_window">
-        <field name="name">Журна синхронизации AD</field>
+        <field name="name">Журна синхронизации</field>
         <field name="res_model">ad.sync_log</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">

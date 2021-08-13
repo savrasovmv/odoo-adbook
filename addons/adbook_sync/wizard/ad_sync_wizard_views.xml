@@ -14,8 +14,8 @@
                  <field name="full_sync"/>
                 </group>
                 <footer>
-                    <!-- <button name="ad_sync_emloyer_action" string="Обновить Сотрудников" type="object" class="oe_highlight"/> -->
-                    <button name="ad_sync_group_action" string="Обновить Группы" type="object" class="oe_highlight"/>
+                    <button name="sync_employer_wizard_action" string="Обновить Сотрудников" type="object" class="oe_highlight"/>
+                    <button name="sync_group_wizard_action" string="Обновить Группы" type="object" class="oe_highlight"/>
                     
                 </footer>
                 <notebook colspan="4">
