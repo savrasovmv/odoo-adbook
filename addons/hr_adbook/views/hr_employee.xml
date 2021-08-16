@@ -44,11 +44,46 @@
                     groups="hr.group_hr_user"
                     string="1с"
                 >
+                    <field name="personal_email" />
                     <field name="number_1c" />
                     <field name="employment_type_1c" />
                     <field name="guid_1c" />
                     
                 </group>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page name="passport" string="Удостоверение личности" groups="base.group_erp_manager">
+                    <group string="Удостоверение личности">
+                        <field name="passport_type"/>
+                        <field name="passport_country"/>
+                        <field name="passport_number" colspan='2'/>
+                        <field name="passport_series"/>
+                        <field name="passport_issued_by"/>
+                        <field name="passport_department_code"/>
+                        <field name="passport_date_issue"/>
+                        <field name="passport_date_validity"/>
+                        <field name="passport_place_birth"/>
+
+                    </group>
+
+                    <group string="Адрес регистрации(постоянной/временной)">
+                        <field name="ra1_full"/>
+                        <field name="ra1_country"/>
+                        <field name="ra1_region"/>
+                        <field name="ra1_city"/>
+                        <field name="ra1_district"/>
+                        <field name="ra1_street"/>
+                        <field name="ra1_house"/>
+                        <field name="ra1_building"/>
+                        <field name="ra1_structure"/>
+                        <field name="ra1_apartment"/>
+                        <field name="ra1_end_date"/>
+
+                    </group>
+
+                </page>
+                
             </xpath>
         </field>
     </record>

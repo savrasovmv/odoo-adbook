@@ -12,6 +12,7 @@
     "data": [
         "views/hr_employee.xml",
         "views/hr_department.xml",
+        "views/res_country.xml",
         ],
     "installable": True,
 }

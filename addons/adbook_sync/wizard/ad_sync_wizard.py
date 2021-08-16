@@ -12,11 +12,10 @@ class AdSync(models.TransientModel):
     result = fields.Text(string='Результат')
     full_sync = fields.Boolean(string='Полная синхронизация')
 
-    def sync_group_wizard_action(self):
-        #res = self.ad_sync_group_action()
-        try:
-            self.result = self.env['ad.group'].sudo().ad_sync_group(full_sync=self.full_sync)
-        except Exception as error:
+    def return_result(self, error=False):
+        """Возвращает ошибку или результат выполнения действия"""
+
+        if error:
             notification = {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
@@ -28,8 +27,8 @@ class AdSync(models.TransientModel):
                 },
             }
             return notification
-        
-        return {
+        else:
+            return {
 				'name': 'Message',
 				'type': 'ir.actions.act_window',
 				'view_type': 'form',
@@ -41,34 +40,40 @@ class AdSync(models.TransientModel):
 							} 
 				}
 
-    def sync_employer_wizard_action(self):
+
+    def ad_sync_group_wizard_action(self):
+        #res = self.ad_sync_group_action()
+        try:
+            self.result = self.env['ad.group'].sudo().ad_sync_group(full_sync=self.full_sync)
+        except Exception as error:
+            return self.return_result(error=error)
+        
+        return self.return_result()
+
+    def ad_sync_employer_wizard_action(self):
         #res = self.ad_sync_group_action()
         try:
             self.result = self.env['ad.employer'].sudo().ad_sync_employe(full_sync=self.full_sync)
         except Exception as error:
-            notification = {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': ('Прерванно'),
-                    'message': error,
-                    'type':'warning',  #types: success,warning,danger,info
-                    'sticky': False,  #True/False will display for few seconds if false
-                },
-            }
-            return notification
+            return self.return_result(error=error)
         
-        return {
-				'name': 'Message',
-				'type': 'ir.actions.act_window',
-				'view_type': 'form',
-				'view_mode': 'form',
-				'res_model': 'ad.sync_wizard',
-				'target':'new',
-				'context':{
-							'default_result':self.result,
-							} 
-				}
+        return self.return_result()
+
+    def zup_sync_dep_wizard_action(self):
+        try:
+            self.result = self.env['zup.sync'].sudo().zup_sync_dep()
+        except Exception as error:
+            return self.return_result(error=error)
+        
+        return self.return_result()
+
+    def zup_sync_employer_wizard_action(self):
+        try:
+            self.result = self.env['zup.sync'].sudo().zup_sync_employer()
+        except Exception as error:
+            return self.return_result(error=error)
+        
+        return self.return_result()
 
 
     # def _ldap_search(self, full_sync=False, date=False, attributes=False):

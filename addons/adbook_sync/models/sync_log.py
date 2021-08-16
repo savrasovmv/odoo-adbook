@@ -1,4 +1,6 @@
 
+from odoo import fields, models, api
+from datetime import datetime
 
 class SyncLog(models.Model):
     _name = "ad.sync_log"

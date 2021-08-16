@@ -8,7 +8,7 @@ class AdConnect(models.AbstractModel):
     _name = "ad.connect"
     _description = "Класс для работы с AD"
 
-    def ldap_search(self, full_sync=False, date=False,search_filter=False, attributes=False):
+    def ldap_search(self, full_sync=False, date=False, search_filter=False, attributes=False):
         """ Подключется к АД, ищит записи, 
             Параметры:
                 full_sync - полная синхронизация, при установке ищит в журнале синхронизации, когда последний раз было обновление и добавляет в фильтр значение даты
@@ -43,7 +43,8 @@ class AdConnect(models.AbstractModel):
         # search_filter = "(&(|(objectClass=user)(objectClass=contact))(whenChanged>=" + today + "))"
         #                   '(|(objectClass=user)(objectClass=contact))'
 
-        if not full_sync:
+        # Если дату не определим то делаем полную синхронизацию
+        if not full_sync and not date:
             sl = self.env['ad.sync_log'].search([
                                                     ('obj', '=', self.__class__.__name__),
                                                     ('is_error', '=', False),
@@ -52,7 +53,10 @@ class AdConnect(models.AbstractModel):
                                                 order='date desc'
                                                 )
             if sl:
-                search_filter =  "(&"+ search_filter + "(whenChanged>=" + sl.date.strftime('%Y%m%d%H%M')  + "00.0Z))" #секунды обнулил
+                date = sl.date if sl.date else False
+        
+        if date:
+            search_filter =  "(&"+ search_filter + "(whenChanged>=" + date.strftime('%Y%m%d%H%M')  + "00.0Z))" #секунды обнулил
 
         total_entries = 0
 
@@ -184,9 +188,9 @@ class AdGroup(models.Model):
 
         result ='Всего получено из АД %s записей \n' % total_entries
         if not message_error == '':
-            result = "\n Обновление прошло с предупреждениями: \n \n" + message_error
+            result += "\n Обновление прошло с предупреждениями: \n \n" + message_error
         else:
-            result = "\n Обновление прошло успешно \n \n"
+            result += "\n Обновление прошло успешно \n \n"
         if not message_create == '':
             result += "\n Создны новые группы: \n" + message_create
         if not message_update == '':

@@ -9,6 +9,7 @@
     'sequence': 15,
     'summary': 'Синхронизация сотрудников с 1С и AD',
     'description': "Синхронизация сотрудников с 1С и AD",
+    'external_dependencies': {'python': ['requests']},
     'depends': [
         'base',
         'hr_adbook',

@@ -14,8 +14,11 @@
                  <field name="full_sync"/>
                 </group>
                 <footer>
-                    <button name="sync_employer_wizard_action" string="Обновить Сотрудников" type="object" class="oe_highlight"/>
-                    <button name="sync_group_wizard_action" string="Обновить Группы" type="object" class="oe_highlight"/>
+                    <button name="ad_sync_employer_wizard_action" string="Обновить Сотрудников AD" type="object" class="oe_highlight"/>
+                    <button name="ad_sync_group_wizard_action" string="Обновить Группы AD" type="object" class="oe_highlight"/>
+
+                    <button name="zup_sync_dep_wizard_action" string="Обновить Подразделения из ЗУП" type="object" class="oe_highlight"/>
+                    <button name="zup_sync_employer_wizard_action" string="Обновить Сотрудников из ЗУП" type="object" class="oe_highlight"/>
                     
                 </footer>
                 <notebook colspan="4">

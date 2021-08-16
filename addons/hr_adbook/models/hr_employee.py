@@ -19,14 +19,43 @@ class HrEmployee(models.Model):
     # Доп Телефоны
     mobile_phone2 = fields.Char(string='Мобильный телефон 2')
     ip_phone = fields.Char(string='Внутренний номер')
+    
+    personal_email = fields.Char(string='Личный email')
 
-    @api.depends("birthday")
-    def _compute_age(self):
-        for record in self:
-            age = 0
-            if record.birthday:
-                age = relativedelta(fields.Date.today(), record.birthday).years
-            record.age = age
+    passport_type = fields.Char(string='Вид удостоверения личности')
+    passport_country = fields.Char(string='Страна выдачи')
+    passport_number = fields.Char(string='Номер')
+    passport_series = fields.Char(string='Серия')
+    passport_issued_by = fields.Char(string='Кем выдан')
+    passport_department_code = fields.Char(string='Код подразделения')
+    passport_date_issue = fields.Date(string='Дата выдачи')
+    passport_date_validity = fields.Date(string='Срок действия')
+    passport_place_birth = fields.Char(string='Место рождения')
+    
+    ra1_full = fields.Char(string='Адрес регистрации(постоянной/временной)')
+    ra1_country = fields.Char(string='Страна')
+    ra1_region = fields.Char(string='Область')
+    ra1_city = fields.Char(string='Город')
+    ra1_district = fields.Char(string='Элемент планировочной структуры')
+    ra1_street = fields.Char(string='Улица')
+    ra1_house = fields.Char(string='Дом')
+    ra1_building = fields.Char(string='Корпус')
+    ra1_structure = fields.Char(string='Строение')
+    ra1_apartment = fields.Char(string='Квартира')
+    ra1_end_date = fields.Date(string='Дата окончания временной регистрации')
+
+    ra2_full = fields.Char(string='Адрес фактического проживания')
+    ra2_country = fields.Char(string='Страна')
+    ra2_region = fields.Char(string='Область')
+    ra2_city = fields.Char(string='Город')
+    ra2_district = fields.Char(string='Элемент планировочной структуры')
+    ra2_street = fields.Char(string='Улица')
+    ra2_house = fields.Char(string='Дом')
+    ra2_building = fields.Char(string='Корпус')
+    ra2_structure = fields.Char(string='Строение')
+    ra2_apartment = fields.Char(string='Квартира')
+    
+    
 
 
     # Даты приема и увольнения
@@ -74,6 +103,14 @@ class HrEmployee(models.Model):
     )
 
 
+
+    @api.depends("birthday")
+    def _compute_age(self):
+        for record in self:
+            age = 0
+            if record.birthday:
+                age = relativedelta(fields.Date.today(), record.birthday).years
+            record.age = age
 
 
     @api.depends("service_start_date", "service_termination_date")
