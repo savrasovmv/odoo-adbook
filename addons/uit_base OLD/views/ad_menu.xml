@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<odoo>
+
+     <menuitem id="menu_ad_root" name="Справочники">
+
+        <menuitem id="ad_employer_first_level_menu" name="Сотрудники">
+            <menuitem id="ad_employer_menu_action" action="ad_employer_action"/>
+            <menuitem id="ad_organizacion_menu_action" action="ad_organizacion_action"/>
+            <menuitem id="ad_branch_menu_action" action="ad_branch_action"/>
+            <menuitem id="ad_department_menu_action" action="ad_department_action"/>
+            <menuitem id="ad_sync_employer_wizard_menu_action" action="ad_sync_employer_wizard_action"/>
+            <menuitem id="ad_mailbox_menu_action" action="ad_mailbox_action"/>
+        </menuitem>
+
+         <menuitem id="ad_group_first_level_menu" name="Группы">
+            <menuitem id="ad_group_menu_action" action="ad_group_action"/>
+            <menuitem id="ad_set_group_menu_action" action="ad_set_group_action"/>
+        </menuitem>
+
+        <menuitem id="ad_settings_first_level_menu" name="Настройки">
+            <menuitem id="ad_settings_menu_action" action="ad_settings_action"/>
+        </menuitem>
+
+    </menuitem>
+
+</odoo>

@@ -54,32 +54,88 @@
 
             <xpath expr="//notebook" position="inside">
                 <page name="passport" string="Удостоверение личности" groups="base.group_erp_manager">
-                    <group string="Удостоверение личности">
+                    <group string="Удостоверение личности" col="4">
                         <field name="passport_type"/>
-                        <field name="passport_country"/>
+                        <field name="passport_country" colspan='2'/>
+                        <field name="passport_series" colspan='2'/>
                         <field name="passport_number" colspan='2'/>
-                        <field name="passport_series"/>
-                        <field name="passport_issued_by"/>
-                        <field name="passport_department_code"/>
-                        <field name="passport_date_issue"/>
-                        <field name="passport_date_validity"/>
-                        <field name="passport_place_birth"/>
+                        <field name="passport_issued_by" colspan='4'/>
+                        <field name="passport_department_code" colspan='2'/>
+                        <field name="passport_date_issue" colspan='2'/>
+                        <field name="passport_date_validity" colspan='2'/>
+                        <field name="passport_place_birth" colspan='4'/>
 
                     </group>
 
-                    <group string="Адрес регистрации(постоянной/временной)">
-                        <field name="ra1_full"/>
-                        <field name="ra1_country"/>
-                        <field name="ra1_region"/>
-                        <field name="ra1_city"/>
-                        <field name="ra1_district"/>
-                        <field name="ra1_street"/>
-                        <field name="ra1_house"/>
-                        <field name="ra1_building"/>
-                        <field name="ra1_structure"/>
-                        <field name="ra1_apartment"/>
-                        <field name="ra1_end_date"/>
 
+                </page>
+                <page name="addres" string="Адреса проживания" groups="base.group_erp_manager">
+                    <group>
+                        
+                        <group string="Адрес регистрации(постоянной/временной)">
+                            <field name="ra_full" string="Полный"/>
+                            <field name="ra_zipcode"/>
+                            <field name="ra_area_type"/>
+                            <field name="ra_area"/>
+                            <field name="ra_district_type"/>
+                            <field name="ra_district"/>
+                            <field name="ra_city_type"/>
+                            <field name="ra_city"/>
+                            <field name="ra_locality_type"/>
+                            <field name="ra_locality"/>
+                            <field name="ra_mun_district_type"/>
+                            <field name="ra_mun_district"/>
+                            <field name="ra_settlement_type"/>
+                            <field name="ra_settlement"/>
+                            <field name="ra_city_district_type"/>
+                            <field name="ra_city_district"/>
+                            <field name="ra_territory_type"/>
+                            <field name="ra_territory"/>
+                            <field name="ra_street_type"/>
+                            <field name="ra_street"/>
+                            <field name="ra_house_type"/>
+                            <field name="ra_house"/>
+                            <field name="ra_buildings_type"/>
+                            <field name="ra_buildings"/>
+                            <field name="ra_apartments_type"/>
+                            <field name="ra_apartments"/>
+                            <field name="ra_stead"/>
+
+                            <field name="ra_end_date"/>
+                            
+
+                        </group>
+                        <group string="Адрес фактического проживания">
+                            <field name="fa_full" string="Полный"/>
+                            <field name="fa_zipcode"/>
+                            <field name="fa_area_type"/>
+                            <field name="fa_area"/>
+                            <field name="fa_district_type"/>
+                            <field name="fa_district"/>
+                            <field name="fa_city_type"/>
+                            <field name="fa_city"/>
+                            <field name="fa_locality_type"/>
+                            <field name="fa_locality"/>
+                            <field name="fa_mun_district_type"/>
+                            <field name="fa_mun_district"/>
+                            <field name="fa_settlement_type"/>
+                            <field name="fa_settlement"/>
+                            <field name="fa_city_district_type"/>
+                            <field name="fa_city_district"/>
+                            <field name="fa_territory_type"/>
+                            <field name="fa_territory"/>
+                            <field name="fa_street_type"/>
+                            <field name="fa_street"/>
+                            <field name="fa_house_type"/>
+                            <field name="fa_house"/>
+                            <field name="fa_buildings_type"/>
+                            <field name="fa_buildings"/>
+                            <field name="fa_apartments_type"/>
+                            <field name="fa_apartments"/>
+                            <field name="fa_stead"/>
+                            
+
+                        </group>
                     </group>
 
                 </page>

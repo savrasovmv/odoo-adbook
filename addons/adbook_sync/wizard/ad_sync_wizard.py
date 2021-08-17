@@ -7,7 +7,7 @@ import base64
 
 class AdSync(models.TransientModel):
     _name = 'ad.sync_wizard'
-    _description = "Wizard обновление AD"
+    _description = "Wizard обновление с AD и ЗУП"
 
     result = fields.Text(string='Результат')
     full_sync = fields.Boolean(string='Полная синхронизация')
@@ -61,7 +61,7 @@ class AdSync(models.TransientModel):
 
     def zup_sync_dep_wizard_action(self):
         try:
-            self.result = self.env['zup.sync'].sudo().zup_sync_dep()
+            self.result = self.env['zup.sync_dep'].sudo().zup_sync_dep()
         except Exception as error:
             return self.return_result(error=error)
         
@@ -69,7 +69,15 @@ class AdSync(models.TransientModel):
 
     def zup_sync_employer_wizard_action(self):
         try:
-            self.result = self.env['zup.sync'].sudo().zup_sync_employer()
+            self.result = self.env['zup.sync_employer'].sudo().zup_sync_employer()
+        except Exception as error:
+            return self.return_result(error=error)
+        
+        return self.return_result()
+
+    def zup_sync_passport_wizard_action(self):
+        try:
+            self.result = self.env['zup.sync_passport'].sudo().zup_sync_passport()
         except Exception as error:
             return self.return_result(error=error)
         

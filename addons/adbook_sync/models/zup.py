@@ -51,9 +51,9 @@ class ZupConnect(models.AbstractModel):
             raise Exception("Ошибка при выполнении подключения к ЗУП:" + str(error))
 
         res = response.json()
-
         total_entries = len(res['data'])
         data = res['data']
+        _logger.info("Получены данные из ЗУП, в кол-ве: %s" % total_entries)
         #return total_entries, data
         return total_entries, data
 
@@ -73,9 +73,9 @@ class ZupConnect(models.AbstractModel):
 
 
 
-class ZupSync(models.AbstractModel):
-    _name = 'zup.sync'
-    _description = 'Синхронизация ЗУП'
+class ZupSyncDep(models.AbstractModel):
+    _name = 'zup.sync_dep'
+    _description = 'Синхронизация подразделений ЗУП'
     _inherit = ['zup.connect']
   
 
@@ -84,7 +84,7 @@ class ZupSync(models.AbstractModel):
         date = datetime.today()
         URL_API = self.env['ir.config_parameter'].sudo().get_param('zup_url_get_dep_list')
         if not URL_API:
-            raise "Не заполнен параметр zup_url_get_dep_list"
+            raise Exception("Не заполнен параметр zup_url_get_dep_list")
 
         try:
             res = self.zup_search(
@@ -98,7 +98,7 @@ class ZupSync(models.AbstractModel):
             total_entries, data = res
         else:
             self.create_ad_log(date=date,result='Ошибка. Данные не получены', is_error=True)
-            raise 'Ошибка. Данные не получены'
+            raise Exception('Ошибка. Данные не получены')
         
         if total_entries == 0:
             result = "Новых данных нет"
@@ -166,13 +166,17 @@ class ZupSync(models.AbstractModel):
 
         return result
 
+class ZupSyncEmployer(models.AbstractModel):
+    _name = 'zup.sync_employer'
+    _description = 'Синхронизация сотрудников ЗУП'
+    _inherit = ['zup.connect']
 
     def zup_sync_employer(self):
         """Загрузка информации по Сотрудникам из ЗУП"""
         date = datetime.today()
         URL_API = self.env['ir.config_parameter'].sudo().get_param('zup_url_get_empl_list')
         if not URL_API:
-            raise "Не заполнен параметр zup_url_get_empl_list"
+            raise Exception("Не заполнен параметр zup_url_get_empl_list")
 
         try:
             res = self.zup_search(
@@ -186,7 +190,7 @@ class ZupSync(models.AbstractModel):
             total_entries, data = res
         else:
             self.create_ad_log(date=date,result='Ошибка. Данные не получены', is_error=True)
-            raise 'Ошибка. Данные не получены'
+            raise Exception('Ошибка. Данные не получены')
         
         if total_entries == 0:
             result = "Новых данных нет"
@@ -314,6 +318,256 @@ class ZupSync(models.AbstractModel):
 
         if not message_update == '':
             result += "\n Обновлены Сотрудники: \n" + message_update
+
+        self.create_ad_log(result=result)
+
+        return result
+
+
+class ZupSyncPassport(models.AbstractModel):
+    _name = 'zup.sync_passport'
+    _description = 'Синхронизация документов УЛ и адресов ЗУП'
+    _inherit = ['zup.connect']
+
+    def zup_sync_passport(self):
+        """Загрузка информации по удостоверениям личности и адресам Сотрудников из ЗУП
+            Пример ответа:
+            {'dataType': 'identityDocumentList', 
+		'discription': '', 
+		'data': [
+					{'employeeGuid1C': 'c3c66a3c-17c2-11e0-86c5-00155d003102', 
+					'documentType': 'Паспорт гражданина РФ', 
+					'country': '', 
+					'series': '71 11', 
+					'number': '860325', 
+					'issuedBy': 'Территориальным пунктом УФМС России по Тюменской обл. в Нижнетавдинском районе', 
+					'departamentCode': '720-016', 
+					'issueDate': '2011-05-31T00:00:00', 
+					'validUntil': '0001-01-01T00:00:00', 
+					'birthPlace': '0,Комсомолец,Комсомольский,Кустанайская,Россия', 
+					'registrationAddress': {
+											'value': '626020, Тюменская обл, Нижнетавдинский р-н, Нижняя Тавда с, Ульянова ул, дом № 12', 
+											'comment': '', 
+											'type': 'Адрес', 
+											'Country': 'РОССИЯ', 
+											'addressType': 'Административно-территориальный', 
+											'CountryCode': '643', 
+											'ZIPcode': '626020', 
+											'area': 'Тюменская', 
+											'areaType': 'обл', 
+											'city': '', 
+											'cityType': '', 
+											'street': 'Ульянова', 
+											'streetType': 'ул', 
+											'id': '', 
+											'areaCode': '', 
+											'areaId': '', 
+											'district': 'Нижнетавдинский', 
+											'districtType': 'р-н', 
+											'districtId': '', 
+											'munDistrict': '', 
+											'munDistrictType': '', 
+											'munDistrictId': '', 
+											'cityId': '', 
+											'settlement': '', 
+											'settlementType': '', 
+											'settlementId': '', 
+											'cityDistrict': '', 
+											'cityDistrictType': '', 
+											'cityDistrictId': '', 
+											'territory': '', 
+											'territoryType': '', 
+											'territoryId': '', 
+											'locality': 'Нижняя Тавда', 
+											'localityType': 'с', 
+											'localityId': '', 
+											'streetId': '', 
+											'houseType': 'Дом', 
+											'houseNumber': '12', 
+											'houseId': '', 
+											'buildings': [], 
+											'apartments': [{
+															'type': 'Квартира', 
+															'number': '69'
+															}],
+											'codeKLADR': '', 
+											'oktmo': '', 
+											'okato': '', 
+											'asInDocument': '', 
+											'ifnsFLCode': '', 
+											'ifnsULCode': '', 
+											'ifnsFLAreaCode': '', 
+											'ifnsULAreaCode': ''}, 
+					'residenceAddress': ''
+				}, ]
+		}
+
+        
+        """
+        date = datetime.today()
+        URL_API = self.env['ir.config_parameter'].sudo().get_param('zup_url_get_passport_list')
+        if not URL_API:
+            raise Exception("Не заполнен параметр zup_url_get_passport_list")
+
+        try:
+            res = self.zup_search(
+                                    url_api=URL_API
+                                )
+        except Exception as error:
+            self.create_ad_log(date=date,result=error, is_error=True)
+            raise error
+
+        if res:
+            total_entries, data = res
+        else:
+            self.create_ad_log(date=date,result='Ошибка. Данные не получены', is_error=True)
+            raise Exception('Ошибка. Данные не получены')
+        
+        if total_entries == 0:
+            result = "Новых данных нет"
+            self.create_ad_log(result=result)
+            return result
+        
+        n = 0
+        message_error = ''
+        message_update = ''
+        message_create = ''
+        
+        for line in data:
+            # print(line)
+            if 'employeeGuid1C' in line:
+                guid_1c = line['employeeGuid1C'] # Идентификатор сотрудника
+                
+                record_search = self.env['hr.employee'].search([
+                    ('guid_1c', '=', guid_1c)
+                ],limit=1)
+                if len(record_search) == 0:
+                    message_error += "не найден сотрудник с gud1c %s \n" % guid_1c
+                    continue # Переход к следующей записи
+                
+                passport_type = line['documentType'] 
+                passport_country = line['country'] 
+                if passport_country == '':
+                    passport_country = record_search.country_id.name
+                passport_series = line['series'] 
+                passport_number = line['number'] 
+                passport_issued_by = line['issuedBy'] 
+                passport_department_code = line['departamentCode'] 
+
+                # Дата выдачи
+                passport_date_issue = None
+                passport_date_issue_text = line['issueDate']
+                if passport_date_issue_text != '' and passport_date_issue_text != '0001-01-01T00:00:00':
+                    passport_date_issue = datetime.strptime(passport_date_issue_text, '%Y-%m-%dT%H:%M:%S').date()
+                
+                # Срок действия
+                passport_date_validity = None
+                passport_date_validity_text = line['validUntil'] 
+                if passport_date_validity_text != '' and passport_date_validity_text != '0001-01-01T00:00:00':
+                    passport_date_validity = datetime.strptime(passport_date_validity_text, '%Y-%m-%dT%H:%M:%S').date()
+                
+                # Место рождения
+                passport_place_birth = line['birthPlace'] 
+
+                vals = {
+                    'passport_type': passport_type,
+                    'passport_country': passport_country,
+                    'passport_series': passport_series,
+                    'passport_number': passport_number,
+                    'passport_issued_by': passport_issued_by,
+                    'passport_department_code': passport_department_code,
+                    'passport_date_issue': passport_date_issue,
+                    'passport_date_validity': passport_date_validity,
+                    'passport_place_birth': passport_place_birth,
+                }
+
+
+
+                
+                reg_adr = line['registrationAddress'] 
+                fact_adr = line['residenceAddress'] 
+
+                adr_list_param = [
+                    {'name':'full', 'key':'value'},
+                    {'name':'zipcode', 'key':'ZIPcode'},
+                    {'name':'area_type', 'key':'areaType'},
+                    {'name':'area', 'key':'area'},
+                    {'name':'district_type', 'key':'districtType'},
+                    {'name':'district', 'key':'district'},
+                    {'name':'city_type', 'key':'cityType'},
+                    {'name':'city', 'key':'city'},
+                    {'name':'locality_type', 'key':'localityType'},
+                    {'name':'locality', 'key':'locality'},
+                    {'name':'mun_district_type', 'key':'munDistrictType'},
+                    {'name':'mun_district', 'key':'munDistrict'},
+                    {'name':'settlement_type', 'key':'settlementType'},
+                    {'name':'settlement', 'key':'settlement'},
+                    {'name':'city_district_type', 'key':'cityDistrictType'},
+                    {'name':'city_district', 'key':'cityDistrict'},
+                    {'name':'territory_type', 'key':'territoryType'},
+                    {'name':'territory', 'key':'territory'},
+                    {'name':'street_type', 'key':'streetType'},
+                    {'name':'street', 'key':'street'},
+                    {'name':'house_type', 'key':'houseType'},
+                    {'name':'house', 'key':'houseNumber'},
+                    {'name':'stead', 'key':'stead'},
+                ]
+                    # {'buildings_type':''},
+                    # {'buildings':''},
+                    # {'apartments_type':''},
+                    # {'apartments':''},
+
+                if len(reg_adr) > 0:
+
+                    for param in adr_list_param:
+                        vals['ra_%s' % param['name']] = reg_adr[param['key']] if param['key'] in reg_adr else ''
+                    
+                    buildings_text = reg_adr['buildings'] if 'buildings' in reg_adr else ''
+                    if len(buildings_text) > 0:
+                        vals['ra_buildings_type'] = buildings_text[0]['type']
+                        vals['ra_buildings'] = buildings_text[0]['number']
+                    
+                    apartments_text = reg_adr['apartments'] if 'apartments' in reg_adr else ''
+                    if len(apartments_text) > 0:
+                        vals['ra_apartments_type'] = apartments_text[0]['type']
+                        vals['ra_apartments'] = apartments_text[0]['number']
+                    
+                
+                if len(fact_adr) > 0:
+
+                    for param in adr_list_param:
+                        vals['fa_%s' % param['name']] = fact_adr[param['key']] if param['key'] in fact_adr else ''
+
+                    buildings_text = fact_adr['buildings'] if 'buildings' in fact_adr else ''
+                    if len(buildings_text) > 0:
+                        vals['fa_buildings_type'] = buildings_text[0]['type']
+                        vals['fa_buildings'] = buildings_text[0]['number']
+                    
+                    apartments_text = fact_adr['apartments'] if 'apartments' in fact_adr else ''
+                    if len(apartments_text) > 0:
+                        vals['fa_apartments_type'] = apartments_text[0]['type']
+                        vals['fa_apartments'] = apartments_text[0]['number']
+
+
+                print(guid_1c) 
+                print(vals) 
+                message_update += record_search.name + '\n'
+                record_search.write(vals)
+                
+            else:
+                message_error += "Отсутствует обязательное поле в запси: %s \n" % line
+
+
+        result ='Всего получено из ЗУП %s записей \n' % total_entries
+        if not message_error == '':
+            result = "\n Обновление прошло с предупреждениями: \n \n" + message_error
+        else:
+            result = "\n Обновление прошло успешно \n \n"
+
+        _logger.info(result)
+
+        if not message_update == '':
+            result += "\n Обновлены Документы УЛ и адреса сотрудников: \n" + message_update
 
         self.create_ad_log(result=result)
 

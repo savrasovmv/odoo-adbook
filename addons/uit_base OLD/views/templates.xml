@@ -1,0 +1,42 @@
+<odoo>
+
+    <template id="uit_base.index" name="adbook_index">
+        <!-- Шаблон верхней части -->
+        <t t-call="uit_base.adbook_head"/>
+        
+        <t t-if="search==False">
+            <t t-call="uit_base.adbook_list"/>
+        </t>
+        <t t-if="search==True">
+            <t t-call="uit_base.adbook_list_search"/>
+        </t>
+
+        <a id="go-top" href="#" onclick="smoothJumpUp(); return false;">
+            Вверх
+        </a>
+
+        <script>
+            //Крнопка Наверх
+            window.onload = function () {
+                var smoothJumpUp = function() {
+                    if (document.body.scrollTop > 0 || document.documentElement.scrollTop > 0) {
+                        window.scrollBy(0,-50);
+                        setTimeout(smoothJumpUp, 10);
+                    }
+                }
+                
+                window.onscroll = function() {
+                    var scrolled = window.pageYOffset || document.documentElement.scrollTop;
+                    if (scrolled > 100) {
+                        document.getElementById('go-top').style.display = 'block';
+                    } else {
+                        document.getElementById('go-top').style.display = 'none';
+                    }
+                }
+            }
+        </script>
+
+        
+    </template>
+
+</odoo>

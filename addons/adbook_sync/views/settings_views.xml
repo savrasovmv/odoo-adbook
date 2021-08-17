@@ -163,6 +163,17 @@
                             </div>
                         </div>
 
+                        <div class="col-lg-12 o_setting_box" id="adbook_sync">
+                            <div class="o_setting_right_pane" id="zup_settings">
+                                <label for="zup_url_get_passport_list"/>
+                                <div class="text-muted">
+                                    Список Документы УЛ и дреса сотрудников URL API
+                                </div>
+                                <field name="zup_url_get_passport_list"/>
+
+                            </div>
+                        </div>
+
                     </div>
 
                     

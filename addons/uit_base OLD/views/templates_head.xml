@@ -1,0 +1,66 @@
+<odoo>
+
+    <template id="adbook_head" name="adbook_head">
+        <xpath expr="." position="inside">
+
+            <link href="/uit_base/static/src/css/uit_base.css" rel="stylesheet"/>
+            <!-- <script src="/uit_base/static/src/js/disabled_copy.js"></script> -->
+
+        </xpath>
+        <title>Справочник контактов ЭТС</title>
+
+        <nav class="top-menu">
+            <a class="navbar-logo" href="/adbook"><img src="/uit_base/static/img/logo.png"/></a>
+            <div class='my-legend'>
+                <div class='legend-scale'>
+                    <ul class='legend-labels'>
+                        <li><div class='legend-title'>Обозначения</div></li>
+                        <li><span style='background:#FFECF2;'></span>Отпуск</li>
+                        <li><span style='background:#FFFECA;'></span>Командировка</li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="search" id="sch">
+            <form class="form-wrapper cf" t-attf-action="/adbook/search" id="search_text" method="POST">
+                <input placeholder="Поиск: ФИО, вн.номер, e-mail" type="search" id="schtext" name="search_text" t-att-value="search_text"/>
+                <button class="excel" name="excel" value="export">Экспорт <img src="/uit_base/static/img/excel.png" width="12px" height="12px"/></button>
+                <button type="submit">Искать</button>
+            </form>
+          
+        </div>
+
+        <div class="tab">
+            <t t-foreach="branch_list" t-as="branch">
+
+                <a class="button" t-attf-href="/adbook/{{branch.id}}">
+                    <t t-if="search==False">
+                        <t t-if="current_branch_id.id==branch.id">
+                            <button class="tablinks active"><t t-esc="branch.adbook_name"/></button>
+                        </t>
+                        <t t-if="current_branch_id.id!=branch.id">
+                            <button class="tablinks"><t t-esc="branch.adbook_name"/></button>
+                        </t>
+                    </t>
+                    <t t-if="search==True">
+                        <button class="tablinks"><t t-esc="branch.adbook_name"/></button>
+                    </t>
+
+                    
+                </a>
+                
+            </t>
+            <t t-if="search==True">
+                <a class="button" t-attf-href="/adbook">
+                        <button class="tablinks active">Поиск</button>
+                </a>
+            </t>
+            
+        </div>
+
+      
+        
+    </template>
+
+</odoo>
