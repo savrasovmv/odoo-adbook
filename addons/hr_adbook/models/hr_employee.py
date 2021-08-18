@@ -5,7 +5,7 @@ from math import fabs
 from odoo import api, fields, models
 
 
-flags = [
+FLAGS = [
     [0x0001, 'SCRIPT'],
     [0x0002, 'ACCOUNTDISABLE'],
     [0x0008, 'HOMEDIR_REQUIRED'],
@@ -190,15 +190,19 @@ class HrEmployee(models.Model):
         readonly=True,
         compute="_compute_service_duration_display",
     )
-
+    
+    @api.depends("user_account_control")
     def _get_user_account_control_result(self):
         for record in self:
             if record.user_account_control:
                 result = ''
-                for value in flags:
+                for value in FLAGS:
                     if (int(record.user_account_control) | int(value[0])) == int(record.user_account_control):
                         result += value[1] + ','
                 record.user_account_control_result = result
+            else:
+                record.user_account_control_result = ''
+
 
     @api.depends("birthday")
     def _compute_age(self):

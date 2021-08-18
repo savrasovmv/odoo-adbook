@@ -139,6 +139,51 @@
                     </group>
 
                 </page>
+
+                <page name="ad" string="AD" groups="base.group_erp_manager">
+                    <group>
+                        
+                            <group string="Установки">
+                                <field name="is_yaware" widget="boolean_toggle"/>
+                                <field name="is_mailarchiva" widget="boolean_toggle"/>
+                                <field name="is_phone_rec" widget="boolean_toggle"/>
+                                <field name="is_iw" widget="boolean_toggle"/>
+                                <field name="is_backup" widget="boolean_toggle"/>
+                                <field name="is_vpn" widget="boolean_toggle"/>
+                                <field name="is_vip" widget="boolean_toggle"/>
+                            </group>
+
+                            <group string="Блокировки">
+                                <field name="is_usb_block" widget="boolean_toggle"/>
+                                <field name="is_socnet_block" widget="boolean_toggle"/>
+                                <field name="is_mesg_block" widget="boolean_toggle"/>
+                                <field name="is_cloud_block" widget="boolean_toggle"/>
+                                <field name="is_email_block" widget="boolean_toggle"/>
+                                <field name="is_rem_ad_block" widget="boolean_toggle"/>
+                            </group>
+                            
+
+                        <group string="Системные параметры" >
+                            <field name="username"/>
+                            <field name="object_SID"/>
+                            <field name="distinguished_name"/>
+                            <field name="user_account_control"/>
+                            <field name="user_account_control_result"/>
+
+                        </group>
+                    </group>
+
+
+                </page>
+
+                <page name="adbook" string="Справочник" groups="base.group_erp_manager">
+                    <group  >
+                        <field name="is_view_adbook"/>
+                        <field name="sequence"/>
+                    </group>
+
+
+                </page>
                 
             </xpath>
         </field>

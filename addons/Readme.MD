@@ -7,8 +7,15 @@ user@mint:~/pro$ sudo chmod ugo=rwx -R odoo-test/
 user@mint:~/pro$ sudo chown user:user -R odoo-test/\*
 
 
+Создать пустой проект
+======================
+./odoo-bin scaffold nameAddons /addons-path/
+или
+odoo scaffold nameAddons /addons-path/
+
 
 Logger
+=======
 import logging
 _logger = logging.getLogger(__name__)
 
