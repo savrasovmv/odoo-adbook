@@ -1,0 +1,15 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_public_ad_organizacion,access_public_ad_organizacion,model_ad_organizacion,,1,0,0,0
+access_public_ad_branch,access_public_ad_branch,model_ad_branch,,1,0,0,0
+access_public_ad_department,access_public_ad_department,model_ad_department,,1,0,0,0
+access_public_ad_users,access_public_ad_users,model_ad_users,,1,0,0,0
+access_ad_users_group_line,access_ad_users_group_line,model_ad_users_group_line,base.group_user,1,1,1,1
+access_ad_organizacion,access_ad_organizacion,model_ad_organizacion,base.group_user,1,1,1,1
+access_ad_branch,access_ad_branch,model_ad_branch,base.group_user,1,1,1,1
+access_ad_department,access_ad_department,model_ad_department,base.group_user,1,1,1,1
+access_ad_users,access_ad_users,model_ad_users,base.group_user,1,1,1,1
+access_ad_sync_users_wizard,access_ad_sync_users_wizard,model_ad_sync_users_wizard,base.group_user,1,1,1,1
+access_ad_mailbox,access_ad_mailbox,model_ad_mailbox,base.group_user,1,1,1,1
+access_ad_group,access_ad_group,model_ad_group,base.group_user,1,1,1,1
+access_ad_set_group,access_ad_set_group,model_ad_set_group,base.group_user,1,1,1,1
+access_ad_set_group_line,access_ad_set_group_line,model_ad_set_group_line,base.group_user,1,1,1,1
