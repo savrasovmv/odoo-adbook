@@ -4,6 +4,7 @@
 {
     'name': 'Модуль синхронизации с AD и 1С:ЗУП',
     "author": "Savrasov Mikhail <savrasovmv@tmenergo.ru> ",
+    "website": "https://github.com/savrasovmv/",
     'version': '14',
     'category': 'HR',
     'sequence': 15,

@@ -49,7 +49,7 @@
                                     <t t-if="current_branch_id.is_view_photo_adbook==True">
                                         <td align="center"  width="90px" height="90px" style="padding:0">
                                             <t t-if="employer.photo">
-                                                <img t-att-src="'/web/image/ad.employer/%s/photo' % employer.id" alt="Employer"/>
+                                                <img t-att-src="'/web/image/ad.users/%s/photo' % employer.id" alt="Employer"/>
                                                 
                                                 <!-- <span t-field="employer.photo"  t-options="{'widget': 'image','style':'width: 90px; height: 90px'}" class="photo"/> -->
                                             </t>

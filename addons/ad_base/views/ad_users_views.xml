@@ -52,14 +52,18 @@
                                     <field name="sequence"/>
                                 </group>
                             </group>
-                        
-                            <group string="Контакты">
-                                <field name="ip_phone"/>
-                                <field name="phone"/>
-                                <field name="sec_phone"/>
-                                <field name="email"/>
-                            </group>
-                                
+                            <group >
+                                <group string="Контакты">
+                                    <field name="ip_phone"/>
+                                    <field name="phone"/>
+                                    <field name="sec_phone"/>
+                                    <field name="email"/>
+                                    <field name="search_text"/>
+                                </group>
+                                <group string="Сотрудник">
+                                    <field name="employee_id"/>
+                                </group>
+                            </group>    
 
                             <group string="Текущее состояние">
                                 <field name="is_fired"/>

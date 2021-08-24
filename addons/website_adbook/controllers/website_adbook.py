@@ -15,7 +15,7 @@ class AdBook(http.Controller):
 
         #Экспорт контактов в эксель
         if excel == 'export':
-            file_name = http.request.env['ad.employer']._export_adbook()
+            file_name = http.request.env['ad.users'].sudo()._export_adbook()
             f = open(file_name,"rb").read()
             response = request.make_response(f,
                                         headers=[('Content-Type', 'application/vnd.ms-excel'),
@@ -27,24 +27,31 @@ class AdBook(http.Controller):
         if search_text == '':
             return werkzeug.utils.redirect('/adbook')
 
-        branch_list = http.request.env['ad.branch'].search([
+        branch_list = http.request.env['ad.branch'].sudo().search([
                                 ('active', '=', True),
                                 ('is_view_adbook', '=', True),
                             ], order="sequence desc")
                 
-        employer_list = http.request.env['ad.employer'].search([
-                            '|','|',
-                            ('name', 'ilike', search_text),
-                            ('ip_phone', 'ilike', search_text),
-                            ('email', 'ilike', search_text),
-                            '&',
+        employer_list = http.request.env['ad.users'].sudo().search([
+                            ('search_text', 'ilike', search_text),
                             ('active', '=', True),
                             ('is_view_adbook', '=', True),
                             ('branch_id', 'in', branch_list.ids),
                         ], order="sequence desc, name asc")
+
+        # employer_list = http.request.env['ad.users'].sudo().search([
+        #                     '|','|',
+        #                     ('name', 'ilike', search_text),
+        #                     ('ip_phone', 'ilike', search_text),
+        #                     ('email', 'ilike', search_text),
+        #                     '&',
+        #                     ('active', '=', True),
+        #                     ('is_view_adbook', '=', True),
+        #                     ('branch_id', 'in', branch_list.ids),
+        #                 ], order="sequence desc, name asc")
         
             
-        return http.request.render('uit_base.index', {
+        return http.request.render('website_adbook.index', {
             'search': True,
             'search_text': search_text,
             'current_branch_id': '',
@@ -61,19 +68,21 @@ class AdBook(http.Controller):
     @http.route(['/adbook','/adbook/<int:branch_id>'], auth='public')
     def index(self, branch_id=False, **kw):
         print("++++ route INDEX")
-        branch_list = http.request.env['ad.branch'].search([
+        branch_list = http.request.env['ad.branch'].sudo().search([
                                 ('active', '=', True),
                                 ('is_view_adbook', '=', True),
                             ], order="sequence desc")
-        
+        if not branch_list:
+            return "Нет ниодного подразделения для отображения в справочнике. Установите хотя бы для одного объекта Подразделения AD 'Отображать в справочнике контктов'"
+
         if branch_id in branch_list.ids:
-            branch_id = http.request.env['ad.branch'].browse(branch_id)
+            branch_id = http.request.env['ad.branch'].sudo().browse(branch_id)
         
         if branch_list and not branch_id:
             branch_id = branch_list[0]
 
         if branch_id:
-            department_list_id = http.request.env['ad.employer'].read_group([ 
+            department_list_id = http.request.env['ad.users'].sudo().read_group([ 
                                                         ('branch_id', '=', branch_id.id),
                                                         ('active', '=', True),
                                                         ('is_view_adbook', '=', True),
@@ -87,14 +96,14 @@ class AdBook(http.Controller):
                 d_id, obj = data['department_id']
                 department_ids.append(d_id)
            
-            department_list = http.request.env['ad.department'].search([ 
+            department_list = http.request.env['ad.department'].sudo().search([ 
                                                         ('id', 'in', department_ids),
                                                         ('active', '=', True),
                                                         ('is_view_adbook', '=', True),
                                                     ], 
                                                         order="sequence desc"
                                                     )
-            employer_list = http.request.env['ad.employer'].search([
+            employer_list = http.request.env['ad.users'].sudo().search([
                                 ('branch_id', '=', branch_id.id),
                                 ('active', '=', True),
                                 ('is_view_adbook', '=', True),
@@ -105,7 +114,7 @@ class AdBook(http.Controller):
             department_list = []
             branch_id = ''
             
-        return http.request.render('uit_base.index', {
+        return http.request.render('website_adbook.index', {
             'search': False,
             'current_branch_id': branch_id,
             'branch_list':  branch_list,

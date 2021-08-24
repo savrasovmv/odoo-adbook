@@ -4,6 +4,7 @@ from odoo import fields, models, api
 from ldap3 import Server, Connection, SUBTREE, MODIFY_REPLACE, LEVEL
 import json
 import base64
+import re
 
 from openpyxl import Workbook
 import os, fnmatch
@@ -93,6 +94,8 @@ class AdUsers(models.Model):
     _order = "name"
 
     name = fields.Char(u'ФИО', required=True)
+    employee_id = fields.Many2one("hr.employee", string="Сотрудник")
+
     active = fields.Boolean('Active', default=True)
     is_ldap = fields.Boolean('LDAP?', default=False)
 
@@ -106,6 +109,8 @@ class AdUsers(models.Model):
     sec_phone = fields.Char(u'Мобильный телефон 2')
 
     email = fields.Char(u'E-mail')
+
+    search_text = fields.Char(u'Поисковое поле', compute="_get_search_text", store=True, index=True)
 
     username = fields.Char(u'sAMAccountName')
     object_SID = fields.Char(u'AD objectSID')
@@ -153,6 +158,46 @@ class AdUsers(models.Model):
     # @api.depends("is_yaware")
     # def _is_yaware_yaware(self):
     #     self.is_usb_block = self.is_yaware
+    @api.depends("name", "ip_phone", "phone","sec_phone", "email")
+    def _get_search_text(self):
+        for user in self:
+            ip_phone = re.sub('\D', '', user.ip_phone) if user.ip_phone else ''
+            phone = re.sub('\D', '', user.phone) if user.phone else ''
+            sec_phone = re.sub('\D', '', user.sec_phone) if user.sec_phone else ''
+            email = user.email if user.email else ''
+            user.search_text = user.name + " " + ip_phone + " " + phone  + " " + sec_phone + " " + email
+
+
+    def get_employee_by_name(self):
+        for user in self:
+            empl = self.env['hr.employee'].search([
+                ('name', '=', user.name),
+                '|',
+                ('active', '=', False), 
+                ('active', '=', True)
+
+            ], limit=1)
+            if len(empl)>0:
+                user.employee_id = empl[0].id
+                employee = self.env['hr.employee'].browse(empl[0].id)
+                if user.photo:
+                    employee.image_1920 = user.photo
+                # else:
+                #     employee.image_1920 = employee._default_image()
+                employee.mobile_phone = user.phone
+                employee.mobile_phone2 = user.sec_phone
+                employee.ip_phone = user.ip_phone
+                employee.work_email = user.email
+
+            else:
+                user.employee_id = None
+
+    
+    def join_user_and_employee(self, full_sync=False):
+        for user in self.search([]):
+            if not user.employee_id or full_sync:
+                user.get_employee_by_name()
+
 
     def update_group_list(self):
         for empl in self:

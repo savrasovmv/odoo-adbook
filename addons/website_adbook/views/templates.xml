@@ -1,14 +1,14 @@
 <odoo>
 
-    <template id="uit_base.index" name="adbook_index">
+    <template id="website_adbook.index" name="adbook_index">
         <!-- Шаблон верхней части -->
-        <t t-call="uit_base.adbook_head"/>
+        <t t-call="website_adbook.adbook_head"/>
         
         <t t-if="search==False">
-            <t t-call="uit_base.adbook_list"/>
+            <t t-call="website_adbook.adbook_list"/>
         </t>
         <t t-if="search==True">
-            <t t-call="uit_base.adbook_list_search"/>
+            <t t-call="website_adbook.adbook_list_search"/>
         </t>
 
         <a id="go-top" href="#" onclick="smoothJumpUp(); return false;">

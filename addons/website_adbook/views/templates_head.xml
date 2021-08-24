@@ -3,14 +3,14 @@
     <template id="adbook_head" name="adbook_head">
         <xpath expr="." position="inside">
 
-            <link href="/uit_base/static/src/css/uit_base.css" rel="stylesheet"/>
-            <!-- <script src="/uit_base/static/src/js/disabled_copy.js"></script> -->
+            <link href="/website_adbook/static/src/css/adbook.css" rel="stylesheet"/>
+            <!-- <script src="/website_adbook/static/src/js/disabled_copy.js"></script> -->
 
         </xpath>
         <title>Справочник контактов ЭТС</title>
 
         <nav class="top-menu">
-            <a class="navbar-logo" href="/adbook"><img src="/uit_base/static/img/logo.png"/></a>
+            <a class="navbar-logo" href="/adbook"><img src="/website_adbook/static/img/logo.png"/></a>
             <div class='my-legend'>
                 <div class='legend-scale'>
                     <ul class='legend-labels'>
@@ -22,12 +22,17 @@
             </div>
         </nav>
 
+        
+
         <div class="search" id="sch">
             <form class="form-wrapper cf" t-attf-action="/adbook/search" id="search_text" method="POST">
-                <input placeholder="Поиск: ФИО, вн.номер, e-mail" type="search" id="schtext" name="search_text" t-att-value="search_text"/>
-                <button class="excel" name="excel" value="export">Экспорт <img src="/uit_base/static/img/excel.png" width="12px" height="12px"/></button>
-                <button type="submit">Искать</button>
+                <input placeholder="Поиск: ФИО, телефон, e-mail" type="search" id="schtext" name="search_text" t-att-value="search_text"/>
+                <div>
+                <button type="submit" name="search" value="search" style="">Искать</button>
+                <button type="submit" class="excel" name="excel" value="export">Экспорт <img src="/website_adbook/static/img/excel.png" width="12px" height="12px"/></button>
+                </div>
             </form>
+         
           
         </div>
 

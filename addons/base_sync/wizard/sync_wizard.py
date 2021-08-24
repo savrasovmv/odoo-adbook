@@ -59,6 +59,14 @@ class SyncWizard(models.TransientModel):
         
         return self.return_result()
 
+    def join_user_and_employee_wizard_action(self):
+        try:
+            self.result = self.env['ad.users'].sudo().join_user_and_employee(full_sync=self.full_sync)
+        except Exception as error:
+            return self.return_result(error=error)
+        
+        return self.return_result()
+
     def zup_sync_dep_wizard_action(self):
         try:
             self.result = self.env['zup.sync_dep'].sudo().zup_sync_dep()

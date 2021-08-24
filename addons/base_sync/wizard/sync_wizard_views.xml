@@ -19,6 +19,10 @@
                     <p></p>
                     <p>Загрузить группы из AD</p>
                     <button name="ad_sync_group_wizard_action" string="Обновить Группы AD" type="object" class="oe_highlight"/>
+
+                    <p></p>
+                    <p>Связать пользователей AD со справочником Сотрудники</p>
+                    <button name="join_user_and_employee_wizard_action" string="Связать пользователей AD" type="object" class="oe_highlight"/>
                 </div>
                 <group string="Синхронизации с ЗУП">
 
