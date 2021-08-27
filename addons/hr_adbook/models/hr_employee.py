@@ -121,30 +121,11 @@ class HrEmployee(models.Model):
     
     
     # AD
-    username = fields.Char(u'sAMAccountName')
-    object_SID = fields.Char(u'AD objectSID')
-    distinguished_name = fields.Char(u'AD distinguishedName')
-    user_account_control = fields.Char(u'AD userAccountControl')
-    user_account_control_result = fields.Char(u'AD userAccountControl result', compute="_get_user_account_control_result")
-
-    # Блокировки
-    is_yaware = fields.Boolean(string='yaware')
-    is_usb_block = fields.Boolean(string='Блокировка USB')
-    is_mailarchiva = fields.Boolean(string='mailarchiva')
-    is_phone_rec = fields.Boolean(string='Запись телефонных разговоров')
-    is_socnet_block = fields.Boolean(string='Блокировка соц.сетей')
-    is_mesg_block = fields.Boolean(string='Блокировка мессенджеров')
-    is_cloud_block = fields.Boolean(string='Блокировка облаков')
-    is_email_block = fields.Boolean(string='Блокировка email')
-    is_rem_ad_block = fields.Boolean(string='rem_ad_block')
-    is_iw = fields.Boolean(string='iw')
-    is_backup = fields.Boolean(string='backup')
-    is_vpn = fields.Boolean(string='vpn')
-    is_vip = fields.Boolean(string='vip')
+    users_id = fields.Many2one("ad.users", string="Пользователь AD")
 
     # Справочник
-    is_view_adbook = fields.Boolean(string='Отоброжать в справочнике контактов', default=True)
-    sequence = fields.Integer(string=u"Сортировка", help="Сортировка")
+    # is_view_adbook = fields.Boolean(string='Отоброжать в справочнике контактов', default=True)
+    # sequence = fields.Integer(string=u"Сортировка", help="Сортировка")
 
 
     # Даты приема и увольнения
@@ -191,17 +172,17 @@ class HrEmployee(models.Model):
         compute="_compute_service_duration_display",
     )
     
-    @api.depends("user_account_control")
-    def _get_user_account_control_result(self):
-        for record in self:
-            if record.user_account_control:
-                result = ''
-                for value in FLAGS:
-                    if (int(record.user_account_control) | int(value[0])) == int(record.user_account_control):
-                        result += value[1] + ','
-                record.user_account_control_result = result
-            else:
-                record.user_account_control_result = ''
+    # @api.depends("user_account_control")
+    # def _get_user_account_control_result(self):
+    #     for record in self:
+    #         if record.user_account_control:
+    #             result = ''
+    #             for value in FLAGS:
+    #                 if (int(record.user_account_control) | int(value[0])) == int(record.user_account_control):
+    #                     result += value[1] + ','
+    #             record.user_account_control_result = result
+    #         else:
+    #             record.user_account_control_result = ''
 
 
     @api.depends("birthday")

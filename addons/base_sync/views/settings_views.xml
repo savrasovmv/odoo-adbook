@@ -29,7 +29,7 @@
                                 <div class="text-muted">
                                     Port
                                 </div>
-                                <field name="ldap_port"/>
+                                <field name="ldap_port" class="col-lg-2"/>
 
                             </div>
                         </div>
@@ -41,6 +41,17 @@
                                     SSL?
                                 </div>
                                 <field name="ldap_ssl"/>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 o_setting_box" id="base_sync">
+                            <div class="o_setting_right_pane" id="ldap_settings">
+                                <label for="ldap_connect_timeout"/>
+                                <div class="text-muted">
+                                    Timeout
+                                </div>
+                                <field name="ldap_connect_timeout" class="col-lg-2"/>
 
                             </div>
                         </div>
@@ -130,13 +141,13 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-2 o_setting_box" id="base_sync">
+                        <div class="col-lg-6 o_setting_box" id="base_sync">
                             <div class="o_setting_right_pane" id="zup_settings">
                                 <label for="zup_timeout"/>
                                 <div class="text-muted">
                                     Timeout
                                 </div>
-                                <field name="zup_timeout"/>
+                                <field name="zup_timeout" class="col-lg-2"/>
 
                             </div>
                         </div>

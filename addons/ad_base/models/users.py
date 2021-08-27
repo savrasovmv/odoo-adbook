@@ -179,11 +179,13 @@ class AdUsers(models.Model):
             ], limit=1)
             if len(empl)>0:
                 user.employee_id = empl[0].id
+                user.birthday = empl[0].birthday
                 employee = self.env['hr.employee'].browse(empl[0].id)
                 if user.photo:
                     employee.image_1920 = user.photo
                 # else:
                 #     employee.image_1920 = employee._default_image()
+                employee.users_id = user.id
                 employee.mobile_phone = user.phone
                 employee.mobile_phone2 = user.sec_phone
                 employee.ip_phone = user.ip_phone

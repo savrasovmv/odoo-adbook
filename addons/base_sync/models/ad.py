@@ -4,11 +4,39 @@ from odoo import fields, models, api
 from ldap3 import Server, Connection, SUBTREE, MODIFY_REPLACE, LEVEL
 from datetime import datetime
 import base64
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class AdConnect(models.AbstractModel):
     _name = "ad.connect"
     _description = "Класс для работы с AD"
+
+    def ldap_connect(self):
+        """Подключается к AD, возвращает объект Connection"""
+        _logger.info("ldap_connect")
+         #     #Подключение к серверу AD
+        LDAP_HOST = self.env['ir.config_parameter'].sudo().get_param('ldap_host')
+        LDAP_PORT = self.env['ir.config_parameter'].sudo().get_param('ldap_port')
+        LDAP_USER = self.env['ir.config_parameter'].sudo().get_param('ldap_user')
+        LDAP_PASS = self.env['ir.config_parameter'].sudo().get_param('ldap_password')
+        LDAP_SSL = self.env['ir.config_parameter'].sudo().get_param('ldap_ssl')
+        LDAP_CONNECT_TIMEOUT = int(self.env['ir.config_parameter'].sudo().get_param('ldap_connect_timeout'))
+
+        if LDAP_HOST and LDAP_PORT and LDAP_USER and LDAP_PASS and LDAP_SSL:
+            if not LDAP_CONNECT_TIMEOUT or LDAP_CONNECT_TIMEOUT == 0:
+                LDAP_CONNECT_TIMEOUT = 30
+        else:
+            _logger.warning("Нет учетных данных для подключения. Настройки-Синхронизация")
+            raise Exception("Нет учетных данных для подключения. Настройки-Синхронизация")
+        try:
+            ldap_server = Server(host=LDAP_HOST, port=int(LDAP_PORT), use_ssl=LDAP_SSL, get_info='ALL', connect_timeout=LDAP_CONNECT_TIMEOUT)
+            c = Connection(ldap_server, user=LDAP_USER, password=LDAP_PASS, auto_bind=True)
+            return c
+        except Exception as e:
+            _logger.warning('Невозможно соединиться с AD. Ошибка: ' + str(e))
+            raise Exception('Невозможно соединиться с AD. Ошибка: ' + str(e))
+
 
     def ldap_search(self, full_sync=False, date=False, search_filter=False, attributes=False):
         """ Подключется к АД, ищит записи, 
@@ -21,26 +49,20 @@ class AdConnect(models.AbstractModel):
                 data - данные
          """
          #     #Подключение к серверу AD
-        LDAP_HOST = self.env['ir.config_parameter'].sudo().get_param('ldap_host')
-        LDAP_PORT = self.env['ir.config_parameter'].sudo().get_param('ldap_port')
-        LDAP_USER = self.env['ir.config_parameter'].sudo().get_param('ldap_user')
-        LDAP_PASS = self.env['ir.config_parameter'].sudo().get_param('ldap_password')
-        LDAP_SSL = self.env['ir.config_parameter'].sudo().get_param('ldap_ssl')
+        
+        # LDAP_HOST = self.env['ir.config_parameter'].sudo().get_param('ldap_host')
+        # LDAP_PORT = self.env['ir.config_parameter'].sudo().get_param('ldap_port')
+        # LDAP_USER = self.env['ir.config_parameter'].sudo().get_param('ldap_user')
+        # LDAP_PASS = self.env['ir.config_parameter'].sudo().get_param('ldap_password')
+        # LDAP_SSL = self.env['ir.config_parameter'].sudo().get_param('ldap_ssl')
         LDAP_SEARCH_BASE = self.env['ir.config_parameter'].sudo().get_param('ldap_search_base')
         # LDAP_SEARCH_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_filter')
         # LDAP_SEARCH_GROUP_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_group_filter')
-        if not search_filter:
-            raise "Не заполнен параметр search_filter"
+        
+        if not LDAP_SEARCH_BASE:
+            raise Exception("Не указан LDAP_SEARCH_BASE. Настройки-Синхронизация")
 
-        if LDAP_HOST and LDAP_PORT and LDAP_USER and LDAP_PASS and LDAP_SSL and LDAP_SEARCH_BASE:
-            pass
-        else:
-            raise "Нет учетных данных для подключения. Настройки-Синхронизация"
-        try:
-            ldap_server = Server(host=LDAP_HOST, port=int(LDAP_PORT), use_ssl=LDAP_SSL, get_info='ALL', connect_timeout=10)
-            c = Connection(ldap_server, user=LDAP_USER, password=LDAP_PASS, auto_bind=True)
-        except Exception as e:
-            raise 'Невозможно соединиться с AD. Ошибка: ' + str(e)
+        
         
         # search_filter = "(&(|(objectClass=user)(objectClass=contact))(whenChanged>=" + today + "))"
         #                   '(|(objectClass=user)(objectClass=contact))'
@@ -62,34 +84,58 @@ class AdConnect(models.AbstractModel):
 
         total_entries = 0
 
-        # Постраничный поиск
-        res = c.search(
-                        search_base=LDAP_SEARCH_BASE,
-                        search_filter=search_filter,
-                        search_scope=SUBTREE,
-                        attributes=attributes,
-                        paged_size = 500
-                    )
-        
-        total_entries += len(c.response)
-        cookie = c.result['controls']['1.2.840.113556.1.4.319']['value']['cookie']
-        data = c.entries
-        page = 1
-        while cookie:
-            res = c.search(
+        try:
+            connection = self.ldap_connect()
+            # Постраничный поиск
+            res = connection.search(
                             search_base=LDAP_SEARCH_BASE,
                             search_filter=search_filter,
                             search_scope=SUBTREE,
                             attributes=attributes,
-                            paged_size = 500,
-                            paged_cookie = cookie
+                            paged_size = 500
                         )
-            total_entries += len(c.response)
-            cookie = c.result['controls']['1.2.840.113556.1.4.319']['value']['cookie']
-            data += c.entries
-        
-        return total_entries, data
+            
+            total_entries += len(connection.response)
+            cookie = connection.result['controls']['1.2.840.113556.1.4.319']['value']['cookie']
+            data = connection.entries
+            page = 1
+            while cookie:
+                res = connection.search(
+                                search_base=LDAP_SEARCH_BASE,
+                                search_filter=search_filter,
+                                search_scope=SUBTREE,
+                                attributes=attributes,
+                                paged_size = 500,
+                                paged_cookie = cookie
+                            )
+                total_entries += len(connection.response)
+                cookie = connection.result['controls']['1.2.840.113556.1.4.319']['value']['cookie']
+                data += connection.entries
+            
+            return total_entries, data
+        except Exception as error:
+            raise error
 
+    def ldap_create_user(self, param=False):
+        if not param:
+            _logger.warning('Нет параметров для создния пользователя AD')
+            raise Exception("Нет параметров для создния пользователя AD")
+        pass
+    
+    def ldap_update_user(self, object_SID=False, param=False):
+        if not param:
+            _logger.warning('Нет параметров для обновления пользователя AD')
+            raise Exception("Нет параметров для обновления пользователя AD")
+        if not object_SID:
+            _logger.warning('Нет object_SID для обновления пользователя AD')
+            raise Exception("Нет object_SID для обновления пользователя AD")
+        pass
+
+    def ldap_disable_user(self, object_SID=False):
+        if not object_SID:
+            _logger.warning('Нет object_SID для обновления пользователя AD')
+            raise Exception("Нет object_SID для обновления пользователя AD")
+        pass
 
     def create_ad_log(self, date=False, is_error=False, result=''):
         """Создает запись в журнале синхронизации с AD"""
@@ -114,10 +160,12 @@ class AdSyncGroup(models.AbstractModel):
 
      # Синхронизация групп
     def ad_sync_group(self, full_sync=False):
+        _logger.info("ad_sync_group")
         date = datetime.today()
         LDAP_SEARCH_GROUP_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_group_filter')
         if not LDAP_SEARCH_GROUP_FILTER:
-            raise 'Не заполнен параметр ldap_search_group_filter'
+            _logger.warning('Не заполнен параметр ldap_search_group_filter')
+            raise Exception('Не заполнен параметр ldap_search_group_filter')
 
         attributes = ['cn', 'distinguishedName', 'whenChanged', 'objectSID', 'sAMAccountName']
         
@@ -129,12 +177,14 @@ class AdSyncGroup(models.AbstractModel):
                                 )
                                 
         except Exception as error:
+            _logger.warning(error)
             raise error
         
         if res:
             total_entries, data = res
         else:
-            raise 'Ошибка. Данные не получены'
+            _logger.warning('Ошибка. Данные не получены')
+            raise Exception('Ошибка. Данные не получены')
         
         if total_entries == 0:
             result = "Новых данных нет"

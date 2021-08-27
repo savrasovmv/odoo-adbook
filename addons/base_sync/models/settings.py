@@ -15,6 +15,7 @@ class Settings(models.TransientModel):
     ldap_search_base = fields.Char(u'search_base', default='')
     ldap_search_filter = fields.Char(u'ldap_search_filter', default='(|(objectClass=user)(objectClass=user))')
     ldap_search_group_filter = fields.Char(u'ldap_search_group_filter', default='(objectClass=group)')
+    ldap_connect_timeout = fields.Integer(u'LDAP timeout, сек', default=30)
 
     # ЗУП
     zup_user = fields.Char(u'Пользователь ЗУП', default='')
@@ -38,6 +39,7 @@ class Settings(models.TransientModel):
                 'ldap_search_base': conf.get_param('ldap_search_base'),
                 'ldap_search_filter': conf.get_param('ldap_search_filter'),
                 'ldap_search_group_filter': conf.get_param('ldap_search_group_filter'),
+                'ldap_connect_timeout': conf.get_param('ldap_connect_timeout'),
 
                 'zup_user': conf.get_param('zup_user'),
                 'zup_password': conf.get_param('zup_password'),
@@ -61,6 +63,7 @@ class Settings(models.TransientModel):
         conf.set_param('ldap_search_base', str(self.ldap_search_base))
         conf.set_param('ldap_search_filter', str(self.ldap_search_filter))
         conf.set_param('ldap_search_group_filter', str(self.ldap_search_group_filter))
+        conf.set_param('ldap_connect_timeout', int(self.ldap_connect_timeout))
 
         conf.set_param('zup_user', str(self.zup_user))
         conf.set_param('zup_password', str(self.zup_password))
