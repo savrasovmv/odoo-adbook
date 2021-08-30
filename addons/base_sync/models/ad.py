@@ -341,18 +341,31 @@ class AdSyncUsers(models.AbstractModel):
                 branch_id = None
 
             #Search Department
-            if user['department'].value:
+            if user['department'].value and branch_id != None:
                 department_name = user['department'].value
                 if len(department_name)>0:
                     #print("department_name = ", department_name)
-                    department_search = self.env['ad.department'].search([('name', '=', department_name)],limit=1)
+                    department_search = self.env['ad.department'].search([
+                                                        ('name', '=', department_name),
+                                                        '|',
+                                                        ('branch_id', '=', branch_id),
+                                                        ('branch_id', '=', False),
+                                                        ],limit=1)
+                    
                     if not department_search:
                         department_id = self.env['ad.department'].create({
                                                     'name': department_name, 
+                                                    'branch_id': branch_id,
                                                 }).id
                         message_department += department_name +"\n"
                     else:
                         department_id = department_search.id
+                        if not department_search.branch_id:
+                            department_search.write({
+                                                    'branch_id': branch_id,
+                                                })
+
+
                 else:
                     message_error += "Для %s не задан department. \n" % user_name
                     department_id = None

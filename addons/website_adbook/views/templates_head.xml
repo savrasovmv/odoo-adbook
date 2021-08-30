@@ -10,7 +10,7 @@
         <title>Справочник контактов ЭТС</title>
 
         <nav class="top-menu">
-            <a class="navbar-logo" href="/adbook"><img src="/website_adbook/static/img/logo.png"/></a>
+            <a class="navbar-logo" href="/"><img src="/website_adbook/static/img/logo.png"/></a>
             <div class='my-legend'>
                 <div class='legend-scale'>
                     <ul class='legend-labels'>

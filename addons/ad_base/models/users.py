@@ -38,12 +38,13 @@ class AdBranch(models.Model):
 class AdDepartment(models.Model):
     _name = "ad.department"
     _description = "Управления/отделы AD"
-    _order = "name"
+    _order = "sequence"
 
     name = fields.Char(u'Наименование', required=True)
+    branch_id = fields.Many2one("ad.branch", string="Подразделение")
     active = fields.Boolean('Active', default=True)
     is_view_adbook = fields.Boolean(string='Отоброжать в справочнике контактов', default=True)
-    sequence = fields.Integer(string=u"Сортировка", help="Сортировка")
+    sequence = fields.Integer(string=u"Сортировка", help="Сортировка", default=10)
 
 class AdGroup(models.Model):
     _name = "ad.group"
@@ -124,7 +125,7 @@ class AdUsers(models.Model):
 
 
     is_view_adbook = fields.Boolean(string='Отоброжать в справочнике контактов', default=True)
-    sequence = fields.Integer(string=u"Сортировка", help="Сортировка")
+    sequence = fields.Integer(string=u"Сортировка", help="Сортировка", default=10)
 
     is_fired = fields.Boolean(string='Уволен', default=False)
     fired_date = fields.Date(string='Дата увольнения')

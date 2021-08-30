@@ -71,7 +71,7 @@ class AdBook(http.Controller):
         branch_list = http.request.env['ad.branch'].sudo().search([
                                 ('active', '=', True),
                                 ('is_view_adbook', '=', True),
-                            ], order="sequence desc")
+                            ], order="sequence asc")
         if not branch_list:
             return "Нет ниодного подразделения для отображения в справочнике. Установите хотя бы для одного объекта Подразделения AD 'Отображать в справочнике контктов'"
 
@@ -101,13 +101,13 @@ class AdBook(http.Controller):
                                                         ('active', '=', True),
                                                         ('is_view_adbook', '=', True),
                                                     ], 
-                                                        order="sequence desc"
+                                                        order="sequence asc"
                                                     )
             employer_list = http.request.env['ad.users'].sudo().search([
                                 ('branch_id', '=', branch_id.id),
                                 ('active', '=', True),
                                 ('is_view_adbook', '=', True),
-                            ], order="sequence desc")
+                            ], order="sequence asc")
         else:
             employer_list = []
             branch_list = []

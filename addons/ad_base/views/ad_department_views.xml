@@ -1,5 +1,21 @@
 <?xml version="1.0"?>
 <odoo>
+    <record id="ad_department_view_tree" model="ir.ui.view">
+        <field name="name">ad.department.tree</field>
+        <field name="model">ad.department</field>
+        <field name="arch" type="xml">
+            <!-- <tree string="Channel" editable="bottom"> -->
+            
+
+            <tree>
+                <field name="sequence"/>
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="is_view_adbook"/>
+                
+            </tree>
+        </field>
+    </record>
 
     <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
     <record id="ad_department_action" model="ir.actions.act_window">
