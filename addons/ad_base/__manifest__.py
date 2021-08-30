@@ -26,13 +26,14 @@
         'views/ad_group_views.xml',
         'views/set_group_views.xml',
         'views/mailbox_views.xml',
-        'views/ad_sync_wizard_view.xml',
+        # 'views/ad_sync_wizard_view.xml',
         'views/menu.xml',
         # 'views/templates_head.xml',
         # 'views/templates_list.xml',
         # 'views/templates_list_search.xml',
         # 'views/templates.xml',
         
+        'security/ad_security.xml',
         'security/ir.model.access.csv',
 
     ],

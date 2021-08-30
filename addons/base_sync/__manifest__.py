@@ -18,6 +18,7 @@
     'depends': [
         'base',
         'hr_adbook',
+        'ad_base'
     ],
     'data': [
         

@@ -389,355 +389,355 @@ class UsersGroupLine(models.Model):
 
 
 
-class AdSyncUsers(models.TransientModel):
-    _name = 'ad.sync_users_wizard'
-    _description = "Wizard обновление AD"
+# class AdSyncUsers(models.TransientModel):
+#     _name = 'ad.sync_users_wizard'
+#     _description = "Wizard обновление AD"
 
-    result = fields.Text(string='Результат')
+#     result = fields.Text(string='Результат')
 
-    #@api.model
-    def ad_sync_emloyer_action(self):
-         #     #Подключение к серверу AD
-        LDAP_HOST = self.env['ir.config_parameter'].sudo().get_param('ldap_host')
-        LDAP_PORT = self.env['ir.config_parameter'].sudo().get_param('ldap_port')
-        LDAP_USER = self.env['ir.config_parameter'].sudo().get_param('ldap_user')
-        LDAP_PASS = self.env['ir.config_parameter'].sudo().get_param('ldap_password')
-        LDAP_SSL = self.env['ir.config_parameter'].sudo().get_param('ldap_ssl')
-        LDAP_SEARCH_BASE = self.env['ir.config_parameter'].sudo().get_param('ldap_search_base')
-        LDAP_SEARCH_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_filter')
-        LDAP_SEARCH_GROUP_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_group_filter')
+#     #@api.model
+#     def ad_sync_emloyer_action(self):
+#          #     #Подключение к серверу AD
+#         LDAP_HOST = self.env['ir.config_parameter'].sudo().get_param('ldap_host')
+#         LDAP_PORT = self.env['ir.config_parameter'].sudo().get_param('ldap_port')
+#         LDAP_USER = self.env['ir.config_parameter'].sudo().get_param('ldap_user')
+#         LDAP_PASS = self.env['ir.config_parameter'].sudo().get_param('ldap_password')
+#         LDAP_SSL = self.env['ir.config_parameter'].sudo().get_param('ldap_ssl')
+#         LDAP_SEARCH_BASE = self.env['ir.config_parameter'].sudo().get_param('ldap_search_base')
+#         LDAP_SEARCH_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_filter')
+#         LDAP_SEARCH_GROUP_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_group_filter')
 
-        if LDAP_HOST and LDAP_PORT and LDAP_USER and LDAP_PASS and LDAP_SSL and LDAP_SEARCH_BASE and LDAP_SEARCH_FILTER and LDAP_SEARCH_GROUP_FILTER:
-            pass
-        else:
-            notification = {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': ('Прерванно'),
-                    'message': 'Нет учетных данных для подключения',
-                    'type':'warning',  #types: success,warning,danger,info
-                    'sticky': False,  #True/False will display for few seconds if false
-                },
-            }
-            return notification
-        try:
-            ldap_server = Server(host=LDAP_HOST, port=int(LDAP_PORT), use_ssl=LDAP_SSL, get_info='ALL', connect_timeout=10)
-            c = Connection(ldap_server, user=LDAP_USER, password=LDAP_PASS, auto_bind=True)
-        except Exception as e:
-            print("ERROR connect AD: ", str(e))
-            notification = {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': ('Ошибка'),
-                    'message': 'Невозможно соединиться с AD. Ошибка: ' + str(e),
-                    'type':'warning',  #types: success,warning,danger,info
-                    'sticky': False,  #True/False will display for few seconds if false
-                },
-            }
-            return notification
+#         if LDAP_HOST and LDAP_PORT and LDAP_USER and LDAP_PASS and LDAP_SSL and LDAP_SEARCH_BASE and LDAP_SEARCH_FILTER and LDAP_SEARCH_GROUP_FILTER:
+#             pass
+#         else:
+#             notification = {
+#                 'type': 'ir.actions.client',
+#                 'tag': 'display_notification',
+#                 'params': {
+#                     'title': ('Прерванно'),
+#                     'message': 'Нет учетных данных для подключения',
+#                     'type':'warning',  #types: success,warning,danger,info
+#                     'sticky': False,  #True/False will display for few seconds if false
+#                 },
+#             }
+#             return notification
+#         try:
+#             ldap_server = Server(host=LDAP_HOST, port=int(LDAP_PORT), use_ssl=LDAP_SSL, get_info='ALL', connect_timeout=10)
+#             c = Connection(ldap_server, user=LDAP_USER, password=LDAP_PASS, auto_bind=True)
+#         except Exception as e:
+#             print("ERROR connect AD: ", str(e))
+#             notification = {
+#                 'type': 'ir.actions.client',
+#                 'tag': 'display_notification',
+#                 'params': {
+#                     'title': ('Ошибка'),
+#                     'message': 'Невозможно соединиться с AD. Ошибка: ' + str(e),
+#                     'type':'warning',  #types: success,warning,danger,info
+#                     'sticky': False,  #True/False will display for few seconds if false
+#                 },
+#             }
+#             return notification
 
-        attributes = ['cn', 'title', 'ipPhone', 'mobile', 'mail', 'department', 'sn', 'memberof', 'distinguishedName', 'homePhone', 'whenChanged', 'objectSID', 'sAMAccountName', 'thumbnailPhoto', 'userAccountControl']
+#         attributes = ['cn', 'title', 'ipPhone', 'mobile', 'mail', 'department', 'sn', 'memberof', 'distinguishedName', 'homePhone', 'whenChanged', 'objectSID', 'sAMAccountName', 'thumbnailPhoto', 'userAccountControl']
         
-        total_entries = 0
+#         total_entries = 0
         
-        res = c.search(
-                        search_base=LDAP_SEARCH_BASE,
-                        search_filter=LDAP_SEARCH_FILTER,
-                        search_scope=SUBTREE,
-                        attributes=attributes,
-                        paged_size = 500
-                    )
-        print("------------------------------------")
-        total_entries += len(c.response)
-        cookie = c.result['controls']['1.2.840.113556.1.4.319']['value']['cookie']
-        empl_list = c.entries
-        page = 1
-        while cookie:
-            print("search page = ", page)
-            res = c.search(
-                            search_base=LDAP_SEARCH_BASE,
-                            search_filter=LDAP_SEARCH_FILTER,
-                            search_scope=SUBTREE,
-                            attributes=attributes,
-                            paged_size = 500,
-                            paged_cookie = cookie
-                        )
-            total_entries += len(c.response)
-            cookie = c.result['controls']['1.2.840.113556.1.4.319']['value']['cookie']
-            empl_list += c.entries
+#         res = c.search(
+#                         search_base=LDAP_SEARCH_BASE,
+#                         search_filter=LDAP_SEARCH_FILTER,
+#                         search_scope=SUBTREE,
+#                         attributes=attributes,
+#                         paged_size = 500
+#                     )
+#         print("------------------------------------")
+#         total_entries += len(c.response)
+#         cookie = c.result['controls']['1.2.840.113556.1.4.319']['value']['cookie']
+#         empl_list = c.entries
+#         page = 1
+#         while cookie:
+#             print("search page = ", page)
+#             res = c.search(
+#                             search_base=LDAP_SEARCH_BASE,
+#                             search_filter=LDAP_SEARCH_FILTER,
+#                             search_scope=SUBTREE,
+#                             attributes=attributes,
+#                             paged_size = 500,
+#                             paged_cookie = cookie
+#                         )
+#             total_entries += len(c.response)
+#             cookie = c.result['controls']['1.2.840.113556.1.4.319']['value']['cookie']
+#             empl_list += c.entries
 
-        print("total_entries = ", total_entries)
+#         print("total_entries = ", total_entries)
 
-        n = 0
-        message_error = ''
-        message_branch = ''
-        message_department = ''
-        message_empl_update = ''
-        message_empl_create = ''
-        for empl in empl_list:
+#         n = 0
+#         message_error = ''
+#         message_branch = ''
+#         message_department = ''
+#         message_empl_update = ''
+#         message_empl_create = ''
+#         for empl in empl_list:
 
-            empl_name = empl['cn'].value
-            if empl_name == "Перепелкин Сергей Александрович":
-                print("+++++++++++++++++++++++++++", empl_name)
+#             empl_name = empl['cn'].value
+#             if empl_name == "Перепелкин Сергей Александрович":
+#                 print("+++++++++++++++++++++++++++", empl_name)
 
-            if len(empl_name) == 0:
-                message_error += "Не указано CN поля для записи %s, пропускаю \n" % str(empl) 
-                break
-            n += 1
-            #if n>5: break
-            #print(empl)
-            #Search Branch
-            distinguishedName = empl['distinguishedName'].value
-            if empl['distinguishedName'].value:
-                branch_name = distinguishedName.split(',OU=')[1]
-                #print("Branch = ", branch_name)
-                branch_search = self.env['ad.branch'].search([('ad_name', '=', branch_name)],limit=1)
-                if not branch_search:
-                    branch_id = self.env['ad.branch'].create({
-                                                'name': branch_name, 
-                                                'ad_name': branch_name, 
-                                                'adbook_name': branch_name, 
-                                            }).id
-                    message_branch += branch_name +"\n"
-                else:
-                    branch_id = branch_search.id
-            else:
-                message_error += "Для %s не задан branch. \n" % empl_name
-                branch_id = None
+#             if len(empl_name) == 0:
+#                 message_error += "Не указано CN поля для записи %s, пропускаю \n" % str(empl) 
+#                 break
+#             n += 1
+#             #if n>5: break
+#             #print(empl)
+#             #Search Branch
+#             distinguishedName = empl['distinguishedName'].value
+#             if empl['distinguishedName'].value:
+#                 branch_name = distinguishedName.split(',OU=')[1]
+#                 #print("Branch = ", branch_name)
+#                 branch_search = self.env['ad.branch'].search([('ad_name', '=', branch_name)],limit=1)
+#                 if not branch_search:
+#                     branch_id = self.env['ad.branch'].create({
+#                                                 'name': branch_name, 
+#                                                 'ad_name': branch_name, 
+#                                                 'adbook_name': branch_name, 
+#                                             }).id
+#                     message_branch += branch_name +"\n"
+#                 else:
+#                     branch_id = branch_search.id
+#             else:
+#                 message_error += "Для %s не задан branch. \n" % empl_name
+#                 branch_id = None
 
-            #Search Department
-            if empl['department'].value:
-                department_name = empl['department'].value
-                if len(department_name)>0:
-                    #print("department_name = ", department_name)
-                    department_search = self.env['ad.department'].search([('name', '=', department_name)],limit=1)
-                    if not department_search:
-                        department_id = self.env['ad.department'].create({
-                                                    'name': department_name, 
-                                                }).id
-                        message_department += department_name +"\n"
-                    else:
-                        department_id = department_search.id
-                else:
-                    message_error += "Для %s не задан department. \n" % empl_name
-                    department_id = None
-            else:
-                message_error += "Для %s не задан department. \n" % empl_name
-                department_id = None
-
-
-
-            #Photo
-            if empl['thumbnailPhoto'].value:
-                thumbnailPhoto = base64.b64encode(empl['thumbnailPhoto'].value).decode("utf-8")
-            else:
-                thumbnailPhoto = None
-
-            #Search users
-            e_search = self.env['ad.users'].search([
-                                        ('object_SID', '=', empl['objectSID']),
-                                        '|',
-                                        ('active', '=', False), 
-                                        ('active', '=', True)
-                                    ],limit=1)
+#             #Search Department
+#             if empl['department'].value:
+#                 department_name = empl['department'].value
+#                 if len(department_name)>0:
+#                     #print("department_name = ", department_name)
+#                     department_search = self.env['ad.department'].search([('name', '=', department_name)],limit=1)
+#                     if not department_search:
+#                         department_id = self.env['ad.department'].create({
+#                                                     'name': department_name, 
+#                                                 }).id
+#                         message_department += department_name +"\n"
+#                     else:
+#                         department_id = department_search.id
+#                 else:
+#                     message_error += "Для %s не задан department. \n" % empl_name
+#                     department_id = None
+#             else:
+#                 message_error += "Для %s не задан department. \n" % empl_name
+#                 department_id = None
 
 
 
-            # 514 отключенный пользователь
-            uic = int(empl['userAccountControl'].value or '514')
-            active = True
-            # Если пользователь отключен, ACCOUNTDISABLE	0x0002	2
-            if uic | 2 == uic:
-                active = False 
+#             #Photo
+#             if empl['thumbnailPhoto'].value:
+#                 thumbnailPhoto = base64.b64encode(empl['thumbnailPhoto'].value).decode("utf-8")
+#             else:
+#                 thumbnailPhoto = None
+
+#             #Search users
+#             e_search = self.env['ad.users'].search([
+#                                         ('object_SID', '=', empl['objectSID']),
+#                                         '|',
+#                                         ('active', '=', False), 
+#                                         ('active', '=', True)
+#                                     ],limit=1)
+
+
+
+#             # 514 отключенный пользователь
+#             uic = int(empl['userAccountControl'].value or '514')
+#             active = True
+#             # Если пользователь отключен, ACCOUNTDISABLE	0x0002	2
+#             if uic | 2 == uic:
+#                 active = False 
             
-            vals = {
-                    'name': empl_name,
-                    'branch_id': branch_id,
-                    'department_id': department_id,
-                    'title': empl['title'].value,
-                    'ip_phone': empl['ipPhone'].value,
-                    'phone': empl['mobile'].value,
-                    'sec_phone': empl['homePhone'].value,
-                    'email': empl['mail'].value,
-                    'username': empl['sAMAccountName'].value,
-                    'object_SID': empl['objectSID'].value,
-                    'distinguished_name': empl['distinguishedName'].value,
-                    'user_account_control': empl['userAccountControl'].value,
-                    'photo': thumbnailPhoto,
-                    'active': active,
-                    'is_ldap': True,
-                    # 'photo': base64.b64decode(empl['thumbnailPhoto'].value)
+#             vals = {
+#                     'name': empl_name,
+#                     'branch_id': branch_id,
+#                     'department_id': department_id,
+#                     'title': empl['title'].value,
+#                     'ip_phone': empl['ipPhone'].value,
+#                     'phone': empl['mobile'].value,
+#                     'sec_phone': empl['homePhone'].value,
+#                     'email': empl['mail'].value,
+#                     'username': empl['sAMAccountName'].value,
+#                     'object_SID': empl['objectSID'].value,
+#                     'distinguished_name': empl['distinguishedName'].value,
+#                     'user_account_control': empl['userAccountControl'].value,
+#                     'photo': thumbnailPhoto,
+#                     'active': active,
+#                     'is_ldap': True,
+#                     # 'photo': base64.b64decode(empl['thumbnailPhoto'].value)
 
-                }
-            if len(e_search)>0 :
-                #print('Обновление ', e_search.name)
-                message_empl_update += empl_name + '\n'
-                e_search.write(vals)
-            else:
-                #print('Создание  ', empl_name)
-                message_empl_create += empl_name + '\n'
-                self.env['ad.users'].create(vals)
-            #print(vals)
-        # if res:
-        #     emp = c.response[0]
-        #     print(emp)
-        #     atr = emp['attributes']
-        #     dn = emp['dn']
-        #     print(atr)
-        #     department = atr['department']
-            # self.name = atr['cn']
-            # self.department = atr['department']
-            # self.title = atr['title']
-            # self.ou = dn.split(',OU=')[1]
-            # self.ip_phone = atr['ipPhone']
+#                 }
+#             if len(e_search)>0 :
+#                 #print('Обновление ', e_search.name)
+#                 message_empl_update += empl_name + '\n'
+#                 e_search.write(vals)
+#             else:
+#                 #print('Создание  ', empl_name)
+#                 message_empl_create += empl_name + '\n'
+#                 self.env['ad.users'].create(vals)
+#             #print(vals)
+#         # if res:
+#         #     emp = c.response[0]
+#         #     print(emp)
+#         #     atr = emp['attributes']
+#         #     dn = emp['dn']
+#         #     print(atr)
+#         #     department = atr['department']
+#             # self.name = atr['cn']
+#             # self.department = atr['department']
+#             # self.title = atr['title']
+#             # self.ou = dn.split(',OU=')[1]
+#             # self.ip_phone = atr['ipPhone']
 
-        result ='Всего получено из АД %s записей \n' % total_entries
-        if not message_error == '':
-            result = "\n Обновление прошло с предупреждениями: \n \n" + message_error
-        else:
-            result = "\n Обновление прошло успешно \n \n"
-        if not message_branch == '':
-            result = "\n Добавлены филиалы, необходимо назначить имена: \n" + message_branch
-        if not message_department == '':
-            result = "\n Добавлены управления/отделы AD: \n" + message_department
-        if not message_empl_create == '':
-            result += "\n Создны новые пользователи AD: \n" + message_empl_create
-        if not message_empl_update == '':
-            result += "\n Обновлены пользователи AD: \n" + message_empl_update
-        #print("result sync: ", result)
+#         result ='Всего получено из АД %s записей \n' % total_entries
+#         if not message_error == '':
+#             result = "\n Обновление прошло с предупреждениями: \n \n" + message_error
+#         else:
+#             result = "\n Обновление прошло успешно \n \n"
+#         if not message_branch == '':
+#             result = "\n Добавлены филиалы, необходимо назначить имена: \n" + message_branch
+#         if not message_department == '':
+#             result = "\n Добавлены управления/отделы AD: \n" + message_department
+#         if not message_empl_create == '':
+#             result += "\n Создны новые пользователи AD: \n" + message_empl_create
+#         if not message_empl_update == '':
+#             result += "\n Обновлены пользователи AD: \n" + message_empl_update
+#         #print("result sync: ", result)
 
-        self.result = result 
+#         self.result = result 
 
-        return {
-				'name': 'Message',
-				'type': 'ir.actions.act_window',
-				'view_type': 'form',
-				'view_mode': 'form',
-				'res_model': 'ad.sync_users_wizard',
-				'target':'new',
-				'context':{
-							'default_result':self.result,
-							} 
-				}
+#         return {
+# 				'name': 'Message',
+# 				'type': 'ir.actions.act_window',
+# 				'view_type': 'form',
+# 				'view_mode': 'form',
+# 				'res_model': 'ad.sync_users_wizard',
+# 				'target':'new',
+# 				'context':{
+# 							'default_result':self.result,
+# 							} 
+# 				}
         
-    # Синхронизация групп
-    def ad_sync_group_action(self):
-         #     #Подключение к серверу AD
-        LDAP_HOST = self.env['ir.config_parameter'].sudo().get_param('ldap_host')
-        LDAP_PORT = self.env['ir.config_parameter'].sudo().get_param('ldap_port')
-        LDAP_USER = self.env['ir.config_parameter'].sudo().get_param('ldap_user')
-        LDAP_PASS = self.env['ir.config_parameter'].sudo().get_param('ldap_password')
-        LDAP_SSL = self.env['ir.config_parameter'].sudo().get_param('ldap_ssl')
-        LDAP_SEARCH_BASE = self.env['ir.config_parameter'].sudo().get_param('ldap_search_base')
-        LDAP_SEARCH_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_filter')
-        LDAP_SEARCH_GROUP_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_group_filter')
+#     # Синхронизация групп
+#     def ad_sync_group_action(self):
+#          #     #Подключение к серверу AD
+#         LDAP_HOST = self.env['ir.config_parameter'].sudo().get_param('ldap_host')
+#         LDAP_PORT = self.env['ir.config_parameter'].sudo().get_param('ldap_port')
+#         LDAP_USER = self.env['ir.config_parameter'].sudo().get_param('ldap_user')
+#         LDAP_PASS = self.env['ir.config_parameter'].sudo().get_param('ldap_password')
+#         LDAP_SSL = self.env['ir.config_parameter'].sudo().get_param('ldap_ssl')
+#         LDAP_SEARCH_BASE = self.env['ir.config_parameter'].sudo().get_param('ldap_search_base')
+#         LDAP_SEARCH_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_filter')
+#         LDAP_SEARCH_GROUP_FILTER = self.env['ir.config_parameter'].sudo().get_param('ldap_search_group_filter')
 
-        if LDAP_HOST and LDAP_PORT and LDAP_USER and LDAP_PASS and LDAP_SSL and LDAP_SEARCH_BASE and LDAP_SEARCH_FILTER and LDAP_SEARCH_GROUP_FILTER:
-            pass
-        else:
-            notification = {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': ('Прерванно'),
-                    'message': 'Нет учетных данных для подключения',
-                    'type':'warning',  #types: success,warning,danger,info
-                    'sticky': False,  #True/False will display for few seconds if false
-                },
-            }
-            return notification
-        try:
-            ldap_server = Server(host=LDAP_HOST, port=int(LDAP_PORT), use_ssl=LDAP_SSL, get_info='ALL', connect_timeout=10)
-            c = Connection(ldap_server, user=LDAP_USER, password=LDAP_PASS, auto_bind=True)
-        except Exception as e:
-            print("ERROR connect AD: ", str(e))
-            notification = {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': ('Ошибка'),
-                    'message': 'Невозможно соединиться с AD. Ошибка: ' + str(e),
-                    'type':'warning',  #types: success,warning,danger,info
-                    'sticky': False,  #True/False will display for few seconds if false
-                },
-            }
-            return notification
+#         if LDAP_HOST and LDAP_PORT and LDAP_USER and LDAP_PASS and LDAP_SSL and LDAP_SEARCH_BASE and LDAP_SEARCH_FILTER and LDAP_SEARCH_GROUP_FILTER:
+#             pass
+#         else:
+#             notification = {
+#                 'type': 'ir.actions.client',
+#                 'tag': 'display_notification',
+#                 'params': {
+#                     'title': ('Прерванно'),
+#                     'message': 'Нет учетных данных для подключения',
+#                     'type':'warning',  #types: success,warning,danger,info
+#                     'sticky': False,  #True/False will display for few seconds if false
+#                 },
+#             }
+#             return notification
+#         try:
+#             ldap_server = Server(host=LDAP_HOST, port=int(LDAP_PORT), use_ssl=LDAP_SSL, get_info='ALL', connect_timeout=10)
+#             c = Connection(ldap_server, user=LDAP_USER, password=LDAP_PASS, auto_bind=True)
+#         except Exception as e:
+#             print("ERROR connect AD: ", str(e))
+#             notification = {
+#                 'type': 'ir.actions.client',
+#                 'tag': 'display_notification',
+#                 'params': {
+#                     'title': ('Ошибка'),
+#                     'message': 'Невозможно соединиться с AD. Ошибка: ' + str(e),
+#                     'type':'warning',  #types: success,warning,danger,info
+#                     'sticky': False,  #True/False will display for few seconds if false
+#                 },
+#             }
+#             return notification
 
-        attributes = ['cn', 'distinguishedName', 'whenChanged', 'objectSID', 'sAMAccountName']
+#         attributes = ['cn', 'distinguishedName', 'whenChanged', 'objectSID', 'sAMAccountName']
         
-        total_entries = 0
+#         total_entries = 0
         
-        res = c.search(
-                        search_base=LDAP_SEARCH_BASE,
-                        search_filter=LDAP_SEARCH_GROUP_FILTER,
-                        search_scope=SUBTREE,
-                        attributes=attributes,
-                    )
-        print("------------------------------------")
-        total_entries += len(c.response)
-        group_list = c.entries
+#         res = c.search(
+#                         search_base=LDAP_SEARCH_BASE,
+#                         search_filter=LDAP_SEARCH_GROUP_FILTER,
+#                         search_scope=SUBTREE,
+#                         attributes=attributes,
+#                     )
+#         print("------------------------------------")
+#         total_entries += len(c.response)
+#         group_list = c.entries
 
-        print("total_entries = ", total_entries)
+#         print("total_entries = ", total_entries)
 
-        n = 0
-        message_error = ''
-        message_update = ''
-        message_create = ''
-        for group in group_list:
+#         n = 0
+#         message_error = ''
+#         message_update = ''
+#         message_create = ''
+#         for group in group_list:
 
-            group_name = group['cn'].value
+#             group_name = group['cn'].value
 
-            if len(group_name) == 0:
-                message_error += "Не указано CN поля для записи %s, пропускаю \n" % str(group) 
-                break
+#             if len(group_name) == 0:
+#                 message_error += "Не указано CN поля для записи %s, пропускаю \n" % str(group) 
+#                 break
 
-            #Search Group
-            g_search = self.env['ad.group'].search([
-                                        ('object_SID', '=', group['objectSID']),
-                                        '|',
-                                        ('active', '=', False), 
-                                        ('active', '=', True)
-                                    ],limit=1)
+#             #Search Group
+#             g_search = self.env['ad.group'].search([
+#                                         ('object_SID', '=', group['objectSID']),
+#                                         '|',
+#                                         ('active', '=', False), 
+#                                         ('active', '=', True)
+#                                     ],limit=1)
 
             
-            vals = {
-                    'name': group_name,
-                    'account_name': group['sAMAccountName'].value,
-                    'object_SID': group['objectSID'].value,
-                    'distinguished_name': group['distinguishedName'].value,
-                    'active': True,
-                    'is_ldap': True,
-                }
-            if len(g_search)>0 :
-                message_update += group_name + '\n'
-                g_search.write(vals)
-            else:
-                message_create += group_name + '\n'
-                self.env['ad.group'].create(vals)
+#             vals = {
+#                     'name': group_name,
+#                     'account_name': group['sAMAccountName'].value,
+#                     'object_SID': group['objectSID'].value,
+#                     'distinguished_name': group['distinguishedName'].value,
+#                     'active': True,
+#                     'is_ldap': True,
+#                 }
+#             if len(g_search)>0 :
+#                 message_update += group_name + '\n'
+#                 g_search.write(vals)
+#             else:
+#                 message_create += group_name + '\n'
+#                 self.env['ad.group'].create(vals)
         
 
-        result ='Всего получено из АД %s записей \n' % total_entries
-        if not message_error == '':
-            result = "\n Обновление прошло с предупреждениями: \n \n" + message_error
-        else:
-            result = "\n Обновление прошло успешно \n \n"
-        if not message_create == '':
-            result += "\n Создны новые группы: \n" + message_create
-        if not message_update == '':
-            result += "\n Обновлены группы: \n" + message_update
+#         result ='Всего получено из АД %s записей \n' % total_entries
+#         if not message_error == '':
+#             result = "\n Обновление прошло с предупреждениями: \n \n" + message_error
+#         else:
+#             result = "\n Обновление прошло успешно \n \n"
+#         if not message_create == '':
+#             result += "\n Создны новые группы: \n" + message_create
+#         if not message_update == '':
+#             result += "\n Обновлены группы: \n" + message_update
 
-        self.result = result 
+#         self.result = result 
 
-        return {
-				'name': 'Message',
-				'type': 'ir.actions.act_window',
-				'view_type': 'form',
-				'view_mode': 'form',
-				'res_model': 'ad.sync_users_wizard',
-				'target':'new',
-				'context':{
-							'default_result':self.result,
-							} 
-				}
+#         return {
+# 				'name': 'Message',
+# 				'type': 'ir.actions.act_window',
+# 				'view_type': 'form',
+# 				'view_mode': 'form',
+# 				'res_model': 'ad.sync_users_wizard',
+# 				'target':'new',
+# 				'context':{
+# 							'default_result':self.result,
+# 							} 
+# 				}
