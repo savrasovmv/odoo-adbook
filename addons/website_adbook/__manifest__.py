@@ -32,10 +32,12 @@
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
-        'views/templates_head.xml',
-        'views/templates_list_search.xml',
-        'views/templates_list.xml',
-        'views/templates.xml',
+        'views/assets.xml',
+        # 'views/templates_head.xml',
+        # 'views/templates_list_search.xml',
+        # 'views/templates_list.xml',
+        # 'views/templates.xml',
+        'views/website_adbook_templates.xml',
     ],
     
     'js': [
@@ -44,6 +46,6 @@
     ],
 
     'css': [
-        'static/src/css/adbook.css',
+        # 'static/src/scss/adbook.scss',
     ],
 }

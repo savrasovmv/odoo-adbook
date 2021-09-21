@@ -1,0 +1,90 @@
+<odoo>
+    <template id="website_index" name="website_index">
+        <t t-call="website.layout">
+       
+            <div class="oe_structure">
+                <div class="container">
+                    <!--     <p>sgsdfsdf</p>
+                        <div class="tab">
+                        <t t-foreach="branch_list" t-as="branch">
+
+                            <a class="button" t-attf-href="/adbook/{{branch.id}}">
+                                <t t-if="search==False">
+                                    <t t-if="current_branch_id.id==branch.id">
+                                        <button class="tablinks active"><t t-esc="branch.adbook_name"/></button>
+                                    </t>
+                                    <t t-if="current_branch_id.id!=branch.id">
+                                        <button class="tablinks"><t t-esc="branch.adbook_name"/></button>
+                                    </t>
+                                </t>
+                                <t t-if="search==True">
+                                    <button class="tablinks"><t t-esc="branch.adbook_name"/></button>
+                                </t>
+
+                                
+                            </a>
+                            
+                        </t>
+                        <t t-if="search==True">
+                            <a class="button" t-attf-href="/adbook">
+                                    <button class="tablinks active">Поиск</button>
+                            </a>
+                        </t>
+                        
+                    </div> -->
+
+                    <div class="container mt16 o_wslides_home_nav position-relative">
+                        <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background: white!important">
+                            <form method="GET" class="adbook-form-search order-lg-3" t-attf-action="/wadbook/search" role="search">
+                                <div class="input-group">
+                                    <input type="search" name="search" class="form-control" placeholder="Поиск: ФИО, тел, e-mail" aria-label="Search" t-att-value="search_term"/>
+                                    <div class="input-group-append">
+                                        <button class="btn border border-left-0 oe_search_button" type="submit" aria-label="Search" title="Search">
+                                            <i class="fa fa-search"/>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </nav>
+                        
+                        <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background: white!important">
+                            <button class="navbar-toggler px-2 order-1" type="button"
+                                data-toggle="collapse" data-target="#navbarSlidesHomepage"
+                                aria-controls="navbarSlidesHomepage" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"/>
+                            </button>
+                            <div class="collapse navbar-collapse order-2" id="navbarSlidesHomepage">
+                                <div class="navbar-nav pt-3 pt-lg-0">
+                                    <ol class="o_portal_submenu breadcrumb mb-0 py-2 flex-grow-1 row">
+                                        <li class="breadcrumb-item ml-1" data-oe-model="ir.ui.view" data-oe-id="554" data-oe-field="arch" data-oe-xpath="/t[1]/ol[1]/li[1]">
+                                            <a href="/my/wadbook" aria-label="Главная" title="Главная">
+                                                <i class="fa fa-address-book"></i>
+                                            </a>
+                                        </li>
+                                    </ol>
+                                    <!-- <a class="nav-link nav-link mr-md-2 o_wslides_home_all_slides" href="/wadbook"><i class="fa fa-graduation-cap mr-1"/>Подразделения:</a> -->
+                                    <t t-foreach="branch_list" t-as="branch">
+                                        <a class="nav-link nav-link mr-md-2 o_wslides_home_all_slides" href="/wadbook/{{branch.id}}"><t t-esc="branch.adbook_name"/></a>
+                                    </t>
+                                    <!-- <a class="nav-link nav-link mr-md-2 o_wslides_home_all_slides" href="/slides/all"><i class="fa fa-graduation-cap mr-1"/>All courses</a> -->
+                                </div>
+                            </div>
+                        </nav>
+                       
+                    </div>
+                    <div class="container">
+                        <div class="column">
+
+                            <t t-foreach="department_list" t-as="department">
+                                <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between" href="/wadbook/{{department}}"><t t-esc="department.name"/></a>
+                            </t>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

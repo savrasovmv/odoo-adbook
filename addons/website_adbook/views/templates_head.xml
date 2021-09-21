@@ -1,12 +1,7 @@
 <odoo>
 
     <template id="adbook_head" name="adbook_head">
-        <xpath expr="." position="inside">
-
-            <link href="/website_adbook/static/src/css/adbook.css" rel="stylesheet"/>
-            <!-- <script src="/website_adbook/static/src/js/disabled_copy.js"></script> -->
-
-        </xpath>
+        
         <title>Справочник контактов ЭТС</title>
 
         <nav class="top-menu">
