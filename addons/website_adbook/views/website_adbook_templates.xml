@@ -172,7 +172,10 @@
                     <div class="card-body o_wprofile_slides_course_card_body p-0 d-flex mt-1 mb-1 ">
                         <div width="90px" height="90px" class="d-flex o_website_adbook_photo">
                             <t t-if="employer.photo">
-                                <img class="o_website_adbook_photo p-1" t-att-src="'/web/image/ad.users/%s/photo' % employer.id" alt="Employer"/>
+                                <img t-if="employer.photo"
+                                    t-att-src="'data:image/png;base64,%s' % to_text(employer.photo)"
+                                    style="max-width: 90px; max-height: 90px;"/>
+                                <!-- <img class="o_website_adbook_photo p-1" t-att-src="'/web/image/ad.users/%s/photo' % employer.id" alt="Employer"/> -->
                             </t>
                         </div>
                         <div class="p-2 w-100 h6">
