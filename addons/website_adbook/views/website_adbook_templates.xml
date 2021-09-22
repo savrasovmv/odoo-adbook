@@ -8,7 +8,7 @@
                     
                     <div class="container o_wslides_lesson_header_container mt-5 mt-md-3 mt-xl-4">
                         <h1 class="d-flex justify-content-center font-weight-medium w-100">
-                            <span> Справочник контактов</span>
+                            <span> Справочник сотрудников</span>
                             
                         </h1>
                         <div class="row align-items-end align-items-md-stretch d-flex justify-content-end">
@@ -110,9 +110,9 @@
                 <div class="column  align-items-center w-100">
                     <div class="d-flex">
                         <t t-if="is_homepage">
-                            <h3 class="h4 my-0 o_website_adbook_color_text">
+                            <!-- <h3 class="h4 my-0 o_website_adbook_color_text">
                                 Главная                            
-                            </h3>
+                            </h3> -->
                             
                         </t>
                         <t t-elif="not search">
@@ -142,8 +142,11 @@
         <div class="o_wslides_lesson_content_type">
             
             <div class="p-0 mb-3">
-                <t t-if="not is_homepage">
-                        <div class="row d-flex justify-content-end m-0">
+                <t t-if="is_homepage">
+                    <t t-call="website_adbook.wadbook_content_homepage"/>
+                </t>
+                <t t-else="">
+                    <div class="row d-flex justify-content-end m-0">
                             <div class="d-flex mr-3">
                                 <i class="fa fa-plane mr-2 align-items-center color-trip"/>
                                 <span class="font-weight-light small"> - Коммандировка </span>
@@ -160,7 +163,7 @@
                     </t>
                 <!-- <div t-field="slide.html_content"/> -->
                 <t t-set="i" t-value="0"/>
-                <t t-if="len(employer_list)==0">
+                <t t-if="len(employer_list)==0 and not is_homepage">
                     <div class="d-flex align-items-center w-100 mt-4 ml-3">
                         <div class="justify-content-center">Ничего не найдено :-( </div>
                     </div>                   
@@ -253,6 +256,22 @@
 
         
         
+    </template>
+
+
+    <!-- Контент Главная страница, редактируется на сайте -->
+    <template id="wadbook_content_homepage" name="Wadbook: wadbook_content_homepage">
+        <div class="o_wslides_lesson_content_type bg-white" >
+            <div class="p-2 mb-1 o_website_adbook_homepage">
+                
+                <div class="container">
+                    <div class="oe_structure" />
+                            
+                </div>
+            </div>
+            
+
+        </div>
     </template>
 
 
