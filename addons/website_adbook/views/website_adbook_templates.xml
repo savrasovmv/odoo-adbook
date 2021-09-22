@@ -281,7 +281,7 @@
         <div class="o_wslides_lesson_content_type bg-white" >
             <div class="p-2 mb-1 o_website_adbook_homepage">
                 
-                <div class="container">
+                <div class="container" contentEditable="True">
                     <div class="oe_structure" />
                             
                 </div>
