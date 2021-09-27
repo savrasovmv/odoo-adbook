@@ -699,6 +699,17 @@ $o-wslides-color-bg: mix($body-bg, #efeff4);
 }
 
 
+.dep-sub-menu 
+{ 
+   display: none; 
+} 
+
+.dep-sub-menu-show 
+{ 
+   display: block; 
+}
+
+
 .sub-menu 
 { 
    display: none; 
@@ -743,5 +754,18 @@ $o-wslides-color-bg: mix($body-bg, #efeff4);
 // Командировка
 .color-trip {
     color: #3984C6 !important;
+}
+
+
+
+.o_website_adbook_department_list {
+
+        /* overflow-x: auto; */
+        overflow-y: scroll;
+        flex: auto;
+        /* height: 100%; */
+        height: 500px;
+        display: -webkit-flex;
+        -webkit-flex-direction: column;
 }
 

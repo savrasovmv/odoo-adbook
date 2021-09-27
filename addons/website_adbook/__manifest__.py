@@ -31,7 +31,13 @@
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
+        'views/adbook_employer_views.xml',
+        'views/adbook_branch_views.xml',
+        'views/adbook_department_views.xml',
+        'wizard/adbook_build_wizard_views.xml',
+        'views/adbook_menu.xml',
+        'security/ad_security.xml',
+        'security/ir.model.access.csv',
         'views/assets.xml',
         # 'views/templates_head.xml',
         # 'views/templates_list_search.xml',
@@ -47,5 +53,8 @@
 
     'css': [
         # 'static/src/scss/adbook.scss',
+    ],
+    'qweb': [
+        'static/src/xml/wadbook_emploer_list.xml',
     ],
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Multi Sale Order Confirmation Wizard -->
+	<record id="adbook_build_wizard_view" model="ir.ui.view">
+        <field name="name">adbook.build_wizard.view</field>
+        <field name="model">adbook.build_wizard</field>
+        <field name="arch" type="xml">
+            <form string="Confirm">
+           
+                <p>Нажмити Обновить для формирования справочника.</p>
+
+                <footer>
+                    <button name="adbook_build_wizard_action" string="Сформировать" type="object" class="oe_highlight"/>
+                    
+                </footer>
+                <notebook colspan="4">
+                    <page string="Комментарии">
+                        <field name="result" nolabel="1"/>
+                    </page>
+                </notebook> 
+            </form>
+        </field>
+    </record>
+
+    <record id="adbook_build_wizard_action" model="ir.actions.act_window">
+        <field name="name">Создание/обновления справочника контактов</field>
+        <field name="res_model">adbook.build_wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <!-- <field name="binding_model_id" ref="model_ad_users"/> -->
+    </record>
+
+     <!-- <record id="ad_users_action_wizard" model="ir.actions.act_window">
+        <field name="name">Синхранизация с AD</field>
+        <field name="res_model">adbook.build_wizard_wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="ad.users"/>
+    </record> -->
+
+    
+
+</odoo>

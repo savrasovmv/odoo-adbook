@@ -11,6 +11,9 @@
                     <field name="guid_1c" colspan="2"/>
                     <field name="code_1c" colspan="2"/>
                 </group>
+                <group string='Справочник сотрудников' col="4">
+                    <field name="is_view_adbook" colspan="2"/>
+                </group>
             </xpath>
 
             

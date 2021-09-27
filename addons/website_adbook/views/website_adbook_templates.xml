@@ -12,7 +12,7 @@
                         
                         
                         <div class="row align-items-end align-items-md-stretch d-flex justify-content-end">
-                            <div t-attf-class="col-12 col-lg-9 d-flex flex-column">
+                            <div t-attf-class="col-12 col-lg-8 d-flex flex-column">
                                 <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background: white!important">
                                     <form method="GET" class="adbook-form-search order-lg-3" t-attf-action="/wadbook/search" role="search">
                                         <div class="input-group">
@@ -33,10 +33,11 @@
                 </div>
                 <div class="container o_wslides_lesson_main">
                     <div class="row">
-                        <div t-attf-class="o_wslides_lesson_aside col-lg-3">
+                        <div t-attf-class="o_wslides_lesson_aside col-lg-4">
                             <t t-call="website_adbook.wadbook_left_panel"/>
                         </div>
-                        <div t-attf-class="o_wslides_lesson_content col-lg-9">
+                        <div t-attf-class="o_wslides_lesson_content col-lg-8">
+                            <!-- <t t-call="website_adbook.wadbook_content_homepage"/> -->
                             <t t-call="website_adbook.wadbook_content"/>
                             
                         </div>
@@ -62,6 +63,26 @@
 
     </template>
 
+    <template id="menu_item" name="Wadbook: menu_item">
+        <t t-foreach="department_list.sorted(key=lambda r: r.sequence)" t-as="department">
+            <div t-attf-class="o_adbook_menu_block ml-{{department.level}} {{'dep-sub-menu' if department.level>0 else ''}} " t-attf-id="o_dep_parent_id_{{department.parent_id.id if department.parent_id else ''}}">
+
+                <a href="#"  role="button" aria-expanded="true"
+                    t-attf-class="o_adbook_menu o_wslides_lesson_aside_list_link pl-2 text-600 text-decoration-none py-1 d-block o_website_branch_list {{'text-uppercase' if department.level==0 else ''}} "
+                    t-att-id="department.id"
+                    t-attf-isrecords="{{department.is_records}}"
+                    >
+                        <span t-esc="department.adbook_name"/>
+                </a>
+                
+
+                    <t t-call="website_adbook.menu_item">
+                            <t t-set="department_list" t-value="department.child_ids"/>
+                    </t>
+            </div>
+        </t>
+    </template>
+
     <!-- Левая панель -->
     <template id="wadbook_left_panel" name="Wadbook: left panel">
         <div class="o_wslides_lesson_aside_list position-relative bg-white border-bottom mt-4">
@@ -71,41 +92,37 @@
                     <i class="fa fa-chevron-down d-lg-none"/>
                 </a>
             </div>
-            <ul id="collapse_slide_aside" class="list-unstyled my-0 pb-3 collapse d-lg-block">
+            <ul id="collapse_slide_aside" class="o_website_adbook_department_list list-unstyled my-0 pb-3 collapse d-lg-block">
                 <t t-set="i" t-value="0"/>
-                <t t-foreach="branch_list" t-as="branch">
-                    <li class="o_wslides_fs_sidebar_section mt-2 o_website_branch_list" t-att-id="branch.id">
-                        <!-- <a t-att-href="('#collapse-%s') % (category.id if category else 0)" data-toggle="collapse" role="button" aria-expanded="true" -->
-                        <a href="#"  role="button" aria-expanded="true"
-                            class="o_wslides_lesson_aside_list_link pl-2 text-600 text-uppercase text-decoration-none py-1 d-block o_website_branch_list"
-                            >
-                                <span t-esc="branch.adbook_name" class="mr-2"/>
-                        </a>
+                <t t-call="website_adbook.menu_item"/>
+                <!-- <t t-foreach="department_list" t-as="department">
 
+                    <t t-if="department.level==0">
+                            <a href="#"  role="button" aria-expanded="true"
+                                class="o_adbook_menu o_wslides_lesson_aside_list_link pl-2 text-600 text-uppercase text-decoration-none py-1 d-block o_website_branch_list"
+                                t-att-id="department.id"
+                                t-attf-isrecords="{{department.is_records}}"
+                                >
+                                    <span t-esc="department.adbook_name"/>
+                            </a>
+                        <t t-foreach="department.child_ids.sorted(key=lambda r: r.sequence)" t-as="child">
+                            <div> <span t-esc="child.name"/></div>
 
-                        <!-- <ul class="collapse show p-0 m-0 list-unstyled" t-att-id="('collapse-%s') % (category.id if category else 0)" > -->
-                        <ul class="collapse show p-0 m-0 list-unstyled sub-menu"  >
-                            <t t-foreach="department_list" t-as="department">
-                                <t t-if="department.branch_id.id==branch.id">
-                                    
-                                    <li class="p-0 pb-1">
-                                        <a t-attf-href="/wadbook/{{department.id}}"
-                                            t-att-class="'o_wslides_lesson_aside_list_link d-flex align-items-top px-2 pt-1 text-decoration-none '">
-                                            
-                                            <div class="o_wslides_lesson_link_name">
-                                                <!-- <t t-call="website_slides.slide_icon">
-                                                    <t t-set="slide" t-value="aside_slide"/>
-                                                </t> -->
-                                                <span t-esc="department.name" class="mr-3"/>
-                                            </div>
-                                        </a>
-                                    </li>
-                                </t>
-                            </t>
-                        </ul>
-                    </li>
-                        <!-- <a class="nav-link nav-link mr-md-2 o_wslides_home_all_slides" href="/wadbook/{{branch.id}}"><t t-esc="branch.adbook_name"/></a> -->
-                </t>
+                        </t>    
+                    </t>
+                    <t t-else="">
+                        <div t-attf-class="o_adbook_menu_item dep-sub-menu ml-{{department.level}}" t-attf-id="o_dep_parent_id_{{department.parent_id.id}}"> 
+                            <a href="#"  role="button" aria-expanded="true"
+                                t-attf-class="o_adbook_menu o_wslides_lesson_aside_list_link pl-2 text-600 text-decoration-none py-1 d-block o_website_branch_list {{'o_is_records' if department.is_records else '' }}"
+                                t-att-id="department.id"
+                                t-attf-isrecords="{{department.is_records}}"
+                                >
+                                    <span t-esc="department.adbook_name"/>
+                            </a>
+                        </div>
+                    </t>
+                    
+                </t> -->
                 <!-- <t t-if="category.get('slides')" t-foreach="category_data" t-as="category">
                     <t t-call="website_slides.slide_aside_training_category">
                         <t t-set="category_slide_ids" t-value="category['slides']"/>
@@ -119,14 +136,11 @@
 
     <!-- Область контента -->
     <template id="wadbook_content" name="Adbook: wadbook_content">
-        <div class="column align-items-center mt-3">
+        <!-- <div class="column align-items-center mt-3">
             <div class="col-12 col-md order-2 order-md-1 d-flex">
                 <div class="column  align-items-center w-100">
                     <div class="d-flex">
                         <t t-if="is_homepage">
-                            <!-- <h3 class="h4 my-0 o_website_adbook_color_text">
-                                Главная                            
-                            </h3> -->
                             
                         </t>
                         <t t-elif="not search">
@@ -151,144 +165,36 @@
                 </div>
             </div>
             
-        </div>
+        </div> -->
         
-        <div class="o_wslides_lesson_content_type">
+        <div class="o_wslides_lesson_content_type" >
+
+        <!-- <div class="o_wslides_lesson_content_type">
             
-            <div class="p-0 mb-3">
-                <t t-if="is_homepage">
-                    <t t-call="website_adbook.wadbook_content_homepage"/>
-                </t>
-                <t t-else="">
-                    <div class="row d-flex justify-content-end m-0">
-                            <div class="d-flex mr-3">
-                                <i class="fa fa-plane mr-2 align-items-center color-trip"/>
-                                <span class="font-weight-light small"> - Коммандировка </span>
-                            </div>
-                            <div class="d-flex mr-3">
-                                <i class="fa fa-sun-o mr-2 align-items-center color-vacation"/>
-                                <span class="font-weight-light small"> - Отпуск </span>
-                            </div>
-                            <div class="d-flex mr-3">
-                                <i class="fa fa-thermometer-3 mr-2 align-items-center color-sick"/>
-                                <span class="font-weight-light small"> - Больничный </span>
-                            </div>
-                        </div>
-                    </t>
-                <!-- <div t-field="slide.html_content"/> -->
-                <t t-set="i" t-value="0"/>
-                <t t-if="len(employer_list)==0 and not is_homepage">
-                    <div class="d-flex align-items-center w-100 mt-4 ml-3">
-                        <div class="justify-content-center">Ничего не найдено :-( </div>
-                    </div>                   
-                </t>
-                <t t-foreach="employer_list" t-as="employer">
-                    <div class="card-body o_wprofile_slides_course_card_body p-0 d-flex mt-1 mb-1 ">
-                        <div width="90px" height="90px" class="d-flex o_website_adbook_photo">
-                            <t t-if="employer.photo">
-                                <img t-if="employer.photo"
-                                    t-att-src="'data:image/png;base64,%s' % to_text(employer.photo)"
-                                    style="max-width: 90px; max-height: 90px;"/>
-                                <!-- <img class="o_website_adbook_photo p-1" t-att-src="'/web/image/ad.users/%s/photo' % employer.id" alt="Employer"/> -->
-                            </t>
-                        </div>
-                        <div class="p-2 w-100 h6">
-                            <div class="row d-flex justify-content-between m-0">
-                                <div class="d-flex">
-                                    <span class="font-weight-bold mb-0">
-                                        <t t-esc="employer.name"/>
-                                        <span class="mr-3"/>
-                                        
-                                    </span>
-                                </div> 
-
-                                <!-- ДЛЯ ТЕСТИРОВАНИЯ -->
-                                <t t-if="i==1">
-                                    <div class="d-flex justify-content-end ">
-                                        <span class="font-weight-light mr-2 small"> до 26.09.2021 </span>
-                                        <i class="fa fa-plane  align-items-center color-trip"/> 
-                                    </div> 
-                                </t>
-
-                                <t t-if="i==2">
-                                    <div class="d-flex justify-content-end ">
-                                         <span class="font-weight-light small mr-2"> до 26.09.2021 </span>
-                                         <i class="fa fa-sun-o  align-items-center color-vacation"/>
-                                    </div>
-                                </t>
-
-                                <t t-if="i==3">
-                                    <div class="d-flex justify-content-end ">
-                                        <i class="fa fa-thermometer-3  align-items-center color-sick"/> 
-                                    </div>
-                                </t>
-                                <!-- ,,, -->
-                                
-                                
-                                <t t-set="i" t-value="i+1"/>
-                            </div> 
-
-                            <div class="mb-2">
-                                <t t-esc="employer.title"/>
-                            </div>
-
-                            <div class="row d-flex justify-content-between m-0"> 
-
-                                <div class="d-flex">
-                                    <t t-if="employer.ip_phone">
-                                        <i class="fa fa-phone mr-1"/><t t-esc="employer.ip_phone"/> <span class="mr-3"/>
-                                    </t>
-
-                                    <t t-if="employer.phone">
-                                        <i class="fa fa-mobile-phone mr-1"/><t t-esc="employer.phone"/> <span class="mr-3"/>
-                                    </t>
-
-                                    <t t-if="employer.sec_phone">
-                                        <i class="fa fa-phone mr-1"/><t t-esc="employer.sec_phone"/> <span class="mr-3"/>
-                                    </t> 
-                                </div> 
-
-                                <div class="d-flex justify-content-end ">
-                                    <t t-if="employer.email">
-                                        <i class="fa fa-envelope-o mr-1"/>
-                                        <a href="mailto:{{employer.email}}"><t t-esc="employer.email"/></a>
-
-                                    </t> 
-                                </div>
-
-                            </div>
-
-                            <!-- <div>
-                                <t t-if="employer.email">
-                                    <i class="fa fa-envelope-o mr-1"/>
-                                     <a href="mailto:{{employer.email}}"><t t-esc="employer.email"/></a>
-
-                                </t> 
-                            </div> -->
-                        </div>
-                    </div>
-                </t>
-            </div>
-        </div>
+            <div class="p-0 mb-3"> -->
+                <t t-call="website_adbook.wadbook_content_homepage"/>
+            <!-- </div>
+        </div> -->
 
         
+        </div>
         
     </template>
 
 
     <!-- Контент Главная страница, редактируется на сайте -->
     <template id="wadbook_content_homepage" name="Wadbook: wadbook_content_homepage">
-        <div class="o_wslides_lesson_content_type bg-white" >
-            <div class="p-2 mb-1 o_website_adbook_homepage">
+        
+            <div class="p-2 mb-1 o_website_adbook_homepage bg-white">
                 
+                <!-- <div class="container" contentEditable="True"> -->
                 <div class="container" contentEditable="True">
                     <div class="oe_structure" />
-                            
+                            Разместите блоки
                 </div>
             </div>
             
 
-        </div>
     </template>
 
 

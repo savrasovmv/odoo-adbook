@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<odoo>
+    
+    <record id="adbook_department_view_search" model="ir.ui.view">
+        <field name="name">adbook.department.view.search</field>
+        <field name="model">adbook.department</field>
+        <field name="arch" type="xml">
+            <search string="Search Opportunities">
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="adbook_department_view_form" model="ir.ui.view">
+        <field name="name">adbook.department.form</field>
+        <field name="model">adbook.department</field>
+        <field name="arch" type="xml">
+            <form string="Управление/отдел">
+                
+                <sheet>
+
+                    <group string="Справочник">
+                        <field name="adbook_name"/>
+                        <field name="sequence"/>
+                        <field name="is_default"/>
+
+                    </group>
+                    <group string="Основные"  >
+                        <field name="name" attrs="{'readonly': ['|',('hr_department_id', '!=', False),('ad_department_id', '!=', False)]}"/>
+                        <field name="parent_id" attrs="{'readonly': ['|',('hr_department_id', '!=', False),('ad_department_id', '!=', False)]}"/>
+                        <field name="company_id" attrs="{'readonly': ['|',('hr_department_id', '!=', False),('ad_department_id', '!=', False)]}"/>
+                        <field name="branch_id" attrs="{'readonly': ['|',('hr_department_id', '!=', False),('ad_department_id', '!=', False)]}"/>
+                        <field name="level" attrs="{'readonly': ['|',('hr_department_id', '!=', False),('ad_department_id', '!=', False)]}"/>
+                        <field name="is_records"/>
+                    </group>
+
+
+                    <group string="Связи">
+                        <field name="date_update" attrs="{'readonly': True}"/>
+                        <field name="hr_department_id" attrs="{'readonly': True}"/>
+                        <field name="ad_department_id" attrs="{'readonly': True}"/>
+                    </group>
+                    
+                    <notebook>
+                    
+                        <page string="Дочернии подразделения" > 
+                            <tree string="Дочернии подразделения">
+                                <field name="child_ids"/>
+                            </tree>
+                        </page>
+
+                        <page string="Сотруднки подразделения" > 
+                            <tree string="Сотруднки подразделения">
+                                <field name="employer_ids"/>
+                            </tree>
+                        </page>
+                        
+                    </notebook>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="adbook_department_view_tree" model="ir.ui.view">
+        <field name="name">adbook.department.tree</field>
+        <field name="model">adbook.department</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence"  widget="handle"/>
+                <field name="adbook_name"/>
+                <field name="name"/>
+                <field name="hr_department_id"/>
+                <field name="branch_id"/>
+                <field name="company_id"/>
+                <field name="parent_id"/>
+            </tree>
+        </field>
+    </record>
+  
+
+    <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
+    <record id="adbook_department_action" model="ir.actions.act_window">
+        <field name="name">Управления/отделы</field>
+        <field name="res_model">adbook.department</field>
+        <field name="view_mode">tree,form</field>
+        <!-- <field name="domain">['|',('parent_id','!=',False), ('parent_id','=',False)]</field> -->
+        <field name="help" type="html">
+          <p>
+             Создайте новую запись
+          </p>
+        </field>
+    </record>
+
+  
+   
+</odoo>

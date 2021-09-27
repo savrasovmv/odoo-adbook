@@ -28,6 +28,8 @@ class AdBranch(models.Model):
     ad_name = fields.Char(u'Наименование в AD')
     adbook_name = fields.Char(u'Наименование в справочнике')
     organization_id = fields.Many2one("ad.organizacion", string="Организация")
+    company_id = fields.Many2one('res.company', string='Компания')
+
     active = fields.Boolean('Active', default=True)
     address = fields.Text(string='Адрес')
     is_view_adbook = fields.Boolean(string='Отоброжать в справочнике контактов')

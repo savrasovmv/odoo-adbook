@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<odoo>
+    
+    <record id="adbook_branch_view_search" model="ir.ui.view">
+        <field name="name">adbook.branch.view.search</field>
+        <field name="model">adbook.branch</field>
+        <field name="arch" type="xml">
+            <search string="Search Opportunities">
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="adbook_branch_view_form" model="ir.ui.view">
+        <field name="name">adbook.branch.form</field>
+        <field name="model">adbook.branch</field>
+        <field name="arch" type="xml">
+            <form string="Подразделение">
+                
+                <sheet>
+                    <group string="Справочник">
+                        <field name="adbook_name"/>
+                        <field name="sequence"/>
+                    </group>
+
+                    <group string="Основные">
+                        <field name="name" attrs="{'readonly': [('ad_branch_id', '!=', False)]}"/>
+                        <field name="company_id" attrs="{'readonly': [('ad_branch_id', '!=', False)]}"/>
+                    </group>
+                    <group string="Связи">
+                        <field name="date_update" attrs="{'readonly': True}"/>
+                        <field name="ad_branch_id" attrs="{'readonly': True}"/>
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="adbook_branch_view_tree" model="ir.ui.view">
+        <field name="name">adbook.branch.tree</field>
+        <field name="model">adbook.branch</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="company_id"/>
+            </tree>
+        </field>
+    </record>
+  
+
+    <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
+    <record id="adbook_branch_action" model="ir.actions.act_window">
+        <field name="name">Подразделения</field>
+        <field name="res_model">adbook.branch</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p>
+             Создайте новую запись
+          </p>
+        </field>
+    </record>
+
+  
+   
+</odoo>
