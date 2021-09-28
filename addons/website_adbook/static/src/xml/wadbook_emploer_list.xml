@@ -48,8 +48,7 @@
                             <div width="90px" height="90px" class="d-flex o_website_adbook_photo">
                                 <t t-if="employer.photo">
                                     <img t-if="employer.photo != False"
-                                        t-attа-src="data:image/png;base64,{{employer.photo}}"
-                                        style="max-width: 90px; max-height: 90px;"/>
+                                        t-attа-src="data:image/png;base64,{{employer.photo}}"/>
                                 </t>
                             </div>
                             <div class="p-2 w-100 h6">
