@@ -27,7 +27,7 @@ class AdBranch(models.Model):
     name = fields.Char(u'Наименование 1С', required=True)
     ad_name = fields.Char(u'Наименование в AD')
     adbook_name = fields.Char(u'Наименование в справочнике')
-    organization_id = fields.Many2one("ad.organizacion", string="Организация")
+    # organization_id = fields.Many2one("ad.organizacion", string="Организация")
     company_id = fields.Many2one('res.company', string='Компания')
 
     active = fields.Boolean('Active', default=True)
@@ -102,7 +102,9 @@ class AdUsers(models.Model):
     active = fields.Boolean('Active', default=True)
     is_ldap = fields.Boolean('LDAP?', default=False)
 
-    organization_id = fields.Many2one("ad.organizacion", string="Организация", compute="_compute_organization", store=True)
+    # organization_id = fields.Many2one("ad.organizacion", string="Организация", compute="_compute_organization", store=True)
+    company_id = fields.Many2one('res.company', string='Компания', compute="_compute_company", store=True)
+
     branch_id = fields.Many2one("ad.branch", string="Подразделение")
     department_id = fields.Many2one("ad.department", string="Управление/отдел")
     title = fields.Char(u'Должность')
@@ -232,6 +234,12 @@ class AdUsers(models.Model):
         for record in self:
             if record.branch_id:
                 record.organization_id = record.branch_id.organization_id
+    
+    @api.depends("branch_id", "branch_id.company_id")
+    def _compute_company(self):
+        for record in self:
+            if record.branch_id:
+                record.company_id = record.branch_id.company_id
 
     def _get_user_account_control_result(self):
         for record in self:

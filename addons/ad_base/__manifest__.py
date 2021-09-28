@@ -19,7 +19,7 @@
     ],
     'data': [
         
-        'views/ad_organizacion_views.xml',
+        # 'views/ad_organizacion_views.xml',
         'views/ad_branch_views.xml',
         'views/ad_department_views.xml',
         'views/ad_users_views.xml',

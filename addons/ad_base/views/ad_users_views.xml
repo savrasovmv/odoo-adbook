@@ -36,7 +36,7 @@
                             <group col="6">
                                 <group string="Основные данные" colspan="4">
                                     <field name="name"/>
-                                    <field name="organization_id"/>
+                                    <field name="company_id"/>
                                     <field name="branch_id"/>
                                     <field name="department_id"/>
                                     <field name="title"/>

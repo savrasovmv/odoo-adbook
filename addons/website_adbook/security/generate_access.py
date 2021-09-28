@@ -1,5 +1,5 @@
 spisok = []
-spisok.append(['adbook.branch','', 1])
+# spisok.append(['adbook.branch','', 1])
 spisok.append(['adbook.department','', 1])
 spisok.append(['adbook.employer','', 1])
 spisok.append(['adbook.build','', 0])
@@ -8,7 +8,7 @@ spisok.append(['adbook.build_wizard','', 0])
 
 
 spisok_read = []
-spisok_read.append(['adbook.branch',''])
+# spisok_read.append(['adbook.branch',''])
 spisok_read.append(['adbook.department',''])
 spisok_read.append(['adbook.employer',''])
 
