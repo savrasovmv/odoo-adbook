@@ -104,6 +104,9 @@ class AdbookEmployer(models.Model):
     date_update = fields.Datetime(string='Обновлено')
     is_view_adbook = fields.Boolean(string='Отоброжать в справочнике контактов', default=True)
 
+    is_manual = fields.Boolean(string='Ручная корректировка', help="Если установлено, значит подразделение установленно в ручную", default=False)
+
+
 
 
     @api.depends("branch_id.company_id")

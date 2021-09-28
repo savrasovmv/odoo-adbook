@@ -177,7 +177,7 @@ class AdbookBuild(models.AbstractModel):
                     if len(search_dep)>0:
                         employer.department_id = search_dep.id
 
-            elif employer.ad_users_id:
+            elif employer.ad_users_id and not employer.is_manual:
                 print('employer', employer.name)
                 search_dep = []
                 if employer.ad_users_id.department_id:

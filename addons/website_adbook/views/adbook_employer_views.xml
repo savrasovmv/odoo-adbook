@@ -35,7 +35,9 @@
                                     <field name="name" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
                                     <field name="company_id" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
                                     <field name="branch_id" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
-                                    <field name="department_id" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
+                                    <field name="is_manual"/>
+                                    
+                                    <field name="department_id" attrs="{'readonly': [('is_manual', '=', False)]}"/>
                                     <field name="title" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
                                     <field name="active"  widget="boolean_toggle" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
                                 </group>
