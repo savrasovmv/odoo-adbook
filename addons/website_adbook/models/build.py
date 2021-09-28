@@ -77,6 +77,12 @@ class AdbookBuild(models.AbstractModel):
                                 ('is_view_adbook', '=', True),
                                 ('branch_id', 'in', ad_branch_list.ids),
                             ])
+        ad_users_list += self.env['ad.users'].sudo().search([
+                                ('active', '=', False),
+                                ('is_view_adbook', '=', True),
+                                ('is_view_disabled_adbook', '=', True),
+                                ('branch_id', 'in', ad_branch_list.ids),
+                            ])
         adbook_emloyer = self.env['adbook.employer'].sudo()
         for user in ad_users_list:
             search_emloyer = adbook_emloyer.search([

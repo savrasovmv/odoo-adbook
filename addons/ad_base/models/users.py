@@ -127,18 +127,20 @@ class AdUsers(models.Model):
 
 
     is_view_adbook = fields.Boolean(string='Отоброжать в справочнике контактов', default=True)
+    is_view_disabled_adbook = fields.Boolean(string='Отоброжать в справочнике контактов даже если отключена', default=False)
     sequence = fields.Integer(string=u"Сортировка", help="Сортировка", default=10)
 
-    is_fired = fields.Boolean(string='Уволен', default=False)
-    fired_date = fields.Date(string='Дата увольнения')
 
-    is_vacation = fields.Boolean(string='Отпуск')
-    vacation_start_date = fields.Date(string='Дата начала отпуска')
-    vacation_end_date = fields.Date(string='Дата окончания отпуска')
+    # is_fired = fields.Boolean(string='Уволен', default=False)
+    # fired_date = fields.Date(string='Дата увольнения')
 
-    is_btrip = fields.Boolean(string='Командировка')
-    btrip_start_date = fields.Date(string='Дата начала командировки')
-    btrip_end_date = fields.Date(string='Дата окончания командировки')
+    # is_vacation = fields.Boolean(string='Отпуск')
+    # vacation_start_date = fields.Date(string='Дата начала отпуска')
+    # vacation_end_date = fields.Date(string='Дата окончания отпуска')
+
+    # is_btrip = fields.Boolean(string='Командировка')
+    # btrip_start_date = fields.Date(string='Дата начала командировки')
+    # btrip_end_date = fields.Date(string='Дата окончания командировки')
 
     #Блокировки
     is_yaware = fields.Boolean(string='yaware')
@@ -208,7 +210,20 @@ class AdUsers(models.Model):
         for empl in self:
             group_list = self.env['ad.group'].search([
                                                 ('active', '=', True),
-                                                ('is_managed', '=', True),])
+                                                ('is_managed', '=', True),
+                                                ], order="name")
+            
+            empl.users_group_line.unlink()
+
+            for group in group_list:
+
+                empl.users_group_line.create({
+                    'name': group.name,
+                    'group_id': group.id,
+                    'users_id': empl.id,
+                })
+
+
 
 
 
@@ -229,6 +244,9 @@ class AdUsers(models.Model):
 
     def action_update_from_ldap(self):
         pass
+
+
+    
 
 
     #Экспорт справочника в Excel
@@ -387,6 +405,8 @@ class UsersGroupLine(models.Model):
     @api.depends("group_id")
     def _get_name(self):
         self.name = self.group_id.name
+
+    
 
 
 

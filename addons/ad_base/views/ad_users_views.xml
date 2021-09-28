@@ -49,6 +49,7 @@
                                 <group string="Справочник контактов" colspan="2" >
                                     <field name="photo" widget="image"/>
                                     <field name="is_view_adbook" string="Показывать"/>
+                                    <field name="is_view_disabled_adbook" string="Показывать если не активна"/>
                                     <field name="sequence"/>
                                 </group>
                             </group>
@@ -60,12 +61,12 @@
                                     <field name="email"/>
                                     <field name="search_text"/>
                                 </group>
-                                <group string="Сотрудник">
+                                <group string="Связи">
                                     <field name="employee_id"/>
                                 </group>
                             </group>    
 
-                            <group string="Текущее состояние">
+                            <!-- <group string="Текущее состояние">
                                 <field name="is_fired"/>
                                 <field name="fired_date"/>
                                 <field name="is_vacation"/>
@@ -74,12 +75,12 @@
                                 <field name="is_btrip"/>
                                 <field name="btrip_start_date"/>
                                 <field name="btrip_end_date"/>
-                            </group>
+                            </group> -->
 
                         </page>
                         <page string="Установки">  
 
-                            <group string="Установки">
+                            <!-- <group string="Установки">
                                 <field name="is_yaware" widget="boolean_toggle"/>
                                 <field name="is_mailarchiva" widget="boolean_toggle"/>
                                 <field name="is_phone_rec" widget="boolean_toggle"/>
@@ -96,10 +97,11 @@
                                 <field name="is_cloud_block" widget="boolean_toggle"/>
                                 <field name="is_email_block" widget="boolean_toggle"/>
                                 <field name="is_rem_ad_block" widget="boolean_toggle"/>
-                            </group>
+                            </group> -->
 
                             <notebook>
                                 <page string="Назначить группы AD">
+                                    <button name="update_group_list" type="object" string="Обновить из AD"/>
                                     <field name="users_group_line">
                                         <tree editable="botton">
                                             <field name="group_id"/>

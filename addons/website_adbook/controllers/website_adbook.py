@@ -256,6 +256,7 @@ class AdBook(http.Controller):
                 employer_list.append({
                     'name': line.name,
                     'title': line.title,
+                    'departpent_name': line.branch_id.adbook_name + ' - ' + line.department_id.adbook_name,
                     'ip_phone': line.ip_phone,
                     'phone': line.phone,
                     'sec_phone': line.sec_phone,
@@ -268,6 +269,57 @@ class AdBook(http.Controller):
             'current_branch_name': branch_id.adbook_name,
             'current_department_name': current_department_name,
             'employer_list':  employer_list,
+            'is_limited': False,
+
+            # 'employer_list':  json.dumps(employer_list) if employer_list else False ,
+        }
+
+    @http.route(['/wadbook/search_employer/<string:search>'], type='json', auth="user", website=True, sitemap=True)
+    def search_employer(self, search=False,**kw):
+        print('+++++++++++++', search)
+        if not search or search=='':
+            return http.request.redirect('/wadbook')
+        
+        limit = 50
+        employers = http.request.env['adbook.employer'].sudo().search([
+                            ('search_text', '=ilike', search+'%'),
+                            ('active', '=', True),
+                            ('is_view_adbook', '=', True),
+                        ], order="name asc", limit=limit)
+        
+        limit2 = limit - len(employers)
+        employers += http.request.env['adbook.employer'].sudo().search([
+                            ('search_text', 'ilike', search),
+                            ('id', 'not in', employers.ids),
+                            ('active', '=', True),
+                            ('is_view_adbook', '=', True),
+                        ], order="name asc", limit=limit2)
+
+        employer_list = []
+        for line in employers:
+            employer_list.append({
+                'name': line.name,
+                'title': line.title,
+                'departpent_name': line.branch_id.adbook_name + ' - ' + line.department_id.adbook_name,
+                'ip_phone': line.ip_phone,
+                'phone': line.phone,
+                'sec_phone': line.sec_phone,
+                'email': line.email,
+                'photo': line.photo,
+            })
+
+        is_limited = False
+
+        if len(employer_list) == limit:
+            is_limited = True
+        
+        
+        return  {
+            'current_branch_name': False,
+            'current_department_name': False,
+            'employer_list':  employer_list if len(employer_list)>0 else False,
+            'search_text': search,
+            'is_limited': is_limited,
             # 'employer_list':  json.dumps(employer_list) if employer_list else False ,
         }
  

@@ -16,7 +16,7 @@
                                 <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background: white!important">
                                     <form method="GET" class="adbook-form-search order-lg-3" t-attf-action="/wadbook/search" role="search">
                                         <div class="input-group">
-                                            <input type="search" name="search" class="form-control" placeholder="Поиск: ФИО, тел, e-mail" aria-label="Search" t-att-value="search_term"/>
+                                            <input type="search" name="search" class="form-control o_search_text" placeholder="Поиск: ФИО, тел, e-mail" aria-label="Search" t-att-value="search_term"/>
                                             <div class="input-group-append">
                                                 <button class="btn border border-left-0 oe_search_button" type="submit" aria-label="Search" title="Search">
                                                     <i class="fa fa-search"/>

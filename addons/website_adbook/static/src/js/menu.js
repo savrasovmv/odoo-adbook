@@ -1,34 +1,6 @@
 odoo.define('website_adbook.WadbookMenu', function (require) {
     'use strict';
 
-
-    // $(document).ready(function() {
-    //     var rpc = require('web.rpc');
-    
-    //     $('.o_adbook_menu').click(getProductBySKU);
-    //     function getProductBySKU(event){
-    //         console.log("Hello world!", event);
-    //         event.preventDefault();
-    //         var id = $(this).attr('id');
-            
-
-    //         $('*#o_dep_parent_id_'+id).each(function() {
-    //             $(this).addClass('dep-sub-menu-show');
-    //         });
-            
-    //         // var domain = [('id', '=', 2)];
-    //         // var args = [domain];
-    
-    //         // var res = rpc.query({
-    //         //     model: 'product.template',
-    //         //     method: 'search_read',
-    //         //     args: [[], ['name', 'default_code']]
-    //         //     /* args: args */
-    //         // }).then(function (products) {
-    //         //     console.log(products); });
-    //         };
-    //     });
-
     var publicWidget = require('web.public.widget');
 
     var rpc = require('web.rpc');
@@ -56,7 +28,7 @@ odoo.define('website_adbook.WadbookMenu', function (require) {
          * @private
          */
          _onClick: function () {
-            console.log("+++++++++++++++++++++++++++this", this);
+            // console.log("+++++++++++++++++++++++++++this", this);
             // alert($(ev.target).attr('id'));
             var self = this.$el[0]
             var id = self.id;
@@ -81,7 +53,7 @@ odoo.define('website_adbook.WadbookMenu', function (require) {
             if (isrecords == 'True') {
                 ajax.jsonRpc('/wadbook/get_employer/'+id, 'call', {})
                 .then(function(json_data) { 
-                    console.log(json_data); 
+                    // console.log(json_data); 
                     var $content = $(QWeb.render('website_adbook.wadbook_emploer_list' , json_data))
                     $('.o_wslides_lesson_content_type').html($content) 
                     // return;

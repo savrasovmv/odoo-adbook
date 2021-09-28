@@ -7,13 +7,13 @@
             
         </menuitem>
 
-        <menuitem id="adbook_department_first_level_menu" name="Управления/отделы" action="adbook_department_action" sequence="20">
+        <menuitem id="adbook_department_first_level_menu" name="Подразделения" action="adbook_department_action" sequence="20">
             
         </menuitem>
 
-        <menuitem id="adbook_branch_first_level_menu" name="Подразделения" action="adbook_branch_action" sequence="30">
+        <!-- <menuitem id="adbook_branch_first_level_menu" name="Подразделения" action="adbook_branch_action" sequence="30">
             
-        </menuitem>
+        </menuitem> -->
 
         <menuitem id="adbook_actions_first_level_menu" name="Действия" action="adbook_build_wizard_action" sequence="30">
             

@@ -8,17 +8,17 @@ from openpyxl import Workbook
 import os, fnmatch
 from openpyxl.styles import Alignment, Border, Side, PatternFill, Font
 
-class AdbookBranch(models.Model):
-    _name = "adbook.branch"
-    _description = "Подразделения"
-    _order = "sequence"
+# class AdbookBranch(models.Model):
+#     _name = "adbook.branch"
+#     _description = "Подразделения"
+#     _order = "sequence"
 
-    name = fields.Char(u'Наименование в AD', required=True)
-    adbook_name  = fields.Char(u'Наименование')
-    ad_branch_id = fields.Many2one("ad.branch", string="Подразделение AD")
-    company_id = fields.Many2one('res.company', string='Компания')
-    sequence = fields.Integer(string=u"Сортировка", help="Сортировка", default=10)
-    date_update = fields.Datetime(string='Обновлено')
+#     name = fields.Char(u'Наименование в AD', required=True)
+#     adbook_name  = fields.Char(u'Наименование')
+#     ad_branch_id = fields.Many2one("ad.branch", string="Подразделение AD")
+#     company_id = fields.Many2one('res.company', string='Компания')
+#     sequence = fields.Integer(string=u"Сортировка", help="Сортировка", default=10)
+#     date_update = fields.Datetime(string='Обновлено')
 
 
 class AdbookDepartment(models.Model):
