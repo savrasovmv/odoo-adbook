@@ -51,7 +51,7 @@
 
     <template id="wadbook_head" name="Wadbook: head">
 
-        <div class="container">
+        <div class="container o_wadbook_head">
             <h1 class="d-flex justify-content-center font-weight-medium w-100">
                 <a href="/wadbook" class="text-decoration-none text-white"> Справочник сотрудников</a>
                 

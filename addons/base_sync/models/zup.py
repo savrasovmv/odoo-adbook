@@ -6,6 +6,9 @@ import requests
 from requests.auth import HTTPBasicAuth
 from requests import ReadTimeout, ConnectTimeout, HTTPError, Timeout, ConnectionError
 
+import json
+
+
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -38,6 +41,50 @@ class ZupConnect(models.AbstractModel):
         try:
             response = requests.get(
                                 url_api,
+                                auth=HTTPBasicAuth(ZUP_USER, ZUP_PASSWORD),
+                                timeout=int(ZUP_TIMEOUT)
+                            )
+            if response.status_code != 200:
+                err = "Ошибка, Код ответа: %s" % response.status_code
+                _logger.error(err)
+                raise Exception(err)
+     
+        except Exception as error:
+            _logger.error("Ошибка при выполнении подключения к ЗУП:" + str(error))
+            raise Exception("Ошибка при выполнении подключения к ЗУП:" + str(error))
+
+        res = response.json()
+        total_entries = len(res['data'])
+        data = res['data']
+        _logger.info("Получены данные из ЗУП, в кол-ве: %s" % total_entries)
+        #return total_entries, data
+        return total_entries, data
+
+    def zup_post(self, url_api=False, param={}, full_sync=False, date=False,search_filter=False, attributes=False):
+        """ Подключется к ЗУП, POST, 
+            Параметры:
+                param - параметры запроса
+                full_sync - полная синхронизация, при установке ищит в журнале синхронизации, когда последний раз было обновление и добавляет в фильтр значение даты
+                search_filter - строка поиска
+                attributes - требуемые атрибуты
+            Возвращает:
+                total_entries - общее количество полученных записей
+                data - данные
+         """
+        _logger.info("Подключение к ЗУП")
+
+        ZUP_USER = self.env['ir.config_parameter'].sudo().get_param('zup_user')
+        ZUP_PASSWORD = self.env['ir.config_parameter'].sudo().get_param('zup_password')
+        ZUP_TIMEOUT = self.env['ir.config_parameter'].sudo().get_param('zup_timeout')
+
+        if not ZUP_USER or not ZUP_PASSWORD:
+            _logger.error("Нет учетных данных для доступ к API ЗУП. Проверьте настройки")
+            raise "Нет учетных данных для доступ к API ЗУП. Проверьте настройки"
+        
+        try:
+            response = requests.post(
+                                url_api,
+                                data=json.dumps(param),
                                 auth=HTTPBasicAuth(ZUP_USER, ZUP_PASSWORD),
                                 timeout=int(ZUP_TIMEOUT)
                             )
@@ -338,15 +385,15 @@ class ZupSyncPassport(models.AbstractModel):
 					{'employeeGuid1C': 'c3c66a3c-17c2-11e0-86c5-00155d003102', 
 					'documentType': 'Паспорт гражданина РФ', 
 					'country': '', 
-					'series': '71 11', 
-					'number': '860325', 
-					'issuedBy': 'Территориальным пунктом УФМС России по Тюменской обл. в Нижнетавдинском районе', 
-					'departamentCode': '720-016', 
+					'series': '77 11', 
+					'number': '882255', 
+					'issuedBy': 'Территориальным пунктом УФМС России ....', 
+					'departamentCode': '790-016', 
 					'issueDate': '2011-05-31T00:00:00', 
 					'validUntil': '0001-01-01T00:00:00', 
 					'birthPlace': '0,Комсомолец,Комсомольский,Кустанайская,Россия', 
 					'registrationAddress': {
-											'value': '626020, Тюменская обл, Нижнетавдинский р-н, Нижняя Тавда с, Ульянова ул, дом № 12', 
+											'value': '626020, Тюменская обл, .....', 
 											'comment': '', 
 											'type': 'Адрес', 
 											'Country': 'РОССИЯ', 
@@ -362,7 +409,7 @@ class ZupSyncPassport(models.AbstractModel):
 											'id': '', 
 											'areaCode': '', 
 											'areaId': '', 
-											'district': 'Нижнетавдинский', 
+											'district': 'sdgfsdfg', 
 											'districtType': 'р-н', 
 											'districtId': '', 
 											'munDistrict': '', 
@@ -378,7 +425,7 @@ class ZupSyncPassport(models.AbstractModel):
 											'territory': '', 
 											'territoryType': '', 
 											'territoryId': '', 
-											'locality': 'Нижняя Тавда', 
+											'locality': 'JHkjhkjk', 
 											'localityType': 'с', 
 											'localityId': '', 
 											'streetId': '', 
@@ -388,7 +435,7 @@ class ZupSyncPassport(models.AbstractModel):
 											'buildings': [], 
 											'apartments': [{
 															'type': 'Квартира', 
-															'number': '69'
+															'number': '88'
 															}],
 											'codeKLADR': '', 
 											'oktmo': '', 
@@ -568,6 +615,236 @@ class ZupSyncPassport(models.AbstractModel):
 
         if not message_update == '':
             result += "\n Обновлены Документы УЛ и адреса сотрудников: \n" + message_update
+
+        self.create_ad_log(result=result)
+
+        return result
+
+
+
+class ZupSyncPersonalDoc(models.AbstractModel):
+    _name = 'zup.sync_personal_doc'
+    _description = 'Синхронизация кадровых документов ЗУП'
+    _inherit = ['zup.connect']
+
+    def zup_sync_personal_doc_full(self, date_start=False, date_end=False):
+        """Загрузка всех типов документов"""
+        if not date_start or not date_end:
+            raise Exception("Не указан период для синхронизации")
+        
+        date = datetime.today()
+
+        doc_obj_list = [
+                'hr.recruitment_doc',
+                'hr.termination_doc',
+                'hr.vacation_doc',
+                'hr.trip_doc',
+                'hr.sick_leave_doc',
+                'hr.transfer_doc',
+            ]
+        result = ''
+        for doc_obj in doc_obj_list:
+            try:
+                result += self.zup_sync_personal_doc(doc_obj=doc_obj, date_start=date_start, date_end=date_end)
+            except Exception as error:
+                self.create_ad_log(date=date,result=error, is_error=True)
+                raise error
+
+        return result
+
+    def zup_sync_personal_doc(self, doc_obj=False, date_start=False, date_end=False):
+        """Загрузка документов ЗУП
+            Пример ответа:
+            {
+                'dataType': 'recruitmentDocumentList', 
+                'discription': '', 
+                'data': [{
+                    'guid1C': '3a48388e-91c1-11ea-94df-00155d01140c', 
+                    'posted': True, 
+                    'number': '465-к', 
+                    'documentDate': '2020-05-08T17:25:11',
+                    'recruitmenDate': '2020-05-08T00:00:00', 
+                    'employeeGuid1C': '5afc9b7a-91bf-11ea-94df-00155d01140c', 
+                    'employmentType': 'Основное место работы'
+				}, ]
+		}
+
+        
+        """
+
+        if not date_start or not date_end or not date_end:
+            raise Exception("Не указан период или объект для синхронизации")
+        
+
+        date = datetime.today()
+
+        param = {
+            "startDate": date_start.strftime("%Y-%m-%dT%H:%M:%S"),
+		    "endDate": date_end.strftime("%Y-%m-%dT%H:%M:%S"),
+        }
+
+        doc_name = self.env[doc_obj]._description
+
+        param_api = False
+        
+        if doc_obj == 'hr.recruitment_doc':
+            param_api = 'zup_url_get_recruitment_doc_list'
+        if doc_obj == 'hr.termination_doc':
+            param_api = 'zup_url_get_termination_doc_list'
+        if doc_obj == 'hr.vacation_doc':
+            param_api = 'zup_url_get_vacation_doc_list'
+        if doc_obj == 'hr.trip_doc':
+            param_api = 'zup_url_get_trip_doc_list'
+        if doc_obj == 'hr.sick_leave_doc':
+            param_api = 'zup_url_get_sick_leave_doc_list'
+        if doc_obj == 'hr.transfer_doc':
+            param_api = 'zup_url_get_transfer_doc_list'
+
+        # print("+++++ doc_obj",doc_obj)
+
+        if not param_api:
+            raise Exception("Не указан тип объект документа для синхронизации")
+
+        URL_API = self.env['ir.config_parameter'].sudo().get_param(param_api)
+        if not URL_API:
+            raise Exception("Не заполнен параметр zup_url_get_recruitment_doc_list")
+
+        try:
+
+            res = self.zup_post(
+                                    url_api=URL_API,
+                                    param=param
+                                )
+        except Exception as error:
+            self.create_ad_log(date=date,result=error, is_error=True)
+            raise error
+
+        if res:
+            total_entries, data = res
+        else:
+            self.create_ad_log(date=date,result='Ошибка. Данные не получены', is_error=True)
+            raise Exception('Ошибка. Данные не получены')
+        
+        if total_entries == 0:
+            result = "Новых данных нет"
+            self.create_ad_log(result=result)
+            return result
+        
+        n = 0
+        message_error = ''
+        message_update = ''
+        message_create = ''
+        
+        for line in data:
+            # print(line)
+            if 'guid1C' in line:
+                
+                guid_1c = line['guid1C'] # Идентификатор документа
+
+                employee_guid_1c = line['employeeGuid1C']
+                empl_search = self.env['hr.employee'].search([
+                    ('guid_1c', '=', employee_guid_1c)
+                    ],limit=1)
+                if len(empl_search) == 0:
+                    message_error += "не найден сотрудник с gud1c %s, пропуск \n" % ( guid_1c)
+                    continue # Переход к следующей записи
+                
+
+                
+                if empl_search.department_id:
+                    department_id = empl_search.department_id.id
+                else:
+                    department_id = False
+
+                # Постоянные параметры документов
+                if line['documentDate'] == '0001-01-01T00:00:00':
+                    doc_date = False
+                else:
+                    doc_date = line['documentDate']
+
+                const_vals = {
+                    'date': doc_date,
+                    'posted': line['posted'],
+                    'guid_1c': line['guid1C'],
+                    'number_1c': line['number'],
+                    'employee_guid_1c': line['employeeGuid1C'],
+                    'employee_id': empl_search.id,
+                }
+                
+
+                # Индивидуальные параметры
+                doc_vals = {}
+                if doc_obj == 'hr.recruitment_doc':
+                    doc_vals = {
+                        'service_start_date': line['recruitmenDate'],
+                        'employment_type': line['employmentType'],
+                        'department_id': department_id,
+                    }
+                if doc_obj == 'hr.termination_doc':
+                    doc_vals = {
+                        'service_termination_date': line['dismissDate'],
+                    }
+                if doc_obj == 'hr.vacation_doc' or doc_obj == 'hr.trip_doc' or doc_obj == 'hr.sick_leave_doc':
+                    doc_end_date = False
+                    if line['endDate'] != '0001-01-01T00:00:00':
+                        doc_end_date = datetime.strptime(line['endDate'], '%Y-%m-%dT%H:%M:%S').date()
+                    doc_vals = {
+                        'start_date': datetime.strptime(line['startDate'], '%Y-%m-%dT%H:%M:%S').date(),
+                        'end_date': doc_end_date,
+                    }
+                    
+                # if doc_obj == 'hr.trip_doc':
+                # if doc_obj == 'hr.sick_leave_doc':
+                if doc_obj == 'hr.transfer_doc':
+                    doc_end_date = False
+                    if line['endDate'] != '0001-01-01T00:00:00':
+                        doc_end_date = datetime.strptime(line['endDate'], '%Y-%m-%dT%H:%M:%S').date()
+
+                    dep_search = self.env['hr.department'].search([
+                        ('guid_1c', '=', line['departament'])
+                        ],limit=1)
+
+                    # print('++++++++++++===')
+                    doc_vals = {
+                        'start_date': datetime.strptime(line['startDate'], '%Y-%m-%dT%H:%M:%S').date(),
+                        'end_date': doc_end_date,
+                        'job_title': line['position'],
+                        'department_id': dep_search.id if len(dep_search)>0 else False,
+                    }
+
+                vals = {**const_vals, **doc_vals}
+
+                if doc_obj == 'hr.vacation_doc':
+                    print(vals)
+                # print(vals)
+                doc_search = self.env[doc_obj].search([
+                    ('guid_1c', '=', guid_1c)
+                ],limit=1)
+                if len(doc_search)>0:
+                    doc = self.env[doc_obj].write(vals)
+                    message_update += line['number'] + ' от ' + line['documentDate'] + '\n'
+                else:
+                    doc = self.env[doc_obj].create(vals)
+                    message_create += line['number'] + ' от ' + line['documentDate'] + '\n'
+                
+            else:
+                message_error += "Отсутствует обязательное поле в запси: %s \n" % line
+
+
+        result ='Всего получено из ЗУП %s записей \n' % total_entries
+        if not message_error == '':
+            result = "\n Обновление прошло с предупреждениями: \n \n" + message_error
+        else:
+            result = "\n Обновление прошло успешно \n \n"
+
+        _logger.info(result)
+
+        if not message_update == '':
+            result += "\n Обновлены Документы %s: \n" % doc_name 
+            result +=  message_update
+        if not message_create == '':
+            result += "\n Созданы Документы %s: \n" % doc_name 
+            result +=  message_create
 
         self.create_ad_log(result=result)
 

@@ -39,6 +39,20 @@
                     <p>Загружает Документы УЛ и Адреса сотрудников</p>
                     <button name="zup_sync_passport_wizard_action" string="Обновить Документы УЛ и адреса из ЗУП" type="object" class="oe_highlight"/>
 
+                    <p></p>
+                    <p>Загружает Кадровые Документы</p>
+                    <button name="zup_sync_personal_doc_wizard_action" string="Обновить Документы УЛ и адреса из ЗУП" type="object" class="oe_highlight"/>
+
+                </div>
+
+                <div>
+                    <group string="Период загрузки">
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                    </group>
+                    <p>Загружает Кадровые Документы</p>
+                    <button name="zup_sync_personal_doc_wizard_action" string="Обновить Кадровые Документы из ЗУП" type="object" class="oe_highlight"/>
+
                 </div>
 
                 <footer>

@@ -4,4 +4,5 @@
 from . import hr_employee
 from . import hr_department
 from . import res_country
+from . import hr_personal_doc
 
