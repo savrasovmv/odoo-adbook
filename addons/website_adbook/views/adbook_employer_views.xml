@@ -65,14 +65,13 @@
                             </group>    
 
                             <group string="Текущее состояние">
-                                <field name="is_fired" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
-                                <field name="fired_date" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
-                                <field name="is_vacation" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
-                                <field name="vacation_start_date" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
-                                <field name="vacation_end_date" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
-                                <field name="is_btrip" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
-                                <field name="btrip_start_date" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
-                                <field name="btrip_end_date" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
+                                <field name="service_status" />
+                                <div>
+                                    <span class="ml8 mr8">с</span>
+                                    <field name="service_status_start_date" nolabel="1" />
+                                    <span class="ml8 mr8">по</span>
+                                    <field name="service_status_end_date" nolabel="1" />
+                                </div>
                             </group>
 
                         </page>

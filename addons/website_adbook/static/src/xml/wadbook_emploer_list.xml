@@ -61,21 +61,21 @@
                                         </span>
                                     </div> 
 
-                                    <t t-if="i==1">
+                                    <t t-if="service_status=='trip'">
                                         <div class="d-flex justify-content-end ">
-                                            <span class="font-weight-light mr-2 small"> до 26.09.2021 </span>
+                                            <span class="font-weight-light mr-2 small"> до <t t-esc="employer.service_status_end_date"/></span>
                                             <i class="fa fa-plane  align-items-center color-trip"/> 
                                         </div> 
                                     </t>
 
-                                    <t t-if="i==2">
+                                    <t t-if="service_status=='vacation'">
                                         <div class="d-flex justify-content-end ">
-                                            <span class="font-weight-light small mr-2"> до 26.09.2021 </span>
+                                            <span class="font-weight-light small mr-2"> до <t t-esc="employer.service_status_end_date"/> </span>
                                             <i class="fa fa-sun-o  align-items-center color-vacation"/>
                                         </div>
                                     </t>
 
-                                    <t t-if="i==3">
+                                    <t t-if="service_status=='sick_leave'">
                                         <div class="d-flex justify-content-end ">
                                             <i class="fa fa-thermometer-3  align-items-center color-sick"/> 
                                         </div>

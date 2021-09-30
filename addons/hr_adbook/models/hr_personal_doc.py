@@ -174,4 +174,12 @@ class HrTransferDoc(models.Model):
             if len(old_transfer)>0:
                 line.old_job_title = old_transfer.job_title
                 line.old_department_id = old_transfer.department_id
+            else:
+                recruitment = self.env['hr.recruitment_doc'].search([
+                    ('posted', '=', True),
+                    ('employee_id', '=', line.employee_id.id),
+                ], limit=1)
+                if len(recruitment)>0:
+                    line.old_job_title = recruitment.job_title
+                    line.old_department_id = recruitment.department_id
 

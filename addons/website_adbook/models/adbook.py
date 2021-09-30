@@ -85,16 +85,26 @@ class AdbookEmployer(models.Model):
     email = fields.Char(u'E-mail')
     photo = fields.Binary('Фото', default=None)
 
-    is_fired = fields.Boolean(string='Уволен', default=False)
-    fired_date = fields.Date(string='Дата увольнения')
+    # is_fired = fields.Boolean(string='Уволен', default=False)
+    # fired_date = fields.Date(string='Дата увольнения')
 
-    is_vacation = fields.Boolean(string='Отпуск')
-    vacation_start_date = fields.Date(string='Дата начала отпуска')
-    vacation_end_date = fields.Date(string='Дата окончания отпуска')
+    # is_vacation = fields.Boolean(string='Отпуск')
+    # vacation_start_date = fields.Date(string='Дата начала отпуска')
+    # vacation_end_date = fields.Date(string='Дата окончания отпуска')
 
-    is_btrip = fields.Boolean(string='Командировка')
-    btrip_start_date = fields.Date(string='Дата начала командировки')
-    btrip_end_date = fields.Date(string='Дата окончания командировки')
+    # is_btrip = fields.Boolean(string='Командировка')
+    # btrip_start_date = fields.Date(string='Дата начала командировки')
+    # btrip_end_date = fields.Date(string='Дата окончания командировки')
+
+    service_status = fields.Selection([
+        ('work', 'На работе'),
+        ('vacation', 'Отпуск'),
+        ('trip', 'Командировка'),
+        ('sick_leave', 'Больничный'),
+    ], string='Статус', readonly=True, default='work')
+
+    service_status_start_date = fields.Date(string='Начало', readonly=True)
+    service_status_end_date = fields.Date(string='Окончание', readonly=True)
     
 
     search_text = fields.Char(u'Поисковое поле', compute="_get_search_text", store=True, index=True)

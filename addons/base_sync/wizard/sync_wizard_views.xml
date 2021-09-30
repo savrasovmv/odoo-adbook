@@ -55,6 +55,14 @@
 
                 </div>
 
+
+                <div>
+                    <group string="Статусы сотрудников">
+                        <button name="update_employer_status_wizard_action" string="Статусы сотрудников" type="object" class="oe_highlight"/>
+                    </group>
+
+                </div>
+
                 <footer>
                     
 

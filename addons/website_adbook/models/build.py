@@ -177,6 +177,11 @@ class AdbookBuild(models.AbstractModel):
                     if len(search_dep)>0:
                         employer.department_id = search_dep.id
 
+                # Статус сотрудника
+                employer.service_status = employer.hr_employee_id.service_status
+                employer.service_status_start_date = employer.hr_employee_id.service_status_start_date
+                employer.service_status_end_date = employer.hr_employee_id.service_status_end_date
+
             elif employer.ad_users_id and not employer.is_manual:
                 print('employer', employer.name)
                 search_dep = []

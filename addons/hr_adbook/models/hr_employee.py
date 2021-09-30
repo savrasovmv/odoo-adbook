@@ -1,5 +1,5 @@
 from dateutil.relativedelta import relativedelta
-from datetime import timedelta
+from datetime import timedelta, datetime
 from math import fabs
 
 from odoo import api, fields, models
@@ -172,6 +172,17 @@ class HrEmployee(models.Model):
         compute="_compute_service_duration_display",
     )
     
+
+    service_status = fields.Selection([
+        ('work', 'На работе'),
+        ('vacation', 'Отпуск'),
+        ('trip', 'Командировка'),
+        ('sick_leave', 'Больничный'),
+    ], string='Статус', readonly=True, default='work')
+
+    service_status_start_date = fields.Date(string='Начало', readonly=True)
+    service_status_end_date = fields.Date(string='Окончание', readonly=True)
+
     # @api.depends("user_account_control")
     # def _get_user_account_control_result(self):
     #     for record in self:
@@ -227,3 +238,50 @@ class HrEmployee(models.Model):
     # NOTE: Support odoo/odoo@90731ad170c503cdfe89a9998fa1d1e2a5035c86
     def _get_date_start_work(self):
         return self.service_start_date or super()._get_date_start_work()
+
+    def get_status(self):
+        date = datetime.today().date()
+
+        for line in self:
+            # Сброс по умолчанию
+            line.service_status = 'work'
+            line.service_status_start_date = False
+            line.service_status_end_date = False
+
+            vacation = self.env['hr.vacation_doc'].search([
+                ('start_date', '<=', date),
+                ('end_date', '>=', date),
+                ('posted', '=', True),
+                ('employee_id', '=', line.id),
+            ], limit=1, order='date desc')
+
+            if len(vacation)>0:
+                line.service_status = 'vacation'
+                line.service_status_start_date = vacation.start_date
+                line.service_status_end_date = vacation.end_date
+
+
+            trip = self.env['hr.trip_doc'].search([
+                ('start_date', '<=', date),
+                ('end_date', '>=', date),
+                ('posted', '=', True),
+                ('employee_id', '=', line.id),
+            ], limit=1, order='date desc')
+
+            if len(trip)>0:
+                line.service_status = 'trip'
+                line.service_status_start_date = trip.start_date
+                line.service_status_end_date = trip.end_date
+
+
+            sick_leave = self.env['hr.sick_leave_doc'].search([
+                ('start_date', '<=', date),
+                ('end_date', '>=', date),
+                ('posted', '=', True),
+                ('employee_id', '=', line.id),
+            ], limit=1, order='date desc')
+
+            if len(sick_leave)>0:
+                line.service_status = 'sick_leave'
+                line.service_status_start_date = sick_leave.start_date
+                line.service_status_end_date = sick_leave.end_date

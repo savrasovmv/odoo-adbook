@@ -102,6 +102,15 @@ class SyncWizard(models.TransientModel):
         
         return self.return_result()
 
+    def update_employer_status_wizard_action(self):
+        try:
+            self.env['hr.employee'].sudo().search([]).get_status()
+            self.result = 'Обновился статус состояния сотрудников'
+        except Exception as error:
+            return self.return_result(error=error)
+        
+        return self.return_result()
+
 
     # def _ldap_search(self, full_sync=False, date=False, attributes=False):
     #      #     #Подключение к серверу AD

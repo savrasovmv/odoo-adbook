@@ -37,12 +37,12 @@ class AdbookBuildWizard(models.TransientModel):
 
     def adbook_build_wizard_action(self):
         #res = self.ad_sync_group_action()
-        self.result = self.env['adbook.build'].sudo().adbook_build()
+        # self.result = self.env['adbook.build'].sudo().adbook_build()
 
-        # try:
-        #     self.result = self.env['adbook.build'].sudo().adbook_build()
-        # except Exception as error:
-        #     return self.return_result(error=error)
+        try:
+            self.result = self.env['adbook.build'].sudo().adbook_build()
+        except Exception as error:
+            return self.return_result(error=error)
         
         return self.return_result()
 

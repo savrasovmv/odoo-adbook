@@ -31,11 +31,25 @@
                     <label for="service_duration" string="Стаж работы" />
                     <div>
                         <field name="service_duration_years" nolabel="1" />
-                        <span class="ml8 mr8">year(s)</span>
+                        <span class="ml8 mr8">г.</span>
                         <field name="service_duration_months" nolabel="1" />
-                        <span class="ml8 mr8">month(s)</span>
+                        <span class="ml8 mr8">м.</span>
                         <field name="service_duration_days" nolabel="1" />
-                        <span class="ml8">day(s)</span>
+                        <span class="ml8">д.</span>
+                    </div>
+                </group>
+
+                <group
+                    name="service_status"
+                    groups="hr.group_hr_user"
+                    string="Текущее состояние"
+                >
+                    <field name="service_status" />
+                    <div>
+                        <span class="ml8 mr8">с</span>
+                        <field name="service_status_start_date" nolabel="1" />
+                        <span class="ml8 mr8">по</span>
+                        <field name="service_status_end_date" nolabel="1" />
                     </div>
                 </group>
 

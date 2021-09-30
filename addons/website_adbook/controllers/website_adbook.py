@@ -262,6 +262,10 @@ class AdBook(http.Controller):
                     'sec_phone': line.sec_phone,
                     'email': line.email,
                     'photo': line.photo,
+                    'service_status': line.service_status,
+                    'service_status_start_date': line.service_status_start_date.strftime("%d.%m.%Y") if line.service_status_start_date else '',
+                    'service_status_end_date': line.service_status_end_date.strftime("%d.%m.%Y") if line.service_status_end_date else '',
+
                 })
         else:
             is_homepage = True
@@ -306,6 +310,9 @@ class AdBook(http.Controller):
                 'sec_phone': line.sec_phone,
                 'email': line.email,
                 'photo': line.photo,
+                'service_status': line.service_status,
+                'service_status_start_date': line.service_status_start_date.strftime("%d.%m.%Y") if line.service_status_start_date else '',
+                'service_status_end_date': line.service_status_end_date.strftime("%d.%m.%Y") if line.service_status_end_date else '',
             })
 
         is_limited = False
