@@ -111,6 +111,16 @@ class SyncWizard(models.TransientModel):
         
         return self.return_result()
 
+    
+    def zup_sync_personal_doc_change_wizard_action(self):
+        self.result = self.env['zup.sync_personal_doc'].sudo().zup_sync_personal_doc_change()
+        # try:
+        #     self.result = self.env['zup.sync_personal_doc'].sudo().zup_sync_personal_doc_change()
+        # except Exception as error:
+        #     return self.return_result(error=error)
+        
+        return self.return_result()
+
 
     # def _ldap_search(self, full_sync=False, date=False, attributes=False):
     #      #     #Подключение к серверу AD

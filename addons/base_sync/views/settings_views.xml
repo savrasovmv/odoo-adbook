@@ -165,6 +165,17 @@
 
                         <div class="col-lg-12 o_setting_box" id="base_sync">
                             <div class="o_setting_right_pane" id="zup_settings">
+                                <label for="zup_url_get_empl"/>
+                                <div class="text-muted">
+                                    Сотрудник URL API
+                                </div>
+                                <field name="zup_url_get_empl"/>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 o_setting_box" id="base_sync">
+                            <div class="o_setting_right_pane" id="zup_settings">
                                 <label for="zup_url_get_dep_list"/>
                                 <div class="text-muted">
                                     Список подразделений URL API
@@ -258,6 +269,18 @@
                                     Список документов Переводы сотрудников (группа)
                                 </div>
                                 <field name="zup_url_get_multi_transfer_doc_list"/>
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-12 o_setting_box" id="base_sync">
+                            <div class="o_setting_right_pane" id="zup_settings">
+                                <label for="zup_url_get_multi_transfer_doc_list"/>
+                                <div class="text-muted">
+                                    Список измененных кадровых документов
+                                </div>
+                                <field name="zup_url_get_change_doc_list"/>
 
                             </div>
                         </div>

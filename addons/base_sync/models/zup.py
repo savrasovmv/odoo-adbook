@@ -13,6 +13,13 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
+def get_date(self, date_text=''):
+    """Возвращает форматированную дату если она не пуста, т.е не равна 0001-01-01T00:00:00"""
+    date = False
+    if date_text != '0001-01-01T00:00:00' and date_text !='':
+        date = datetime.strptime(date_text, '%Y-%m-%dT%H:%M:%S').date()
+    return date
+
 
 class ZupConnect(models.AbstractModel):
     _name = "zup.connect"
@@ -218,15 +225,28 @@ class ZupSyncEmployer(models.AbstractModel):
     _description = 'Синхронизация сотрудников ЗУП'
     _inherit = ['zup.connect']
 
-    def zup_sync_employer(self):
+    def zup_sync_employer(self, by_guid_1c=False):
         """Загрузка информации по Сотрудникам из ЗУП"""
         date = datetime.today()
-        URL_API = self.env['ir.config_parameter'].sudo().get_param('zup_url_get_empl_list')
+
+        if by_guid_1c:
+            URL_API = self.env['ir.config_parameter'].sudo().get_param('zup_url_get_empl')
+        else:
+            URL_API = self.env['ir.config_parameter'].sudo().get_param('zup_url_get_empl_list')
+        
         if not URL_API:
-            raise Exception("Не заполнен параметр zup_url_get_empl_list")
+            raise Exception("Не заполнен параметр zup_url_get_empl_list или zup_url_get_empl")
 
         try:
-            res = self.zup_search(
+            if by_guid_1c:
+                param = {'guid1C': by_guid_1c}
+                res = self.zup_post(
+                                    param=param,
+                                    url_api=URL_API
+                                )
+
+            else:
+                res = self.zup_search(
                                     url_api=URL_API
                                 )
         except Exception as error:
@@ -234,7 +254,11 @@ class ZupSyncEmployer(models.AbstractModel):
             raise error
 
         if res:
-            total_entries, data = res
+            if by_guid_1c:
+                total_entries, line = res
+                data = [line,] # Преобразуем в массив для, т.к результат содержит одну запись
+            else:
+                total_entries, data = res
         else:
             self.create_ad_log(date=date,result='Ошибка. Данные не получены', is_error=True)
             raise Exception('Ошибка. Данные не получены')
@@ -278,13 +302,13 @@ class ZupSyncEmployer(models.AbstractModel):
                 birthday = None
                 birthday_text = line['birthDate'] if 'birthDate' in line else ''
                 if birthday_text != '':
-                    birthday = datetime.strptime(birthday_text, '%Y-%m-%dT%H:%M:%S').date()
+                    birthday = get_date(birthday_text)
 
                 # Дата принятия на работу
                 service_start_date = None
                 service_start_date_text = line['employmentDate'] if 'employmentDate' in line else ''
                 if service_start_date_text != '':
-                    service_start_date = datetime.strptime(service_start_date_text, '%Y-%m-%dT%H:%M:%S').date()
+                    service_start_date = get_date(service_start_date_text)
 
                 # Пол
                 gender = None
@@ -505,13 +529,13 @@ class ZupSyncPassport(models.AbstractModel):
                 passport_date_issue = None
                 passport_date_issue_text = line['issueDate']
                 if passport_date_issue_text != '' and passport_date_issue_text != '0001-01-01T00:00:00':
-                    passport_date_issue = datetime.strptime(passport_date_issue_text, '%Y-%m-%dT%H:%M:%S').date()
+                    passport_date_issue = get_date(passport_date_issue_text)
                 
                 # Срок действия
                 passport_date_validity = None
                 passport_date_validity_text = line['validUntil'] 
                 if passport_date_validity_text != '' and passport_date_validity_text != '0001-01-01T00:00:00':
-                    passport_date_validity = datetime.strptime(passport_date_validity_text, '%Y-%m-%dT%H:%M:%S').date()
+                    passport_date_validity = get_date(passport_date_validity_text)
                 
                 # Место рождения
                 passport_place_birth = line['birthPlace'] 
@@ -851,9 +875,141 @@ class ZupSyncPersonalDoc(models.AbstractModel):
         return result
 
 
+    
+
+
+    def update_personal_doc(self, doc_obj, data, create_employer=False):
+        message_update = ''
+        message_create = ''
+        message_error = ''
+        doc_name = ''
+
+        if 'guid1C' in data:
+             
+            guid_1c = data['guid1C'] # Идентификатор документа
+
+            employee_guid_1c = data['employeeGuid1C']
+            empl_search = self.env['hr.employee'].search([
+                ('guid_1c', '=', employee_guid_1c)
+                ],limit=1)
+            if len(empl_search) == 0:
+                if create_employer:
+                    res = self.env['zup.sync_employer'].zup_sync_employer(by_guid_1c=employee_guid_1c)
+                    empl_search = self.env['hr.employee'].search([
+                        ('guid_1c', '=', employee_guid_1c)
+                        ],limit=1)     
+
+                if len(empl_search) == 0:
+                    message_error = "не найден сотрудник с gud1c %s, пропуск \n" % ( guid_1c)
+                    return {
+                        'result': False, 
+                        'message_update': message_update,
+                        'message_create': message_create,
+                        'message_error': message_error,
+                    }
+            
+
+            
+            if empl_search.department_id:
+                department_id = empl_search.department_id.id
+            else:
+                department_id = False
+
+            # Постоянные параметры документов
+            if data['documentDate'] == '0001-01-01T00:00:00':
+                doc_date = False
+            else:
+                doc_date = data['documentDate']
+
+            const_vals = {
+                'date': doc_date,
+                'posted': data['posted'],
+                'guid_1c': data['guid1C'],
+                'number_1c': data['number'],
+                'employee_guid_1c': data['employeeGuid1C'],
+                'employee_id': empl_search.id,
+            }
+            
+
+            # Индивидуальные параметры
+            doc_vals = {}
+            if doc_obj == 'hr.recruitment_doc':
+                doc_vals = {
+                    'service_start_date': data['recruitmenDate'],
+                    'employment_type': data['employmentType'],
+                    'department_id': department_id,
+                }
+            if doc_obj == 'hr.termination_doc':
+                doc_vals = {
+                    'service_termination_date': data['dismissDate'],
+                }
+            if doc_obj == 'hr.vacation_doc' or doc_obj == 'hr.trip_doc' or doc_obj == 'hr.sick_leave_doc':
+                
+                # doc_end_date = False
+                # if data['endDate'] != '0001-01-01T00:00:00':
+                #     doc_end_date = datetime.strptime(data['endDate'], '%Y-%m-%dT%H:%M:%S').date()
+
+                doc_vals = {
+                    'start_date': get_date(data['startDate']),
+                    'end_date': get_date(data['endDate']),
+                }
+                
+            # if doc_obj == 'hr.trip_doc':
+            # if doc_obj == 'hr.sick_leave_doc':
+            if doc_obj == 'hr.transfer_doc':
+                # doc_end_date = False
+                # if data['endDate'] != '0001-01-01T00:00:00':
+                #     doc_end_date = datetime.strptime(data['endDate'], '%Y-%m-%dT%H:%M:%S').date()
+
+                dep_search = self.env['hr.department'].search([
+                    ('guid_1c', '=', data['departament'])
+                    ],limit=1)
+
+                # print('++++++++++++===',data)
+                # print('++++++++++++===',data['startDate'])
+                doc_vals = {
+                    'start_date': get_date(data['startDate']),
+                    'end_date': get_date(data['endDate']),
+                    'job_title': data['position'],
+                    'department_id': dep_search.id if len(dep_search)>0 else False,
+                }
+
+            vals = {**const_vals, **doc_vals}
+
+            if doc_obj == 'hr.vacation_doc':
+                print(vals)
+            # print(vals)
+
+            doc_name = self.env[doc_obj]._description
+            doc_search = self.env[doc_obj].search([
+                ('guid_1c', '=', guid_1c)
+            ],limit=1)
+            if len(doc_search)>0:
+                doc = self.env[doc_obj].write(vals)
+                message_update = doc_name + ' ' + data['number'] + ' от ' + data['documentDate'] + '\n'
+            elif vals['posted'] == True: #создаем только проведенные документы
+                doc = self.env[doc_obj].create(vals)
+                message_create = doc_name + ' ' + data['number'] + ' от ' + data['documentDate'] + '\n'
+            
+        else:
+            message_error = "Отсутствует обязательное поле в запси: %s \n" % data
+            return {
+                'result': False,
+                'message_update': message_update,
+                'message_create': message_create,
+                'message_error': message_error,
+            }
+
+        return {
+            'result': True,
+            'message_update': message_update,
+            'message_create': message_create,
+            'message_error': message_error,
+        }
+       
 
     
-    def zup_sync_personal_doc_change(self, doc_obj=False, date_start=False, date_end=False):
+    def zup_sync_personal_doc_change(self):
         """Загрузка измененных документов из ЗУП
 
             GET - получение измененных документов
@@ -874,6 +1030,16 @@ class ZupSyncPersonalDoc(models.AbstractModel):
                                     'employmentType': 'Основное место работы'
                                     },
                 }
+
+                Виды документов:
+                            recruitmentDocumentList
+                            transferDocumentList
+                            multipleTransferDocumentList
+                            dismissDocumentList
+                            vacationDocumentList
+                            sickLeaveDocumentList
+                            businessTripList
+
 
             POST - для пометки обработанных документов
                 пример тела
@@ -901,22 +1067,19 @@ class ZupSyncPersonalDoc(models.AbstractModel):
 
         date = datetime.today()
 
-        doc_name = self.env[doc_obj]._description
-
-        param_api = False
         
-        if doc_obj == 'hr.recruitment_doc':
-            param_api = 'zup_url_get_recruitment_doc_list'
-        if doc_obj == 'hr.termination_doc':
-            param_api = 'zup_url_get_termination_doc_list'
-        if doc_obj == 'hr.vacation_doc':
-            param_api = 'zup_url_get_vacation_doc_list'
-        if doc_obj == 'hr.trip_doc':
-            param_api = 'zup_url_get_trip_doc_list'
-        if doc_obj == 'hr.sick_leave_doc':
-            param_api = 'zup_url_get_sick_leave_doc_list'
-        if doc_obj == 'hr.transfer_doc':
-            param_api = 'zup_url_get_transfer_doc_list'
+        # if doc_obj == 'hr.recruitment_doc':
+        #     param_api = 'zup_url_get_recruitment_doc_list'
+        # if doc_obj == 'hr.termination_doc':
+        #     param_api = 'zup_url_get_termination_doc_list'
+        # if doc_obj == 'hr.vacation_doc':
+        #     param_api = 'zup_url_get_vacation_doc_list'
+        # if doc_obj == 'hr.trip_doc':
+        #     param_api = 'zup_url_get_trip_doc_list'
+        # if doc_obj == 'hr.sick_leave_doc':
+        #     param_api = 'zup_url_get_sick_leave_doc_list'
+        # if doc_obj == 'hr.transfer_doc':
+        #     param_api = 'zup_url_get_transfer_doc_list'
 
         # print("+++++ doc_obj",doc_obj)
 
@@ -951,8 +1114,55 @@ class ZupSyncPersonalDoc(models.AbstractModel):
         message_create = ''
         
         for type_doc in data:
-            # print(line)
-            if 'guid1C' in type_doc:
-                pass
+            print(type_doc)
+            doc_obj = False
+                           
+            if type_doc == 'recruitmentDocumentList':
+                doc_obj = 'hr.recruitment_doc'
+            if type_doc == 'transferDocumentList':
+                doc_obj = 'hr.transfer_doc'
+            # if type_doc == 'multipleTransferDocumentList':
+            #     doc_obj = 'hr.transfer_doc'
+            if type_doc == 'dismissDocumentList':
+                doc_obj = 'hr.termination_doc'
+            if type_doc == 'vacationDocumentList':
+                doc_obj = 'hr.vacation_doc'
+            if type_doc == 'sickLeaveDocumentList':
+                doc_obj = 'hr.sick_leave_doc'
+            if type_doc == 'businessTripList':
+                doc_obj = 'hr.trip_doc'
+            
+            if not doc_obj:
+                message_error += "не найден объект с именем %s, пропуск \n" % ( type_doc)
+                continue # Переход к следующей записи
 
-    
+            for line in data[type_doc]:
+                n += 1
+                if type_doc == 'vacationDocumentList':
+                    print(line)
+                result_doc = self.update_personal_doc(doc_obj=doc_obj, data=line, create_employer=True)
+                result_create = result_doc['result']
+                message_create += result_doc['message_create']
+                message_update += result_doc['message_update']
+                message_error += result_doc['message_error']
+
+
+
+        result ='Всего получено из ЗУП %s записей \n' % n
+        if not message_error == '':
+            result = "\n Обновление прошло с предупреждениями: \n \n" + message_error
+        else:
+            result = "\n Обновление прошло успешно \n \n"
+
+        _logger.info(result)
+
+        if not message_update == '':
+            result += "\n Обновлены Документы %s: \n" 
+            result +=  message_update
+        if not message_create == '':
+            result += "\n Созданы Документы %s: \n" 
+            result +=  message_create
+
+        self.create_ad_log(result=result)
+
+        return result

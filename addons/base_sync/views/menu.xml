@@ -6,6 +6,7 @@
         <menuitem id="base_sync_first_level_menu" name="Синхронизация" groups="base.group_erp_manager" sequence="10">
             <menuitem id="base_sync_wizard_menu_action" action="base_sync_wizard_action" groups="base.group_erp_manager"/>
             <menuitem id="base_sync_sync_log_menu_action" action="base_sync_sync_log_action"/>
+            <menuitem id="base_sync_sync_tasks_menu_action" action="base_sync_sync_tasks_action"/>
         </menuitem>
         
         <menuitem id="base_sync_zup_first_level_menu" name="1С:ЗУП" sequence="20">

@@ -40,9 +40,7 @@
                     <button name="zup_sync_passport_wizard_action" string="Обновить Документы УЛ и адреса из ЗУП" type="object" class="oe_highlight"/>
 
                     <p></p>
-                    <p>Загружает Кадровые Документы</p>
-                    <button name="zup_sync_personal_doc_wizard_action" string="Обновить Документы УЛ и адреса из ЗУП" type="object" class="oe_highlight"/>
-
+                    
                 </div>
 
                 <div>
@@ -57,6 +55,10 @@
 
 
                 <div>
+                    <p></p>
+                    <p>Загружает Измененные Кадровые документы</p>
+                    <button name="zup_sync_personal_doc_change_wizard_action" string="Измененные Кадровые документы" type="object" class="oe_highlight"/>
+                    <p></p>
                     <group string="Статусы сотрудников">
                         <button name="update_employer_status_wizard_action" string="Статусы сотрудников" type="object" class="oe_highlight"/>
                     </group>

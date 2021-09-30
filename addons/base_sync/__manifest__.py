@@ -25,6 +25,7 @@
         'views/settings_views.xml',
         'wizard/sync_wizard_views.xml',
         'views/sync_log_views.xml',
+        'views/sync_tasks_views.xml',
         'cron/cron_ad_group_sync_views.xml',
         'views/menu.xml',
 

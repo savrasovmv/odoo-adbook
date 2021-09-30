@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="base_sync_sync_tasks_view_form" model="ir.ui.view">
+        <field name="name">sync.tasks.form</field>
+        <field name="model">sync.tasks</field>
+        <field name="arch" type="xml">
+            <form string="Журнал задач" create="false" edit="false">
+                <sheet>
+                  <group>
+                    <field name="date"/>  
+                    <field name="name"/>  
+                    <field name="obj_create"/>  
+                    <field name="obj_create_name"/>
+                    <field name="obj_create_id"/>
+                    <field name="is_completed"/>
+                  </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="base_sync_sync_tasks_view_tree" model="ir.ui.view">
+        <field name="name">sync.tasks.tree</field>
+        <field name="model">sync.tasks</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="date"/>  
+                <field name="name"/>  
+                <field name="obj_create"/>  
+                <field name="obj_create_name"/>
+                <field name="obj_create_id"/>
+                <field name="is_completed"/>  
+
+            </tree>
+        </field>
+    </record>
+
+    <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
+    <record id="base_sync_sync_tasks_action" model="ir.actions.act_window">
+        <field name="name">Журнал задач</field>
+        <field name="res_model">sync.tasks</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p>
+             Нет записей
+          </p>
+        </field>
+    </record>
+
+   
+</odoo>
