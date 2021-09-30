@@ -21,35 +21,42 @@
 
                     <group string="Справочник">
                         <field name="adbook_name"/>
-                        <field name="sequence"/>
-                        <field name="is_default"/>
-
-                    </group>
-                    <group string="Основные"  >
                         <field name="name" attrs="{'readonly': ['|',('hr_department_id', '!=', False),('ad_department_id', '!=', False)]}"/>
                         <field name="parent_id" attrs="{'readonly': ['|',('hr_department_id', '!=', False),('ad_department_id', '!=', False)]}"/>
-                        <field name="company_id" attrs="{'readonly': ['|',('hr_department_id', '!=', False),('ad_department_id', '!=', False)]}"/>
                         <field name="branch_id" attrs="{'readonly': ['|',('hr_department_id', '!=', False),('ad_department_id', '!=', False)]}"/>
-                        <field name="level" attrs="{'readonly': ['|',('hr_department_id', '!=', False),('ad_department_id', '!=', False)]}"/>
-                        <field name="is_records"/>
-                    </group>
+                        <field name="hr_department_id" attrs="{'readonly': True, 'invisible': [('hr_department_id', '=', False)]}"/>
 
+                        <field name="is_show_full" widget="boolean_toggle"/>
+                        
 
-                    <group string="Связи">
-                        <field name="date_update" attrs="{'readonly': True}"/>
-                        <field name="hr_department_id" attrs="{'readonly': True}"/>
-                        <field name="ad_department_id" attrs="{'readonly': True}"/>
                     </group>
                     
                     <notebook>
+                        <page string="Доп. праметры" attrs="{'invisible': [('is_show_full', '=', False)]}"> 
+                            <group string="Справочник"  >
+                                <field name="company_id" attrs="{'readonly': ['|',('hr_department_id', '!=', False),('ad_department_id', '!=', False)]}"/>
+                                <field name="sequence"/>
+                                <field name="is_default"/>
+                                <field name="level" attrs="{'readonly': ['|',('hr_department_id', '!=', False),('ad_department_id', '!=', False)]}"/>
+                                <field name="is_records"/>
+                            </group>
+
+
+                            <group string="Связи">
+                                <field name="date_update" attrs="{'readonly': True}"/>
+                                <field name="hr_department_id" attrs="{'readonly': True}"/>
+                                <field name="ad_department_id" attrs="{'readonly': True}"/>
+                            </group>
+                            
+                        </page>
                     
-                        <page string="Дочернии подразделения" > 
+                        <page string="Дочернии подразделения" attrs="{'invisible': [('child_ids', '=', [])]}"> 
                             <tree string="Дочернии подразделения">
                                 <field name="child_ids"/>
                             </tree>
                         </page>
 
-                        <page string="Сотруднки подразделения" > 
+                        <page string="Сотруднки подразделения" attrs="{'invisible': [('employer_ids', '=', [])]}"> 
                             <tree string="Сотруднки подразделения">
                                 <field name="employer_ids"/>
                             </tree>

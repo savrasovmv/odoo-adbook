@@ -29,7 +29,7 @@ class AdbookDepartment(models.Model):
     # _parent_name = "parent_id" 
     # parent_path = fields.Char(index=True)
 
-    name = fields.Char(u'Наименование', required=True, default="Другие")
+    name = fields.Char(u'Наименование (1С)', required=True, default="Другие")
     adbook_name = fields.Char(u'Наименование в справочнике')
     hr_department_id = fields.Many2one("hr.department", string="HR управления/отделы")
     ad_department_id = fields.Many2one("ad.department", string="AD управления/отделы")
@@ -37,7 +37,7 @@ class AdbookDepartment(models.Model):
     
     # company_id = fields.Many2one('res.company', string='Компания', compute="_get_company", store=True)
     company_id = fields.Many2one('res.company', string='Компания')
-    branch_id = fields.Many2one("adbook.department", string="Подразделение")
+    branch_id = fields.Many2one("adbook.department", string="Подразделение(осн)")
     # branch_id = fields.Many2one("adbook.branch", string="Подразделение")
     parent_id = fields.Many2one("adbook.department", string="Родитель")
     sequence = fields.Integer(string=u"Сортировка", help="Сортировка", default=10)  
@@ -48,6 +48,9 @@ class AdbookDepartment(models.Model):
    
     child_ids = fields.One2many('adbook.department', 'parent_id', string='Дочернии подразделения')
     employer_ids = fields.One2many('adbook.employer', 'department_id', string='Сотрудники подразделения')
+
+    is_show_full = fields.Boolean(string='Показать все поля', help="Если установлено, значит подразделение установленно в ручную", default=False, store=False)
+
     # parent_left = fields.Integer('Left Parent', index=True)
     # parent_right = fields.Integer('Right Parent', index=True)
 

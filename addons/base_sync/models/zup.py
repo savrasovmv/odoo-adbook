@@ -850,4 +850,109 @@ class ZupSyncPersonalDoc(models.AbstractModel):
 
         return result
 
+
+
+    
+    def zup_sync_personal_doc_change(self, doc_obj=False, date_start=False, date_end=False):
+        """Загрузка измененных документов из ЗУП
+
+            GET - получение измененных документов
+                Пример ответа:
+                {
+                    {
+                        'dataType': 'documentChanges', 
+                        'discription': '', 
+                        'data': {
+                            'recruitmentDocumentList': [
+                                {
+                                    'guid1C': 'afbc2313-0ecc-11ec-94f9-00155d01140c', 
+                                    'posted': True, 
+                                    'number': '679-к', 
+                                    'documentDate': '2021-09-06T09:41:23', 
+                                    'recruitmenDate': '2021-09-06T00:00:00', 
+                                    'employeeGuid1C': 'e7527b99-0ec8-11ec-94f9-00155d01140c', 
+                                    'employmentType': 'Основное место работы'
+                                    },
+                }
+
+            POST - для пометки обработанных документов
+                пример тела
+                {
+                "documentList": [
+                                    {
+                                        "type": "transfer",
+                                        "guid1C": "feb5c95e-0b1d-11ec-94f8-00155d01140c"
+                                    },
+                                    {
+                                        "type": "sickLeave",
+                                        "guid1C": "b6cd8d3f-0970-11ec-94f8-00155d01140c"
+                                    }
+                                ]
+                }
+
+                type может принимать типы:
+                                            recruitment
+                                            transfer
+                                            multipleTransfer
+                                            dismiss
+
         
+        """
+
+        date = datetime.today()
+
+        doc_name = self.env[doc_obj]._description
+
+        param_api = False
+        
+        if doc_obj == 'hr.recruitment_doc':
+            param_api = 'zup_url_get_recruitment_doc_list'
+        if doc_obj == 'hr.termination_doc':
+            param_api = 'zup_url_get_termination_doc_list'
+        if doc_obj == 'hr.vacation_doc':
+            param_api = 'zup_url_get_vacation_doc_list'
+        if doc_obj == 'hr.trip_doc':
+            param_api = 'zup_url_get_trip_doc_list'
+        if doc_obj == 'hr.sick_leave_doc':
+            param_api = 'zup_url_get_sick_leave_doc_list'
+        if doc_obj == 'hr.transfer_doc':
+            param_api = 'zup_url_get_transfer_doc_list'
+
+        # print("+++++ doc_obj",doc_obj)
+
+
+        URL_API = self.env['ir.config_parameter'].sudo().get_param('zup_url_get_change_doc_list')
+        if not URL_API:
+            raise Exception("Не заполнен параметр zup_url_get_change_doc_list")
+
+        try:
+
+            res = self.zup_search(
+                                    url_api=URL_API,
+                                )
+        except Exception as error:
+            self.create_ad_log(date=date,result=error, is_error=True)
+            raise error
+
+        if res:
+            total_entries, data = res
+        else:
+            self.create_ad_log(date=date,result='Ошибка. Данные не получены', is_error=True)
+            raise Exception('Ошибка. Данные не получены')
+        
+        if total_entries == 0:
+            result = "Новых данных нет"
+            self.create_ad_log(result=result)
+            return result
+        
+        n = 0
+        message_error = ''
+        message_update = ''
+        message_create = ''
+        
+        for type_doc in data:
+            # print(line)
+            if 'guid1C' in type_doc:
+                pass
+
+    

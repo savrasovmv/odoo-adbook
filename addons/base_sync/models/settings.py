@@ -32,6 +32,7 @@ class Settings(models.TransientModel):
     zup_url_get_sick_leave_doc_list = fields.Char(u'Список документов Больничные', default='', help='URL API позвращает полный список документов Больничные сотрудников')
     zup_url_get_transfer_doc_list = fields.Char(u'Список документов Переводы сотрудников', default='', help='URL API позвращает полный список документов Переводы сотрудников')
     zup_url_get_multi_transfer_doc_list = fields.Char(u'Список документов Переводы сотрудников (группа)', default='', help='URL API позвращает полный список документов Переводы сотрудников групповой документ')
+    zup_url_get_change_doc_list = fields.Char(u'Список измененных документов', default='', help='URL API позвращает Список измененных документов, по POST передаются обработанные документы')
 
     
     @api.model
@@ -63,6 +64,7 @@ class Settings(models.TransientModel):
                 'zup_url_get_sick_leave_doc_list': conf.get_param('zup_url_get_sick_leave_doc_list'),
                 'zup_url_get_transfer_doc_list': conf.get_param('zup_url_get_transfer_doc_list'),
                 'zup_url_get_multi_transfer_doc_list': conf.get_param('zup_url_get_multi_transfer_doc_list'),
+                'zup_url_get_change_doc_list': conf.get_param('zup_url_get_change_doc_list'),
                 
         })
         return res
@@ -95,3 +97,4 @@ class Settings(models.TransientModel):
         conf.set_param('zup_url_get_sick_leave_doc_list', str(self.zup_url_get_sick_leave_doc_list))
         conf.set_param('zup_url_get_transfer_doc_list', str(self.zup_url_get_transfer_doc_list))
         conf.set_param('zup_url_get_multi_transfer_doc_list', str(self.zup_url_get_multi_transfer_doc_list))
+        conf.set_param('zup_url_get_change_doc_list', str(self.zup_url_get_change_doc_list))

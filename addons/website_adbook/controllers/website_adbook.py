@@ -280,7 +280,7 @@ class AdBook(http.Controller):
 
     @http.route(['/wadbook/search_employer/<string:search>'], type='json', auth="user", website=True, sitemap=True)
     def search_employer(self, search=False,**kw):
-        print('+++++++++++++', search)
+        # print('+++++++++++++', search)
         if not search or search=='':
             return http.request.redirect('/wadbook')
         

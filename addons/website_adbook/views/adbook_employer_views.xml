@@ -57,7 +57,7 @@
                                     <field name="search_text" attrs="{'readonly': ['|',('hr_employee_id', '!=', False),('ad_users_id', '!=', False)]}"/>
                                 </group>
                                 <group string="Связи">
-                                    <field name="hr_employee_id"  attrs="{'readonly':True}" />
+                                    <field name="hr_employee_id"  attrs="{'readonly': [('is_manual', '=', False)]}" />
                                     <field name="ad_users_id"  attrs="{'readonly':True}" />
                                     <field name="date_update"  attrs="{'readonly':True}" />
 
