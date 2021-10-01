@@ -4,4 +4,5 @@ from . import users
 # from . import website
 from . import mailbox
 from . import set_group
+from . import jms
 # from . import call_history

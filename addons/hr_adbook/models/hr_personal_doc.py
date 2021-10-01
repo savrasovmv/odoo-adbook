@@ -15,6 +15,7 @@ class HrRecruitmentDoc(models.Model):
     employment_type = fields.Char(string='Вид занятости', readonly=True)
     job_title = fields.Char(string='Должность', readonly=True)
     department_id = fields.Many2one("hr.department", string="Подразделение")
+    department_guid_1c = fields.Char(string="guid подразделение 1C")
     posted = fields.Boolean(string='Проведен?', readonly=True)
 
     employee_id = fields.Many2one("hr.employee", string="Сотрудник HR")
@@ -181,5 +182,5 @@ class HrTransferDoc(models.Model):
                 ], limit=1)
                 if len(recruitment)>0:
                     line.old_job_title = recruitment.job_title
-                    line.old_department_id = recruitment.department_id
+                    line.old_department_id = recruitment.department_id.id
 

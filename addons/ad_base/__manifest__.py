@@ -26,6 +26,9 @@
         'views/ad_group_views.xml',
         'views/set_group_views.xml',
         'views/mailbox_views.xml',
+        'views/jms_event_log_views.xml',
+        'wizard/jms_wizard_views.xml',
+
         # 'views/ad_sync_wizard_view.xml',
         'views/menu.xml',
         # 'views/templates_head.xml',

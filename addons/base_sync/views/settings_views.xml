@@ -114,7 +114,64 @@
 
                     </div>
 
+                    <h2>JWS</h2>
+                    <div class="row mt16 o_settings_container">
+                        
+                        <div class="col-lg-12 o_setting_box" id="base_sync">
+                            <div class="o_setting_right_pane" id="ldap_settings">
+                                <label for="jms_server"/>
+                                <div class="text-muted">
+                                    Сервер БД
+                                </div>
+                                <field name="jms_server"/>
 
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 o_setting_box" id="base_sync">
+                            <div class="o_setting_right_pane" id="ldap_settings">
+                                <label for="jms_driver"/>
+                                <div class="text-muted">
+                                    Драйвер MS SQL
+                                </div>
+                                <field name="jms_driver"/>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 o_setting_box" id="base_sync">
+                            <div class="o_setting_right_pane" id="ldap_settings">
+                                <label for="jms_database"/>
+                                <div class="text-muted">
+                                    Имя БД
+                                </div>
+                                <field name="jms_database"/>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 o_setting_box" id="base_sync">
+                            <div class="o_setting_right_pane" id="ldap_settings">
+                                <label for="jms_user"/>
+                                <div class="text-muted">
+                                    Пользователь БД
+                                </div>
+                                <field name="jms_user"/>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 o_setting_box" id="base_sync">
+                            <div class="o_setting_right_pane" id="ldap_settings">
+                                <label for="jms_password"/>
+                                <div class="text-muted">
+                                    Пароль БД
+                                </div>
+                                <field name="jms_password"/>
+
+                            </div>
+                        </div>
+                    </div>
 
                     <h2>ЗУП API</h2>
                     <div class="row mt16 o_settings_container">
@@ -281,6 +338,17 @@
                                     Список измененных кадровых документов
                                 </div>
                                 <field name="zup_url_get_change_doc_list"/>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 o_setting_box" id="base_sync">
+                            <div class="o_setting_right_pane" id="zup_settings">
+                                <label for="zup_url_remove_change_doc_list"/>
+                                <div class="text-muted">
+                                    Удаление из Списка измененных кадровых документов
+                                </div>
+                                <field name="zup_url_remove_change_doc_list"/>
 
                             </div>
                         </div>

@@ -1,4 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ad_organizacion_manager,ad.organizacion,model_ad_organizacion,group_ad_manager,1,1,1,1
+access_ad_organizacion_users,ad.organizacion,model_ad_organizacion,group_ad_users,1,0,0,0
 access_ad_branch_manager,ad.branch,model_ad_branch,group_ad_manager,1,1,1,1
 access_ad_branch_users,ad.branch,model_ad_branch,group_ad_users,1,0,0,0
 access_ad_department_manager,ad.department,model_ad_department,group_ad_manager,1,1,1,1
@@ -13,3 +15,7 @@ access_ad_set_group_manager,ad.set_group,model_ad_set_group,group_ad_manager,1,1
 access_ad_set_group_users,ad.set_group,model_ad_set_group,group_ad_users,1,0,0,0
 access_ad_set_group_line_manager,ad.set_group_line,model_ad_set_group_line,group_ad_manager,1,1,1,1
 access_ad_set_group_line_users,ad.set_group_line,model_ad_set_group_line,group_ad_users,1,0,0,0
+access_jms_event_log_manager,jms.event_log,model_jms_event_log,group_ad_manager,1,1,1,1
+access_jms_event_log_users,jms.event_log,model_jms_event_log,group_ad_users,1,0,0,0
+access_jms_wizard_manager,jms.wizard,model_jms_wizard,group_ad_manager,1,1,1,1
+access_jms_wizard_users,jms.wizard,model_jms_wizard,group_ad_users,1,0,0,0

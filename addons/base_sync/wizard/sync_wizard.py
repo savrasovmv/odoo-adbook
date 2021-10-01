@@ -95,10 +95,11 @@ class SyncWizard(models.TransientModel):
 
 
     def zup_sync_personal_doc_wizard_action(self):
-        try:
-            self.result = self.env['zup.sync_personal_doc'].sudo().zup_sync_personal_doc_full(self.start_date, self.end_date)
-        except Exception as error:
-            return self.return_result(error=error)
+        self.result = self.env['zup.sync_personal_doc'].sudo().zup_sync_personal_doc_full(self.start_date, self.end_date)
+        # try:
+        #     self.result = self.env['zup.sync_personal_doc'].sudo().zup_sync_personal_doc_full(self.start_date, self.end_date)
+        # except Exception as error:
+        #     return self.return_result(error=error)
         
         return self.return_result()
 

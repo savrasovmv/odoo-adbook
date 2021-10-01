@@ -33,8 +33,16 @@ class Settings(models.TransientModel):
     zup_url_get_sick_leave_doc_list = fields.Char(u'Список документов Больничные', default='', help='URL API позвращает полный список документов Больничные сотрудников')
     zup_url_get_transfer_doc_list = fields.Char(u'Список документов Переводы сотрудников', default='', help='URL API позвращает полный список документов Переводы сотрудников')
     zup_url_get_multi_transfer_doc_list = fields.Char(u'Список документов Переводы сотрудников (группа)', default='', help='URL API позвращает полный список документов Переводы сотрудников групповой документ')
-    zup_url_get_change_doc_list = fields.Char(u'Список измененных документов', default='', help='URL API позвращает Список измененных документов, по POST передаются обработанные документы')
+    zup_url_get_change_doc_list = fields.Char(u'Список измененных документов', default='', help='URL API позвращает Список измененных документов')
+    zup_url_remove_change_doc_list = fields.Char(u'Удалить из Списка измененных документов', default='', help='URL API удалить из Списка измененных документов, по POST передаются обработанные документы')
 
+
+    # jms
+    jms_server = fields.Char(u'Сервер БД jms')
+    jms_driver = fields.Char(u'Драйвер MS SQL jms', default='{/opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.8.so.1.1}')
+    jms_database = fields.Char(u'Имя БД jms', default='')
+    jms_user = fields.Char(u'Пользователь БД jms', default='')
+    jms_password = fields.Char(u'Пароль БД jms', default='')
     
     @api.model
     def get_values(self):
@@ -67,7 +75,13 @@ class Settings(models.TransientModel):
                 'zup_url_get_transfer_doc_list': conf.get_param('zup_url_get_transfer_doc_list'),
                 'zup_url_get_multi_transfer_doc_list': conf.get_param('zup_url_get_multi_transfer_doc_list'),
                 'zup_url_get_change_doc_list': conf.get_param('zup_url_get_change_doc_list'),
+                'zup_url_remove_change_doc_list': conf.get_param('zup_url_remove_change_doc_list'),
                 
+                'jms_server': conf.get_param('jms_server'),
+                'jms_driver': conf.get_param('jms_driver'),
+                'jms_database': conf.get_param('jms_database'),
+                'jms_user': conf.get_param('jms_user'),
+                'jms_password': conf.get_param('jms_password'),
         })
         return res
 
@@ -101,3 +115,10 @@ class Settings(models.TransientModel):
         conf.set_param('zup_url_get_transfer_doc_list', str(self.zup_url_get_transfer_doc_list))
         conf.set_param('zup_url_get_multi_transfer_doc_list', str(self.zup_url_get_multi_transfer_doc_list))
         conf.set_param('zup_url_get_change_doc_list', str(self.zup_url_get_change_doc_list))
+        conf.set_param('zup_url_remove_change_doc_list', str(self.zup_url_remove_change_doc_list))
+
+        conf.set_param('jms_server', str(self.jms_server))
+        conf.set_param('jms_driver', str(self.jms_driver))
+        conf.set_param('jms_database', str(self.jms_database))
+        conf.set_param('jms_user', str(self.jms_user))
+        conf.set_param('jms_password', str(self.jms_password))

@@ -105,11 +105,14 @@ class ZupConnect(models.AbstractModel):
             raise Exception("Ошибка при выполнении подключения к ЗУП:" + str(error))
 
         res = response.json()
-        total_entries = len(res['data'])
-        data = res['data']
-        _logger.info("Получены данные из ЗУП, в кол-ве: %s" % total_entries)
-        #return total_entries, data
-        return total_entries, data
+        if 'data' in res:
+            total_entries = len(res['data'])
+            data = res['data']
+            _logger.info("Получены данные из ЗУП, в кол-ве: %s" % total_entries)
+            #return total_entries, data
+            return total_entries, data
+        else:
+            return True
 
 
     def create_ad_log(self, date=False, is_error=False, result=''):
@@ -619,9 +622,6 @@ class ZupSyncPassport(models.AbstractModel):
                         vals['fa_apartments_type'] = apartments_text[0]['type']
                         vals['fa_apartments'] = apartments_text[0]['number']
 
-
-                print(guid_1c) 
-                print(vals) 
                 message_update += record_search.name + '\n'
                 record_search.write(vals)
                 
@@ -665,6 +665,7 @@ class ZupSyncPersonalDoc(models.AbstractModel):
                 'hr.trip_doc',
                 'hr.sick_leave_doc',
                 'hr.transfer_doc',
+                'hr.transfer_doc_multi', # такого объекта нет, потом преобразуем в hr.transfer_doc
             ]
         result = ''
         for doc_obj in doc_obj_list:
@@ -707,7 +708,7 @@ class ZupSyncPersonalDoc(models.AbstractModel):
 		    "endDate": date_end.strftime("%Y-%m-%dT%H:%M:%S"),
         }
 
-        doc_name = self.env[doc_obj]._description
+        
 
         param_api = False
         
@@ -723,6 +724,8 @@ class ZupSyncPersonalDoc(models.AbstractModel):
             param_api = 'zup_url_get_sick_leave_doc_list'
         if doc_obj == 'hr.transfer_doc':
             param_api = 'zup_url_get_transfer_doc_list'
+        if doc_obj == 'hr.transfer_doc_multi': # т.к transfer_doc_multi не существует заменяем объект
+            param_api = 'zup_url_get_multi_transfer_doc_list'
 
         # print("+++++ doc_obj",doc_obj)
 
@@ -753,7 +756,11 @@ class ZupSyncPersonalDoc(models.AbstractModel):
             result = "Новых данных нет"
             self.create_ad_log(result=result)
             return result
-        
+
+        if doc_obj == 'hr.transfer_doc_multi': # Перевод на другую ф-ю
+            return self.zup_sync_multi_transfer_doc(data)
+
+        doc_name = self.env[doc_obj]._description
         n = 0
         message_error = ''
         message_update = ''
@@ -781,74 +788,64 @@ class ZupSyncPersonalDoc(models.AbstractModel):
                     department_id = False
 
                 # Постоянные параметры документов
-                if line['documentDate'] == '0001-01-01T00:00:00':
-                    doc_date = False
-                else:
-                    doc_date = line['documentDate']
-
                 const_vals = {
-                    'date': doc_date,
+                    'date': get_date(line['documentDate']),
                     'posted': line['posted'],
                     'guid_1c': line['guid1C'],
                     'number_1c': line['number'],
                     'employee_guid_1c': line['employeeGuid1C'],
                     'employee_id': empl_search.id,
                 }
+
                 
 
                 # Индивидуальные параметры
                 doc_vals = {}
+
                 if doc_obj == 'hr.recruitment_doc':
                     doc_vals = {
-                        'service_start_date': line['recruitmenDate'],
+                        'service_start_date': get_date(line['recruitmenDate']),
                         'employment_type': line['employmentType'],
                         'department_id': department_id,
+                        'job_title': line['position'],
+                        'department_guid_1c': line['departament'],
                     }
+
                 if doc_obj == 'hr.termination_doc':
                     doc_vals = {
-                        'service_termination_date': line['dismissDate'],
+                        'service_termination_date': get_date(line['dismissDate']),
                     }
+
                 if doc_obj == 'hr.vacation_doc' or doc_obj == 'hr.trip_doc' or doc_obj == 'hr.sick_leave_doc':
-                    doc_end_date = False
-                    if line['endDate'] != '0001-01-01T00:00:00':
-                        doc_end_date = datetime.strptime(line['endDate'], '%Y-%m-%dT%H:%M:%S').date()
                     doc_vals = {
-                        'start_date': datetime.strptime(line['startDate'], '%Y-%m-%dT%H:%M:%S').date(),
-                        'end_date': doc_end_date,
+                        'start_date': get_date(line['startDate']),
+                        'end_date': get_date(line['endDate']),
                     }
                     
-                # if doc_obj == 'hr.trip_doc':
-                # if doc_obj == 'hr.sick_leave_doc':
                 if doc_obj == 'hr.transfer_doc':
-                    doc_end_date = False
-                    if line['endDate'] != '0001-01-01T00:00:00':
-                        doc_end_date = datetime.strptime(line['endDate'], '%Y-%m-%dT%H:%M:%S').date()
-
                     dep_search = self.env['hr.department'].search([
-                        ('guid_1c', '=', line['departament'])
+                            ('guid_1c', '=', line['departament'])
                         ],limit=1)
 
                     # print('++++++++++++===')
                     doc_vals = {
-                        'start_date': datetime.strptime(line['startDate'], '%Y-%m-%dT%H:%M:%S').date(),
-                        'end_date': doc_end_date,
+                        'start_date': get_date(line['startDate']),
+                        'end_date': get_date(line['endDate']),
                         'job_title': line['position'],
                         'department_id': dep_search.id if len(dep_search)>0 else False,
                     }
 
                 vals = {**const_vals, **doc_vals}
 
-                if doc_obj == 'hr.vacation_doc':
-                    print(vals)
-                # print(vals)
                 doc_search = self.env[doc_obj].search([
-                    ('guid_1c', '=', guid_1c)
-                ],limit=1)
+                        ('guid_1c', '=', guid_1c)
+                    ],limit=1)
                 if len(doc_search)>0:
-                    doc = self.env[doc_obj].write(vals)
+                    self.env[doc_obj].write(vals)
                     message_update += line['number'] + ' от ' + line['documentDate'] + '\n'
-                else:
-                    doc = self.env[doc_obj].create(vals)
+
+                elif vals['posted'] == True: #создаем только проведенные документ
+                    self.env[doc_obj].create(vals)
                     message_create += line['number'] + ' от ' + line['documentDate'] + '\n'
                 
             else:
@@ -875,6 +872,113 @@ class ZupSyncPersonalDoc(models.AbstractModel):
         return result
 
 
+
+
+
+    def zup_sync_multi_transfer_doc(self, data, is_def_change=False):
+        """Загрузка документов групповых переводов ЗУП
+        
+        """
+
+        if not data:
+            raise Exception("Нет данных для синхронизации")
+        
+
+        date = datetime.today()
+        doc_name = self.env['hr.transfer_doc']._description
+        n = 0
+        message_error = ''
+        message_update = ''
+        message_create = ''
+        
+        for line in data:
+
+            if 'guid1C' in line and 'employeesList' in line:
+                
+                guid_1c = line['guid1C'] # Идентификатор документа
+                employee_list = line['employeesList'] # список сотрудников
+
+                # Постоянные параметры документов
+                const_vals = {
+                    'date': get_date(line['documentDate']),
+                    'posted': line['posted'],
+                    'guid_1c': line['guid1C'],
+                    'number_1c': line['number'],
+                }
+
+                for emp_line in employee_list:
+                    n += 1
+                    # Индивидуальные параметры
+                    dep_search = self.env['hr.department'].search([
+                        ('guid_1c', '=', emp_line['departament'])
+                    ],limit=1)
+
+                    employee_guid_1c = emp_line['employeeGuid1C']
+                    empl_search = self.env['hr.employee'].search([
+                        ('guid_1c', '=', employee_guid_1c)
+                        ],limit=1)
+                    if len(empl_search) == 0:
+                        message_error += "не найден сотрудник с gud1c %s, пропуск \n" % ( guid_1c)
+                        continue # Переход к следующей записи
+
+                    doc_vals = {
+                        'start_date': get_date(emp_line['startDate']),
+                        'end_date': get_date(emp_line['endDate']),
+                        'job_title': emp_line['position'],
+                        'department_id': dep_search.id if len(dep_search)>0 else False,
+                        'employee_guid_1c': employee_guid_1c,
+                        'employee_id': empl_search.id,
+                    }
+
+                    vals = {**const_vals, **doc_vals}
+
+                    doc_search = self.env['hr.transfer_doc'].search([
+                            ('guid_1c', '=', guid_1c),
+                            ('employee_guid_1c', '=', employee_guid_1c)
+                        ],limit=1)
+
+                    if len(doc_search)>0:
+                        self.env['hr.transfer_doc'].write(vals)
+                        message_update += line['number'] + ' от ' + line['documentDate'] + '\n'
+
+                    elif vals['posted'] == True: #создаем только проведенные документ
+                        self.env['hr.transfer_doc'].create(vals)
+                        message_create += line['number'] + ' от ' + line['documentDate'] + '\n'
+                
+            else:
+                message_error += "Отсутствует обязательное поле в запси: %s \n" % line
+
+        if is_def_change:
+            return {
+                'result': True,
+                'message_update': message_update,
+                'message_create': message_create,
+                'message_error': message_error,
+            }
+
+
+        result ='Всего получено из ЗУП %s записей \n' % n
+        if not message_error == '':
+            result = "\n Обновление прошло с предупреждениями: \n \n" + message_error
+        else:
+            result = "\n Обновление прошло успешно \n \n"
+
+        _logger.info(result)
+
+        if not message_update == '':
+            result += "\n Обновлены Документы %s: \n" % doc_name 
+            result +=  message_update
+        if not message_create == '':
+            result += "\n Созданы Документы %s: \n" % doc_name 
+            result +=  message_create
+
+        self.create_ad_log(result=result)
+
+        return result
+
+
+
+
     
 
 
@@ -894,7 +998,7 @@ class ZupSyncPersonalDoc(models.AbstractModel):
                 ],limit=1)
             if len(empl_search) == 0:
                 if create_employer:
-                    res = self.env['zup.sync_employer'].zup_sync_employer(by_guid_1c=employee_guid_1c)
+                    self.env['zup.sync_employer'].zup_sync_employer(by_guid_1c=employee_guid_1c)
                     empl_search = self.env['hr.employee'].search([
                         ('guid_1c', '=', employee_guid_1c)
                         ],limit=1)     
@@ -907,22 +1011,26 @@ class ZupSyncPersonalDoc(models.AbstractModel):
                         'message_create': message_create,
                         'message_error': message_error,
                     }
-            
+            else:
+                if doc_obj == 'hr.recruitment_doc' or doc_obj == 'hr.termination_doc' or doc_obj == 'hr.transfer_doc':
+                    self.env['zup.sync_employer'].zup_sync_employer(by_guid_1c=employee_guid_1c)
 
             
             if empl_search.department_id:
                 department_id = empl_search.department_id.id
             else:
-                department_id = False
+                if 'departament' in data:
+                    dep_search = self.env['hr.department'].search([
+                        ('guid_1c', '=', data['departament'])
+                        ],limit=1)
+                    if len(dep_search)>0:
+                        department_id = dep_search.id
+                    else:
+                        department_id = False
 
             # Постоянные параметры документов
-            if data['documentDate'] == '0001-01-01T00:00:00':
-                doc_date = False
-            else:
-                doc_date = data['documentDate']
-
             const_vals = {
-                'date': doc_date,
+                'date': get_date(data['documentDate']),
                 'posted': data['posted'],
                 'guid_1c': data['guid1C'],
                 'number_1c': data['number'],
@@ -938,35 +1046,26 @@ class ZupSyncPersonalDoc(models.AbstractModel):
                     'service_start_date': data['recruitmenDate'],
                     'employment_type': data['employmentType'],
                     'department_id': department_id,
+                    'job_title': data['position'],
+                    'department_guid_1c': data['departament'],
                 }
+
             if doc_obj == 'hr.termination_doc':
                 doc_vals = {
                     'service_termination_date': data['dismissDate'],
                 }
-            if doc_obj == 'hr.vacation_doc' or doc_obj == 'hr.trip_doc' or doc_obj == 'hr.sick_leave_doc':
-                
-                # doc_end_date = False
-                # if data['endDate'] != '0001-01-01T00:00:00':
-                #     doc_end_date = datetime.strptime(data['endDate'], '%Y-%m-%dT%H:%M:%S').date()
 
+            if doc_obj == 'hr.vacation_doc' or doc_obj == 'hr.trip_doc' or doc_obj == 'hr.sick_leave_doc':
                 doc_vals = {
                     'start_date': get_date(data['startDate']),
                     'end_date': get_date(data['endDate']),
                 }
-                
-            # if doc_obj == 'hr.trip_doc':
-            # if doc_obj == 'hr.sick_leave_doc':
-            if doc_obj == 'hr.transfer_doc':
-                # doc_end_date = False
-                # if data['endDate'] != '0001-01-01T00:00:00':
-                #     doc_end_date = datetime.strptime(data['endDate'], '%Y-%m-%dT%H:%M:%S').date()
 
+            if doc_obj == 'hr.transfer_doc':
                 dep_search = self.env['hr.department'].search([
                     ('guid_1c', '=', data['departament'])
                     ],limit=1)
 
-                # print('++++++++++++===',data)
-                # print('++++++++++++===',data['startDate'])
                 doc_vals = {
                     'start_date': get_date(data['startDate']),
                     'end_date': get_date(data['endDate']),
@@ -976,15 +1075,12 @@ class ZupSyncPersonalDoc(models.AbstractModel):
 
             vals = {**const_vals, **doc_vals}
 
-            if doc_obj == 'hr.vacation_doc':
-                print(vals)
-            # print(vals)
-
             doc_name = self.env[doc_obj]._description
             doc_search = self.env[doc_obj].search([
                 ('guid_1c', '=', guid_1c)
             ],limit=1)
             if len(doc_search)>0:
+                # print(vals)
                 doc = self.env[doc_obj].write(vals)
                 message_update = doc_name + ' ' + data['number'] + ' от ' + data['documentDate'] + '\n'
             elif vals['posted'] == True: #создаем только проведенные документы
@@ -1061,35 +1157,25 @@ class ZupSyncPersonalDoc(models.AbstractModel):
                                             transfer
                                             multipleTransfer
                                             dismiss
+                                            vacation
+                                            sickLeave
+                                            businessTrip
 
         
         """
 
         date = datetime.today()
 
-        
-        # if doc_obj == 'hr.recruitment_doc':
-        #     param_api = 'zup_url_get_recruitment_doc_list'
-        # if doc_obj == 'hr.termination_doc':
-        #     param_api = 'zup_url_get_termination_doc_list'
-        # if doc_obj == 'hr.vacation_doc':
-        #     param_api = 'zup_url_get_vacation_doc_list'
-        # if doc_obj == 'hr.trip_doc':
-        #     param_api = 'zup_url_get_trip_doc_list'
-        # if doc_obj == 'hr.sick_leave_doc':
-        #     param_api = 'zup_url_get_sick_leave_doc_list'
-        # if doc_obj == 'hr.transfer_doc':
-        #     param_api = 'zup_url_get_transfer_doc_list'
-
-        # print("+++++ doc_obj",doc_obj)
-
 
         URL_API = self.env['ir.config_parameter'].sudo().get_param('zup_url_get_change_doc_list')
         if not URL_API:
             raise Exception("Не заполнен параметр zup_url_get_change_doc_list")
 
+        URL_API_REMOVE = self.env['ir.config_parameter'].sudo().get_param('zup_url_remove_change_doc_list')
+        if not URL_API_REMOVE:
+            raise Exception("Не заполнен параметр zup_url_remove_change_doc_list")
+            
         try:
-
             res = self.zup_search(
                                     url_api=URL_API,
                                 )
@@ -1112,36 +1198,50 @@ class ZupSyncPersonalDoc(models.AbstractModel):
         message_error = ''
         message_update = ''
         message_create = ''
-        
+        guid_change_doc_list = []
         for type_doc in data:
             print(type_doc)
             doc_obj = False
                            
             if type_doc == 'recruitmentDocumentList':
                 doc_obj = 'hr.recruitment_doc'
+                remove_type  = 'recruitment'
             if type_doc == 'transferDocumentList':
                 doc_obj = 'hr.transfer_doc'
-            # if type_doc == 'multipleTransferDocumentList':
-            #     doc_obj = 'hr.transfer_doc'
+                remove_type  = 'transfer'
+            if type_doc == 'multipleTransferDocumentList':
+                doc_obj = 'hr.transfer_doc'
+                remove_type  = 'multipleTransfer'
             if type_doc == 'dismissDocumentList':
                 doc_obj = 'hr.termination_doc'
+                remove_type  = 'dismiss'
             if type_doc == 'vacationDocumentList':
                 doc_obj = 'hr.vacation_doc'
+                remove_type  = 'vacation'
             if type_doc == 'sickLeaveDocumentList':
                 doc_obj = 'hr.sick_leave_doc'
+                remove_type  = 'sickLeave'
             if type_doc == 'businessTripList':
                 doc_obj = 'hr.trip_doc'
+                remove_type  = 'businessTrip'
             
             if not doc_obj:
                 message_error += "не найден объект с именем %s, пропуск \n" % ( type_doc)
                 continue # Переход к следующей записи
 
             for line in data[type_doc]:
-                n += 1
-                if type_doc == 'vacationDocumentList':
-                    print(line)
-                result_doc = self.update_personal_doc(doc_obj=doc_obj, data=line, create_employer=True)
+                if 'guid1C' in line:
+                    guid_1c = line['guid1C']
+                    n += 1
+                    if type_doc == 'multipleTransferDocumentList':
+                        print(line)
+                        result_doc = self.zup_sync_multi_transfer_doc(data=line, is_def_change=True)
+                    else:
+                        result_doc = self.update_personal_doc(doc_obj=doc_obj, data=line, create_employer=True)
+                
                 result_create = result_doc['result']
+                if result_create:
+                    guid_change_doc_list.append({'type': remove_type, 'guid1C': guid_1c}) 
                 message_create += result_doc['message_create']
                 message_update += result_doc['message_update']
                 message_error += result_doc['message_error']
@@ -1164,5 +1264,24 @@ class ZupSyncPersonalDoc(models.AbstractModel):
             result +=  message_create
 
         self.create_ad_log(result=result)
+
+        print(guid_change_doc_list)
+
+        param = {
+            "documentList": guid_change_doc_list
+        }
+
+        try:
+            if len(guid_change_doc_list)>0:
+                res = self.zup_post(
+                                    param=param,
+                                    url_api=URL_API_REMOVE
+                                )
+        except Exception as error:
+            self.create_ad_log(date=date,result=error, is_error=True)
+            raise error
+
+        if not res:
+            result += "Ошибка при пометке измененных документов"
 
         return result

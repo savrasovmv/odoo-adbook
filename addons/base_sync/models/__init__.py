@@ -5,3 +5,4 @@ from . import sync_log
 from . import ad
 from . import zup
 from . import tasks
+from . import jms
