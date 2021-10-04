@@ -26,7 +26,7 @@ class JMSConnect(models.AbstractModel):
         if len(old)>0:
             date = old.date.strftime("%Y-%m-%d %H:%M:%S")
         else:
-            date = "{ts '2021-01-01 00:00:00'}"
+            date = "2021-01-01 00:00:00"
         cursor = conn.cursor()
         cursor.execute("""SELECT
                               				
