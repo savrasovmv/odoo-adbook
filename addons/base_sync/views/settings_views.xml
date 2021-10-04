@@ -88,6 +88,28 @@
 
                             </div>
                         </div>
+
+                        <div class="col-lg-12 o_setting_box" id="base_sync">
+                            <div class="o_setting_right_pane" id="ldap_settings">
+                                <label for="ldap_home_dirertory"/>
+                                <div class="text-muted">
+                                    homeDirectory
+                                </div>
+                                <field name="ldap_home_dirertory"/>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 o_setting_box" id="base_sync">
+                            <div class="o_setting_right_pane" id="ldap_settings">
+                                <label for="ldap_home_drive"/>
+                                <div class="text-muted">
+                                    homeDrive
+                                </div>
+                                <field name="ldap_home_drive"/>
+
+                            </div>
+                        </div>
                         
                         <div class="col-lg-6 o_setting_box" id="base_sync">
                             <div class="o_setting_right_pane" id="ldap_settings">

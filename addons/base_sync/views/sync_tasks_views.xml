@@ -5,7 +5,11 @@
         <field name="name">sync.tasks.form</field>
         <field name="model">sync.tasks</field>
         <field name="arch" type="xml">
-            <form string="Журнал задач" create="false" edit="false">
+            <form string="Журнал задач" create="false" edit="true">
+                <header>
+                    <button name="do_tasks_action" type="object" string="Выполнить задачи"/>
+                    
+                </header>
                 <sheet>
                   <group>
                     <field name="date"/>  
@@ -14,6 +18,8 @@
                     <field name="obj_create_name"/>
                     <field name="obj_create_id"/>
                     <field name="is_completed"/>
+                    <field name="is_canceled"/>
+                    <field name="is_updated"/>
                   </group>
                 </sheet>
             </form>
@@ -31,6 +37,8 @@
                 <field name="obj_create_name"/>
                 <field name="obj_create_id"/>
                 <field name="is_completed"/>  
+                <field name="is_canceled"/>
+                <field name="is_updated"/>
 
             </tree>
         </field>

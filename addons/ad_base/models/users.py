@@ -36,6 +36,7 @@ class AdBranch(models.Model):
     is_view_photo_adbook = fields.Boolean(string='Показывать фото в справочнике контактов')
     sequence = fields.Integer(string=u"Сортировка", help="Сортировка", default=10)
 
+    is_default_branch = fields.Boolean(string='AD контейнер по умолчанию', help='Если установлено, новые пользователи не вошедшие не в одну группу будут создаваться тут')
     hr_department_id = fields.Many2one("hr.department", string="HR Подразделене")
 
 

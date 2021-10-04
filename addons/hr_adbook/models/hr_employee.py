@@ -42,6 +42,8 @@ class HrEmployee(models.Model):
 
     # Возраст
     age = fields.Integer(string="Возраст", compute="_compute_age")
+
+    is_fired = fields.Boolean(string='Уволен')
     
     # Доп Телефоны
     mobile_phone2 = fields.Char(string='Мобильный телефон 2')
@@ -178,6 +180,7 @@ class HrEmployee(models.Model):
         ('vacation', 'Отпуск'),
         ('trip', 'Командировка'),
         ('sick_leave', 'Больничный'),
+        ('fired', 'Уволен'),
     ], string='Статус', readonly=True, default='work')
 
     service_status_start_date = fields.Date(string='Начало', readonly=True)
@@ -285,3 +288,13 @@ class HrEmployee(models.Model):
                 line.service_status = 'sick_leave'
                 line.service_status_start_date = sick_leave.start_date
                 line.service_status_end_date = sick_leave.end_date
+
+    def set_fired(self, fired=True, date=False):
+        print('-----------------', fired)
+        self.is_fired = fired
+        if fired:
+            self.service_termination_date = date
+            self.service_status = 'fired'
+        else:
+            self.service_termination_date = False
+            self.service_status = 'work'

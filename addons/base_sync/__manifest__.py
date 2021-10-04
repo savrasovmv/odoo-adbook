@@ -14,9 +14,11 @@
         'python': [
             'requests', 
             'ldap3',
+            'unidecode'
             ]},
     'depends': [
         'base',
+        'mail',
         'hr_adbook',
         'ad_base'
     ],
@@ -28,6 +30,7 @@
         'views/sync_tasks_views.xml',
         'cron/cron_ad_group_sync_views.xml',
         'views/menu.xml',
+        'views/tasks_mail_templates.xml',
 
         'security/ir.model.access.csv',
 

@@ -16,6 +16,8 @@ class Settings(models.TransientModel):
     ldap_search_filter = fields.Char(u'ldap_search_filter', default='(|(objectClass=user)(objectClass=user))')
     ldap_search_group_filter = fields.Char(u'ldap_search_group_filter', default='(objectClass=group)')
     ldap_connect_timeout = fields.Integer(u'LDAP timeout, сек', default=30)
+    ldap_home_dirertory = fields.Char(u'homeDirectory')
+    ldap_home_drive = fields.Char(u'homeDrive', default='O:')
 
     # ЗУП
     zup_user = fields.Char(u'Пользователь ЗУП', default='')
@@ -58,6 +60,8 @@ class Settings(models.TransientModel):
                 'ldap_search_filter': conf.get_param('ldap_search_filter'),
                 'ldap_search_group_filter': conf.get_param('ldap_search_group_filter'),
                 'ldap_connect_timeout': conf.get_param('ldap_connect_timeout'),
+                'ldap_home_dirertory': conf.get_param('ldap_home_dirertory'),
+                'ldap_home_drive': conf.get_param('ldap_home_drive'),
 
                 'zup_user': conf.get_param('zup_user'),
                 'zup_password': conf.get_param('zup_password'),
@@ -98,6 +102,8 @@ class Settings(models.TransientModel):
         conf.set_param('ldap_search_filter', str(self.ldap_search_filter))
         conf.set_param('ldap_search_group_filter', str(self.ldap_search_group_filter))
         conf.set_param('ldap_connect_timeout', int(self.ldap_connect_timeout))
+        conf.set_param('ldap_home_dirertory', str(self.ldap_home_dirertory))
+        conf.set_param('ldap_home_drive', str(self.ldap_home_drive))
 
         conf.set_param('zup_user', str(self.zup_user))
         conf.set_param('zup_password', str(self.zup_password))

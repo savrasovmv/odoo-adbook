@@ -44,6 +44,7 @@
                     groups="hr.group_hr_user"
                     string="Текущее состояние"
                 >
+                    <field name="is_fired" />
                     <field name="service_status" />
                     <div>
                         <span class="ml8 mr8">с</span>

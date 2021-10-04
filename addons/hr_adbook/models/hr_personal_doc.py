@@ -6,7 +6,7 @@ class HrRecruitmentDoc(models.Model):
     _order = "date desc"
 
     name = fields.Char(u'Наименование', compute='_get_name', store=True )
-    date = fields.Date(string='Дата документа', readonly=True)
+    date = fields.Date(string='Дата документа')
     service_start_date = fields.Date(string='Дата приема', help="Дата с которой сотрудник устроен на работу (первый рабочий день) и исполняет обязанности по должности", readonly=True)
 
     guid_1c = fields.Char(string='guid1C', readonly=True, groups="base.group_erp_manager, base.group_system")
@@ -16,7 +16,7 @@ class HrRecruitmentDoc(models.Model):
     job_title = fields.Char(string='Должность', readonly=True)
     department_id = fields.Many2one("hr.department", string="Подразделение")
     department_guid_1c = fields.Char(string="guid подразделение 1C")
-    posted = fields.Boolean(string='Проведен?', readonly=True)
+    posted = fields.Boolean(string='Проведен?')
 
     employee_id = fields.Many2one("hr.employee", string="Сотрудник HR")
 
@@ -26,6 +26,18 @@ class HrRecruitmentDoc(models.Model):
         for line in self:
             if line.employee_id:
                 line.name = line.employee_id.name
+
+    @api.model
+    def create(self, vals):
+        doc = super(HrRecruitmentDoc, self).create(vals)
+        if vals.get('posted'):
+            self.env['sync.tasks'].sudo().create_task(self)
+        return doc
+    
+    def write(self, vals):
+        doc = super(HrRecruitmentDoc, self).write(vals)
+        self.env['sync.tasks'].sudo().update_task(self)
+        return doc
 
 
 class HrTerminationDoc(models.Model):
@@ -45,7 +57,7 @@ class HrTerminationDoc(models.Model):
     guid_1c = fields.Char(string='guid1C', readonly=True, groups="base.group_erp_manager, base.group_system")
     number_1c = fields.Char(string='Код 1С', readonly=True)
     employee_guid_1c = fields.Char(string='guid сотрудника 1C', readonly=True)
-    posted = fields.Boolean(string='Проведен?', readonly=True)
+    posted = fields.Boolean(string='Проведен?')
 
     employee_id = fields.Many2one("hr.employee", string="Сотрудник HR", readonly=True)
 
@@ -54,6 +66,26 @@ class HrTerminationDoc(models.Model):
         for line in self:
             if line.employee_id:
                 line.name = line.employee_id.name
+
+    @api.model
+    def create(self, vals):
+        doc = super(HrTerminationDoc, self).create(vals)
+        if vals.get('posted'):
+            self.env['sync.tasks'].sudo().create_task(self)
+        return doc
+    
+    def write(self, vals):
+        doc = super(HrTerminationDoc, self).write(vals)
+        self.env['sync.tasks'].sudo().update_task(self)
+        return doc
+
+    # def write(self, vals):
+    #     result = super(Survey, self).write(vals)
+    #     if 'certification_give_badge' in vals:
+    #         return self.sudo()._handle_certification_badges(vals)
+    #     return result
+
+    
 
 
 

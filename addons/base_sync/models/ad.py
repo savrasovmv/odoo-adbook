@@ -2,7 +2,14 @@
 
 from odoo import fields, models, api
 from ldap3 import Server, Connection, SUBTREE, MODIFY_REPLACE, LEVEL
+import ldap3.utils.conv
+from ldap3.extend.microsoft.addMembersToGroups import ad_add_members_to_groups as AddUserToGroup
 from datetime import datetime
+import unidecode
+import random
+import string
+
+
 import base64
 import logging
 _logger = logging.getLogger(__name__)
@@ -116,11 +123,132 @@ class AdConnect(models.AbstractModel):
         except Exception as error:
             raise error
 
-    def ldap_create_user(self, param=False):
-        if not param:
+
+
+    def get_branch_name(self, hr_department_id):
+        """Принимает hr_department_id и возвращает имя контейнера AD для данного подразделения"""
+        ad_branch = self.env['ad.branch'].search([])
+        for line in ad_branch:
+            if hr_department_id == line.hr_department_id.id or hr_department_id in line.hr_department_id.child_ids:
+                return line.name
+    
+
+
+    def check_login(self, username):
+        """Проверяет существует ли пользователь с таким логином"""
+        search = self.env['ad.users'].sudo().search([('username', '=', username)])
+        if len(search)>0:
+            return True
+        
+        return False
+
+
+
+    def get_username(self, surname, name, tname=False):
+        """Принимает ФИО и возвращает логин IvanovII"""
+        
+        surname = unidecode.unidecode('%s' % surname)
+        name = unidecode.unidecode('%s' % name)
+        if tname:
+            tname = unidecode.unidecode('%s' % tname)
+            username =  '%s%c%c' % (surname, name[0], tname[0])
+        else:
+            username =  '%s%c%c' % (surname, name[0])
+        
+        # Проверяем существует ли такой логин, если да то пробуем вариант IvanovIvanI
+        if self.check_login(username):
+            if tname:
+                tname = unidecode.unidecode('%s' % tname)
+                username =  '%s%c%c' % (surname, name, tname[0])
+            else:
+                username =  '%s%c%c' % (surname, name)
+            
+            if self.check_login(username):
+                return False
+            else:
+                return username
+
+        return username
+
+
+
+    def get_pass(self):
+        """Генерирует пароль"""
+        num = set('0123456789')
+        lowalph = set('qwertyuiopasdfghjklzxcvbnm')
+        upalph = set('QWERTYUIOPASDFGHJKLZXCVBNM')
+        p = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        if any((c in num) for c in p) and any((c in lowalph) for c in p) and any((c in upalph) for c in p):
+            return p
+        else:
+            return self.get_pass()
+
+
+
+    def set_pass(self, username, branch, password):
+        """Устанавливает пароль пользователю"""
+        LDAP_SEARCH_BASE = self.env['ir.config_parameter'].sudo().get_param('ldap_search_base')
+        c = self.ldap_connect()
+        c.bind()
+        return c.extend.microsoft.modify_password('CN=%s,OU=%s,%s' % (username, branch, LDAP_SEARCH_BASE), password)
+
+
+
+    def ldap_create_user(self, employee_id):
+        """Создает пользователя AD из сотрудника HR"""
+        if not employee_id:
             _logger.warning('Нет параметров для создния пользователя AD')
             raise Exception("Нет параметров для создния пользователя AD")
-        pass
+
+        LDAP_SEARCH_BASE = self.env['ir.config_parameter'].sudo().get_param('ldap_search_base')
+        LDAP_HOME_DIRECTORY = self.env['ir.config_parameter'].sudo().get_param('ldap_home_dirertory')
+        LDAP_HOME_DRIVER = self.env['ir.config_parameter'].sudo().get_param('ldap_home_drive')
+
+
+
+        c = self.ldap_connect()
+        c.bind()
+        
+        full_name = employee_id.name
+
+        fname = full_name.split()
+        surname = fname[0]
+        name = fname[1]
+        tname = ''
+        if len(fname)>2:
+            tname = fname[2]
+
+        username = self.get_username(surname, name, tname)
+        if not username:
+            return False #Невозможно создать пользователя
+
+        branch = self.get_branch_name(employee_id.department_id.id)
+        department_name = employee_id.department_id.name[:62] + '..' if len(employee_id.department_id.name) > 63 else employee_id.department_id.name
+        title = ldap3.utils.conv.escape_filter_chars(employee_id.job_title, 'utf-8')
+        department = ldap3.utils.conv.escape_filter_chars(department_name, 'utf-8')
+        #print('%s %s %s' % (empl, title, department))
+        c.add(
+                'CN=%s,OU=%s,%s' % (full_name, branch, LDAP_SEARCH_BASE), 
+                'user', {
+                        'company': employee_id.company_id.name, 
+                        'department': department, 
+                        'displayName': full_name,
+                        'givenName': name, 
+                        'sAMAccountName': username, 
+                        'userPrincipalName': username + '@tmenergo.ru', 
+                        'sn': surname,
+                        'title': title, 
+                        'homeDrive': LDAP_HOME_DRIVER, 
+                        'homeDirectory': LDAP_HOME_DIRECTORY,
+                        'physicalDeliveryOfficeName' : branch, 
+                        'wWWHomePage' : employee_id.company_id.website
+                 }
+            )
+        password = self.get_pass()
+        self.set_pass(username, branch, password)
+
+
+
     
     def ldap_update_user(self, object_SID=False, param=False):
         if not param:

@@ -13,11 +13,15 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-def get_date(self, date_text=''):
+def get_date(date_text):
     """Возвращает форматированную дату если она не пуста, т.е не равна 0001-01-01T00:00:00"""
     date = False
+    print('date_text=',date_text)
+
     if date_text != '0001-01-01T00:00:00' and date_text !='':
+        print('date_text=',date_text)
         date = datetime.strptime(date_text, '%Y-%m-%dT%H:%M:%S').date()
+    print(date_text, date)
     return date
 
 
@@ -769,6 +773,7 @@ class ZupSyncPersonalDoc(models.AbstractModel):
         for line in data:
             # print(line)
             if 'guid1C' in line:
+                print(line)
                 
                 guid_1c = line['guid1C'] # Идентификатор документа
 
@@ -841,7 +846,8 @@ class ZupSyncPersonalDoc(models.AbstractModel):
                         ('guid_1c', '=', guid_1c)
                     ],limit=1)
                 if len(doc_search)>0:
-                    self.env[doc_obj].write(vals)
+                    print(vals)
+                    doc_search.write(vals)
                     message_update += line['number'] + ' от ' + line['documentDate'] + '\n'
 
                 elif vals['posted'] == True: #создаем только проведенные документ
@@ -938,7 +944,7 @@ class ZupSyncPersonalDoc(models.AbstractModel):
                         ],limit=1)
 
                     if len(doc_search)>0:
-                        self.env['hr.transfer_doc'].write(vals)
+                        doc_search.write(vals)
                         message_update += line['number'] + ' от ' + line['documentDate'] + '\n'
 
                     elif vals['posted'] == True: #создаем только проведенные документ
@@ -1081,7 +1087,7 @@ class ZupSyncPersonalDoc(models.AbstractModel):
             ],limit=1)
             if len(doc_search)>0:
                 # print(vals)
-                doc = self.env[doc_obj].write(vals)
+                doc = doc_search.write(vals)
                 message_update = doc_name + ' ' + data['number'] + ' от ' + data['documentDate'] + '\n'
             elif vals['posted'] == True: #создаем только проведенные документы
                 doc = self.env[doc_obj].create(vals)
