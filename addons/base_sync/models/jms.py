@@ -24,18 +24,20 @@ class JMSConnect(models.AbstractModel):
 
         old = self.env['jms.event_log'].sudo().search([], limit=1, order='date desc')           
         if len(old)>0:
-            date = old.date
+            date = old.date.strftime("%Y-%m-%d %H:%M:%S")
         else:
             date = "{ts '2021-01-01 00:00:00'}"
         cursor = conn.cursor()
-        cursor.execute("""SELECT  				
+        cursor.execute("""SELECT
+                              				
                             e.EventDate
                             ,e.NotificationType
                             ,e.Arg4
                             ,w.NetBIOSName
+                            ,e.id
                             FROM dbo.ClientEventLog as e
                             LEFT JOIN Workstation as w ON (w.id=e.WorkstationId)
-                            WHERE (NotificationType=12 OR NotificationType=13) AND EventDate>%s
+                            WHERE (NotificationType=12 OR NotificationType=13) AND EventDate>{ts '%s'}
                 """ % date)
         jms = self.env['jms.event_log'].sudo()
         for line in cursor:
@@ -45,15 +47,20 @@ class JMSConnect(models.AbstractModel):
                 event_name = 'Подключение'
             elif line[1]==13:
                 event_name = 'Отключение'
-
+            id = line[4]
             vals = {
                 'date': line[0],
                 'event_id': line[1],
                 'event_name': event_name,
                 'name': line[2],
                 'pc_name': line[3],
+                'jms_id': line[4],
             }
-            jms.create(vals)
+            search = self.env['jms.event_log'].sudo().search([('jms_id', '=', id)], limit=1, order='date desc') 
+            if len(search)>0:
+                jms.write(vals)
+            else:
+                jms.create(vals)
 
 
 

@@ -12,6 +12,7 @@
                 <field name="pc_name"/>
                 <field name="event_name"/>
                 <field name="users_id"/>
+                <field name="jms_id"/>
             </tree>
         </field>
     </record>
