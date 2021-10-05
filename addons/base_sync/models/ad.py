@@ -56,6 +56,7 @@ class AdConnect(models.AbstractModel):
                 data - данные
          """
          #     #Подключение к серверу AD
+        _logger.debug("Подключение к серверу AD")
         
         # LDAP_HOST = self.env['ir.config_parameter'].sudo().get_param('ldap_host')
         # LDAP_PORT = self.env['ir.config_parameter'].sudo().get_param('ldap_port')
@@ -127,10 +128,27 @@ class AdConnect(models.AbstractModel):
 
     def get_branch_name(self, hr_department_id):
         """Принимает hr_department_id и возвращает имя контейнера AD для данного подразделения"""
+        _logger.debug("get_branch_name hr_department_id=" + str(hr_department_id))
+
         ad_branch = self.env['ad.branch'].search([])
         for line in ad_branch:
-            if hr_department_id == line.hr_department_id.id or hr_department_id in line.hr_department_id.child_ids:
-                return line.name
+            _logger.debug("get_branch_name line=" + str(line))
+
+            if line.hr_department_id:
+                _logger.debug("get_branch_name line.hr_department_id=" + str(line.hr_department_id.id))
+                _logger.debug("get_branch_name line.hr_department_id.child_ids=" + str(line.hr_department_id.child_ids))
+
+                if hr_department_id == line.hr_department_id: 
+                    _logger.debug("get_branch_name return1=" + str(line))
+
+                    return line
+                if hr_department_id in line.hr_department_id.child_ids:
+                    _logger.debug("get_branch_name return2=" + str(line))
+
+                    return line
+
+        ad_branch = self.env['ad.branch'].search([('is_default_branch', '=', True)], limit=1)
+        return ad_branch
     
 
 
@@ -192,6 +210,28 @@ class AdConnect(models.AbstractModel):
         c.bind()
         return c.extend.microsoft.modify_password('CN=%s,OU=%s,%s' % (username, branch, LDAP_SEARCH_BASE), password)
 
+    
+    def add_user_to_group(self, users_list):
+        _logger.debug("add_user_to_group=" + str(users_list))
+
+        for user in users_list:
+            search_templates = self.env['ad.set_group'].sudo().search([
+                ('active', '=', True),
+                '|',
+                ('branch_id', '=', False),
+                ('branch_id', '=', user.branch_id.id if user.branch_id else False),
+                '|',
+                ('department_id', '=', False),
+                ('department_id', '=', user.department_id.id if user.department_id else False),
+            ])
+
+            for line in search_templates:
+                for group in line.set_group_line:
+                    c = self.ldap_connect()
+                    c.bind()
+                    AddUserToGroup(c, user.distinguished_name, group.group_id.distinguished_name)
+
+            
 
 
     def ldap_create_user(self, employee_id):
@@ -200,13 +240,12 @@ class AdConnect(models.AbstractModel):
             _logger.warning('Нет параметров для создния пользователя AD')
             raise Exception("Нет параметров для создния пользователя AD")
 
+        _logger.debug("Создает пользователя AD из сотрудника HR" + str(employee_id.name))
         try:
             LDAP_SEARCH_BASE = self.env['ir.config_parameter'].sudo().get_param('ldap_search_base')
             LDAP_HOME_DIRECTORY = self.env['ir.config_parameter'].sudo().get_param('ldap_home_dirertory')
             LDAP_HOME_DRIVER = self.env['ir.config_parameter'].sudo().get_param('ldap_home_drive')
-
-            c = self.ldap_connect()
-            c.bind()
+            
             
             full_name = employee_id.name
 
@@ -218,18 +257,19 @@ class AdConnect(models.AbstractModel):
                 tname = fname[2]
 
             username = self.get_username(surname, name, tname)
+
             if not username:
                 _logger.error("Ошибка при создании пользователя AD: не сгенерировано имя")
                 return False #Невозможно создать пользователя
 
-            branch = self.get_branch_name(employee_id.department_id.id)
+            branch_id = self.get_branch_name(employee_id.department_id)
+            _logger.debug("Получен Branch=" + str(branch_id))
+
             department_name = employee_id.department_id.name[:62] + '..' if len(employee_id.department_id.name) > 63 else employee_id.department_id.name
             title = ldap3.utils.conv.escape_filter_chars(employee_id.job_title, 'utf-8')
             department = ldap3.utils.conv.escape_filter_chars(department_name, 'utf-8')
-            #print('%s %s %s' % (empl, title, department))
-            c.add(
-                    'CN=%s,OU=%s,%s' % (full_name, branch, LDAP_SEARCH_BASE), 
-                    'user', {
+
+            param = {
                             'company': employee_id.company_id.name, 
                             'department': department, 
                             'displayName': full_name,
@@ -240,12 +280,69 @@ class AdConnect(models.AbstractModel):
                             'title': title, 
                             'homeDrive': LDAP_HOME_DRIVER, 
                             'homeDirectory': LDAP_HOME_DIRECTORY,
-                            'physicalDeliveryOfficeName' : branch, 
+                            'physicalDeliveryOfficeName' : branch_id.name, 
                             'wWWHomePage' : employee_id.company_id.website
                     }
+            _logger.debug("Попытка создать пользователя AD %s, %s, %s" % (str(full_name), branch_id.name, param))
+
+            #print('%s %s %s' % (empl, title, department))
+            c = self.ldap_connect()
+            c.bind()
+            result = c.add(
+                    'CN=%s,OU=%s,%s' % (full_name, branch_id.name, LDAP_SEARCH_BASE), 
+                    'user', 
+                    param
                 )
-            password = self.get_pass()
-            self.set_pass(username, branch, password)
+            if result:
+                _logger.debug("Создан пользователь AD" + str(result))
+
+                password = self.get_pass()
+                self.set_pass(username, branch_id.name, password)
+
+                _logger.debug("Синхронизация с AD")
+
+                sync = self.env['ad.sync_users'].sudo().ad_sync_users(full_sync=True)
+                if sync:
+                    _logger.debug("Обновление пользователей AD" + str(result))
+
+
+                    search_user = self.env['ad.users'].sudo().search([
+                        ('username', '=', username),
+                        '|',
+                        ('active', '=', True),
+                        ('active', '=', False),
+                        ], limit=1)
+                    _logger.debug("search username=" + str(username))
+                    _logger.debug("search_user=" + str(search_user))
+                    if len(search_user):
+                        self.add_user_to_group(search_user)
+
+            
+                    mail = self.env['sync.mail'].sudo()
+                    vals = {
+                        'name': 'Регистрационные данные',
+                        'email_from': 'portal@tmenergo.ru',
+                        'email_to': "savrasovmv@tmenergo.ru",
+                        'subject': 'Регистрационные данные',
+                    }
+                    new = mail.create(vals)
+                    print('++++++++', new)
+                    new.send_mail({'rrr': 'login:%s password:%s' % (username, password)})
+
+            # ef add_to_groups(user, ou, dep):
+            # print('%s %s %s' % (user, ou, dep))
+            # for group in default_groups:
+            #     AddUserToGroup(c, 'CN=%s,OU=%s,OU=UsersCorporate,DC=tmenergo,DC=ru' % (user, ou), 'CN=%s,OU=Global Group,OU=UsersCorporate,DC=tmenergo,DC=ru' % group)
+            #     AddUserToGroup(c, 'CN=%s,OU=%s,OU=UsersCorporate,DC=tmenergo,DC=ru' % (user, ou), 'CN=%s,OU=Global Group,OU=UsersCorporate,DC=tmenergo,DC=ru' % branch_groups[ou])
+            # try:
+            #     AddUserToGroup(c, 'CN=%s,OU=%s,OU=UsersCorporate,DC=tmenergo,DC=ru' % (user, ou), 'CN=%s,OU=Global Group,OU=UsersCorporate,DC=tmenergo,DC=ru' % dep_groups[dep])
+            # except:
+            #     send_mail(SUPPORT_EMAIL, 'Не удалось добавить\\найти группу', 'Для пользователя %s из отдела %s не удалось найти группу подразделения' % (user, dep))
+            # try:
+            #     AddUserToGroup(c, 'CN=%s,OU=%s,OU=UsersCorporate,DC=tmenergo,DC=ru' % (user, ou), 'CN=%s,OU=Global Group,OU=UsersCorporate,DC=tmenergo,DC=ru' % print_groups[dep])
+            # except:
+            #     send_mail(SUPPORT_EMAIL, 'Не удалось добавить\\найти группу', 'Для пользователя %s из отдела %s не удалось найти группу принтера' % (user, dep))
+
         except Exception as error:
             _logger.error("Ошибка при создании пользователя AD:" + str(error))
             return False

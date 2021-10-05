@@ -14,7 +14,7 @@ class SyncTasks(models.Model):
     date = fields.Datetime(string='Дата')
     obj_create = fields.Char(u'Модель')
     obj_create_name = fields.Char(u'Имя модели')
-    obj_create_id = fields.Char(u'Id записи')
+    obj_create_id = fields.Integer(u'Id записи')
     is_completed = fields.Boolean(string='Выполнена?', default=False)
     is_canceled = fields.Boolean(string='Отменить?', default=False)
     is_updated = fields.Boolean(string='Обновить?', default=False)
@@ -118,22 +118,14 @@ class SyncTasks(models.Model):
 
     def do_tasks_action(self):
 
-        mail = self.env['sync.mail'].sudo()
-        vals = {
-            'name': 'Регистрационные данные',
-            'email_from': 'portal@tmenergo.ru',
-            'email_to': 'savrasovmv@tmenergo.ru',
-            'subject': 'Регистрационные данные',
-        }
-        new = mail.create(vals)
-        print('++++++++', new)
-        new.send_mail({'rrr': 'rrrrr'})
+       
         if not self.is_completed or self.is_canceled or self.is_updated:
             if self.obj_create == 'hr.recruitment_doc':
                 # create user AD
-                employee_id = self.env[self.obj_create].sudo().browse(self.obj_create_id)
-                if employee_id:
-                    self.env['ad.connect'].sudo().ldap_create_user(employee_id)
+                doc = self.env[self.obj_create].sudo().browse(self.obj_create_id)
+                print('=++++=', doc)
+                if doc:
+                    self.env['ad.connect'].sudo().ldap_create_user(doc.employee_id)
 
 
 

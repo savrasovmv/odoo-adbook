@@ -7,7 +7,7 @@ class HrRecruitmentDoc(models.Model):
 
     name = fields.Char(u'Наименование', compute='_get_name', store=True )
     date = fields.Date(string='Дата документа')
-    service_start_date = fields.Date(string='Дата приема', help="Дата с которой сотрудник устроен на работу (первый рабочий день) и исполняет обязанности по должности", readonly=True)
+    service_start_date = fields.Date(string='Дата приема', help="Дата с которой сотрудник устроен на работу (первый рабочий день) и исполняет обязанности по должности")
 
     guid_1c = fields.Char(string='guid1C', readonly=True, groups="base.group_erp_manager, base.group_system")
     number_1c = fields.Char(string='Код 1С', readonly=True)
