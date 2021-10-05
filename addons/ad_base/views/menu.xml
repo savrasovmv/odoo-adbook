@@ -22,6 +22,10 @@
             <menuitem id="jms_wizard_menu_action" action="ad_base_jms_wizard_action"/>
         </menuitem>
 
+        <menuitem id="ad_reports_first_level_menu" name="Отчеты" sequence="30">
+            <menuitem id="jms_report_menu_action" action="ad_base_jms_report_action"/>
+        </menuitem>
+
         
 
     </menuitem>

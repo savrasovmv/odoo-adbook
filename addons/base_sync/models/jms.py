@@ -26,7 +26,7 @@ class JMSConnect(models.AbstractModel):
         if len(old)>0:
             date = old.date.strftime("%Y-%m-%d %H:%M:%S")
         else:
-            date = "2021-01-01 00:00:00"
+            date = "2021-10-01 00:00:00"
         cursor = conn.cursor()
         cursor.execute("""SELECT
                               				
@@ -48,6 +48,11 @@ class JMSConnect(models.AbstractModel):
             elif line[1]==13:
                 event_name = 'Отключение'
             id = line[4]
+            dname = line[2].split('\\') # DOMAIN\UserName
+            username = dname[1] # UserName
+
+            users_id = self.env['ad.users'].sudo().search([('username', 'ilike', username)], limit=1)
+
             vals = {
                 'date': line[0],
                 'event_id': line[1],
@@ -55,6 +60,7 @@ class JMSConnect(models.AbstractModel):
                 'name': line[2],
                 'pc_name': line[3],
                 'jms_id': line[4],
+                'users_id': users_id.id if len(users_id)>0 else '',
             }
             search = self.env['jms.event_log'].sudo().search([('jms_id', '=', id)], limit=1, order='date desc') 
             if len(search)>0:
@@ -63,16 +69,7 @@ class JMSConnect(models.AbstractModel):
                 jms.create(vals)
 
 
+    # def report(self, date_start, date_end):
+    #     pass
 
-
-            # SELECT  				
-            #                 e.Id
-            #                 ,e.EventLogType
-            #                 ,e.EventDate
-            #                 ,e.WorkstationId
-            #                 ,e.NotificationType
-            #                 ,e.Arg4
-            #                 ,w.NetBIOSName
-            #                 FROM dbo.ClientEventLog as e
-            #                 LEFT JOIN Workstation as w ON (w.id=e.WorkstationId)
-            #                 WHERE (NotificationType=12 OR NotificationType=13) AND EventDate>{ts '2021-10-01 08:00:00'}
+        

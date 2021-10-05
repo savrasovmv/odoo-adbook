@@ -13,6 +13,7 @@
         "views/hr_employee.xml",
         "views/hr_department.xml",
         "views/res_country.xml",
+        "views/res_company.xml",
         "views/hr_personal_doc.xml",
         "views/hr_menu.xml",
         'security/ir.model.access.csv',

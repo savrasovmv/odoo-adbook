@@ -200,52 +200,55 @@ class AdConnect(models.AbstractModel):
             _logger.warning('Нет параметров для создния пользователя AD')
             raise Exception("Нет параметров для создния пользователя AD")
 
-        LDAP_SEARCH_BASE = self.env['ir.config_parameter'].sudo().get_param('ldap_search_base')
-        LDAP_HOME_DIRECTORY = self.env['ir.config_parameter'].sudo().get_param('ldap_home_dirertory')
-        LDAP_HOME_DRIVER = self.env['ir.config_parameter'].sudo().get_param('ldap_home_drive')
+        try:
+            LDAP_SEARCH_BASE = self.env['ir.config_parameter'].sudo().get_param('ldap_search_base')
+            LDAP_HOME_DIRECTORY = self.env['ir.config_parameter'].sudo().get_param('ldap_home_dirertory')
+            LDAP_HOME_DRIVER = self.env['ir.config_parameter'].sudo().get_param('ldap_home_drive')
 
+            c = self.ldap_connect()
+            c.bind()
+            
+            full_name = employee_id.name
 
+            fname = full_name.split()
+            surname = fname[0]
+            name = fname[1]
+            tname = ''
+            if len(fname)>2:
+                tname = fname[2]
 
-        c = self.ldap_connect()
-        c.bind()
-        
-        full_name = employee_id.name
+            username = self.get_username(surname, name, tname)
+            if not username:
+                _logger.error("Ошибка при создании пользователя AD: не сгенерировано имя")
+                return False #Невозможно создать пользователя
 
-        fname = full_name.split()
-        surname = fname[0]
-        name = fname[1]
-        tname = ''
-        if len(fname)>2:
-            tname = fname[2]
-
-        username = self.get_username(surname, name, tname)
-        if not username:
-            return False #Невозможно создать пользователя
-
-        branch = self.get_branch_name(employee_id.department_id.id)
-        department_name = employee_id.department_id.name[:62] + '..' if len(employee_id.department_id.name) > 63 else employee_id.department_id.name
-        title = ldap3.utils.conv.escape_filter_chars(employee_id.job_title, 'utf-8')
-        department = ldap3.utils.conv.escape_filter_chars(department_name, 'utf-8')
-        #print('%s %s %s' % (empl, title, department))
-        c.add(
-                'CN=%s,OU=%s,%s' % (full_name, branch, LDAP_SEARCH_BASE), 
-                'user', {
-                        'company': employee_id.company_id.name, 
-                        'department': department, 
-                        'displayName': full_name,
-                        'givenName': name, 
-                        'sAMAccountName': username, 
-                        'userPrincipalName': username + '@tmenergo.ru', 
-                        'sn': surname,
-                        'title': title, 
-                        'homeDrive': LDAP_HOME_DRIVER, 
-                        'homeDirectory': LDAP_HOME_DIRECTORY,
-                        'physicalDeliveryOfficeName' : branch, 
-                        'wWWHomePage' : employee_id.company_id.website
-                 }
-            )
-        password = self.get_pass()
-        self.set_pass(username, branch, password)
+            branch = self.get_branch_name(employee_id.department_id.id)
+            department_name = employee_id.department_id.name[:62] + '..' if len(employee_id.department_id.name) > 63 else employee_id.department_id.name
+            title = ldap3.utils.conv.escape_filter_chars(employee_id.job_title, 'utf-8')
+            department = ldap3.utils.conv.escape_filter_chars(department_name, 'utf-8')
+            #print('%s %s %s' % (empl, title, department))
+            c.add(
+                    'CN=%s,OU=%s,%s' % (full_name, branch, LDAP_SEARCH_BASE), 
+                    'user', {
+                            'company': employee_id.company_id.name, 
+                            'department': department, 
+                            'displayName': full_name,
+                            'givenName': name, 
+                            'sAMAccountName': username, 
+                            'userPrincipalName': username + '@' + employee_id.company_id.domain_name, 
+                            'sn': surname,
+                            'title': title, 
+                            'homeDrive': LDAP_HOME_DRIVER, 
+                            'homeDirectory': LDAP_HOME_DIRECTORY,
+                            'physicalDeliveryOfficeName' : branch, 
+                            'wWWHomePage' : employee_id.company_id.website
+                    }
+                )
+            password = self.get_pass()
+            self.set_pass(username, branch, password)
+        except Exception as error:
+            _logger.error("Ошибка при создании пользователя AD:" + str(error))
+            return False
 
 
 

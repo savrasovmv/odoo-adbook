@@ -28,6 +28,7 @@
         'views/mailbox_views.xml',
         'views/jms_event_log_views.xml',
         'wizard/jms_wizard_views.xml',
+        'reports/jms_report_views.xml',
 
         # 'views/ad_sync_wizard_view.xml',
         'views/menu.xml',

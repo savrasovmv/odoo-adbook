@@ -13,6 +13,8 @@ class SyncWizard(models.TransientModel):
 
     result = fields.Text(string='Результат')
 
+    
+
     def return_result(self, error=False):
         """Возвращает ошибку или результат выполнения действия"""
 
@@ -50,5 +52,7 @@ class SyncWizard(models.TransientModel):
         #     return self.return_result(error=error)
         
         # return self.return_result()
+
+    
 
     

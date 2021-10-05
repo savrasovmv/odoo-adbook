@@ -15,3 +15,6 @@ class JMSEventLog(models.Model):
     event_name = fields.Char(string='Имя события')
     users_id = fields.Many2one("ad.users", string="Пользователь AD")
     jms_id = fields.Integer(string='id jms')
+
+
+    
