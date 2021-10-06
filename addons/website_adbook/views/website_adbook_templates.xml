@@ -185,14 +185,16 @@
     <!-- Контент Главная страница, редактируется на сайте -->
     <template id="wadbook_content_homepage" name="Wadbook: wadbook_content_homepage">
         
-            <div class="p-2 mb-1 o_website_adbook_homepage bg-white">
+            
                 
                 <!-- <div class="container" contentEditable="True"> -->
-                <div class="container" contentEditable="True">
+                <div class="container" contentEditable="true">
                     <div class="oe_structure" />
+                    <div class="p-2 mb-1 o_website_adbook_homepage bg-white">
                             Разместите блоки
+                    </div>
+                    
                 </div>
-            </div>
             
 
     </template>
