@@ -110,6 +110,7 @@ class JMSReport(models.TransientModel):
                 print('++++', current_date, event_list)
                 t_delta = 0
                 t_first = False
+                t_last = False
                 t_start = False
                 t_end = False
                 for line in event_list:
@@ -121,13 +122,18 @@ class JMSReport(models.TransientModel):
                     if not t_end and t_start and line.event_name == 'Отключение':
                         t_end = line.date
                         t_delta += (t_end - t_start).total_seconds() / 60.0 /60.0
+                        t_start = False
+                        t_end = False
+
+                    if line.event_name == 'Отключение':
+                        t_last = line.date
 
                 if t_first:
                     t_first = t_first + timedelta(hours=5)
-                if t_end:
-                    t_end = t_end + timedelta(hours=5)
+                if t_last:
+                    t_last = t_last + timedelta(hours=5)
                 else:
-                    t_end = ''
+                    t_last = ''
                 if len(event_list)>0:
                     n+=1
                     sheet.write(n, 0, current_date, formatDate)
@@ -135,7 +141,7 @@ class JMSReport(models.TransientModel):
                     sheet.write(n, 2, event_list[0].users_id.title, format3)
                     sheet.write(n, 3, len(event_list), format3)
                     sheet.write(n, 4, t_first, formatTime)
-                    sheet.write(n, 5, t_end, formatTime)
+                    sheet.write(n, 5, t_last, formatTime)
                     sheet.write(n, 6, t_delta, formatInt1)
                 
                 current_date = current_date + timedelta(days=1)

@@ -676,7 +676,7 @@ class ZupSyncPersonalDoc(models.AbstractModel):
             try:
                 result += self.zup_sync_personal_doc(doc_obj=doc_obj, date_start=date_start, date_end=date_end)
             except Exception as error:
-                self.create_ad_log(date=date,result=error, is_error=True)
+                self.create_ad_log(date=date,result=str(error), is_error=True)
                 raise error
 
         return result
