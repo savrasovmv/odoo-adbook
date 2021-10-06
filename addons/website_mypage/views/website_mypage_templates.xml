@@ -1,0 +1,162 @@
+<odoo>
+
+    <template id="mypage_home" name="mypage_home">
+        <t t-set="body_classname" t-value="'o_wslides_body'"/>
+        <t t-call="website.layout">
+        
+            <div id="wrap" class="wrap o_wslides_wrap" contentEditable="False">
+
+                <div class="o_wslides_lesson_header o_wslides_gradient position-relative text-white pb-0 pt-2 pt-md-1">
+                    
+                    <div class="container o_wslides_lesson_header_container mt-5 mt-md-3 mt-xl-4">
+
+                        <t t-call="website_mypage.mypage_head"/>
+                        
+                    </div>
+                </div>
+                <div class="container o_wslides_lesson_main">
+                    <div class="row">
+                        <div t-attf-class="o_wslides_lesson_aside col-lg-4">
+                            <t t-call="website_mypage.mypage_left_panel"/>
+                        </div>
+                        <div t-attf-class="o_wslides_lesson_content col-lg-8">
+                            <t t-call="website_mypage.mypage_content"/>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </t>
+    </template>
+
+    <template id="mypage_head" name="mypage_head">
+        <div class="row"> 
+            <div t-attf-class="o_wslides_lesson_aside col-lg-2">
+                <img t-attf-src="data:image/png;base64,{{photo}}"/>
+            </div>
+            <div t-attf-class="o_wslides_lesson_aside col-lg-8">
+                <h2> <span t-esc="employer.name"/> </h2>
+                <h5> <span t-esc="employer.job_title"/> </h5>
+                <h5> <span t-esc="employer.department_id.name"/> </h5>
+            </div>
+
+        
+        </div>
+        
+    </template>
+
+    <template id="mypage_left_panel" name="mypage_left_panel">
+        <div> Левая панель </div>
+    </template>
+
+    <template id="mypage_content" name="mypage_content">
+        <div> Контент </div>
+    </template>
+
+
+
+    <template id="mypage_index" name="mypage_index">
+        <t t-set="body_classname" t-value="'o_wslides_body'"/>
+        <t t-call="website.layout">
+        
+            <div id="wrap" class="wrap o_wslides_wrap" contentEditable="False">
+                <h1> Моя страница </h1>
+                    <img 
+                        t-attf-src="data:image/png;base64,{{photo}}"/>
+                
+                <div>
+                    <h2> <span t-esc="employer.name"/> </h2>
+                    <h3> <span t-esc="employer.job_title"/> </h3>
+                    <h3> <span t-esc="employer.department_id.name"/> </h3>
+                    <div> Дата приема: <span t-esc="employer.service_start_date"/></div>
+                    <div> Больничные: 
+                        <t t-foreach="sick_leave_doc" t-as="line">
+                            <div>
+                                С <span t-esc="line.start_date"/> по <span t-esc="line.end_date"/>
+
+                            </div>
+
+                        </t>
+                    
+                    </div>
+                    <div> Отпуска: 
+                        <t t-foreach="vacation_doc" t-as="line">
+                            <div>
+                                С <span t-esc="line.start_date"/> по <span t-esc="line.end_date"/>
+
+                            </div>
+
+                        </t>
+                    
+                    </div>
+                    <div class="input-group">
+                        Отпуск с
+                        <input id="start_date" type="date" name="start_date" class="form-control o_website_form_input o_website_form_date"/>
+                        по
+                        <input id="end_date" type="date" name="end_date" class="form-control o_website_form_input o_website_form_date"/>
+                        <a role="button"
+                            class="btn btn-primary btn-lg"
+                            t-att-href="channel_url">
+                            Сформировать
+                        </a>
+                    </div>
+
+                    <!-- <form method="GET" class="adbook-form-search order-lg-3" t-attf-action="/mypage/vacation">
+                        <div class="input-group">
+                            <input type="search" name="start_date" class="form-control" placeholder="Начало" aria-label="Search" t-att-value="search_term"/>
+                            <div class="input-group-append">
+                                <button class="btn border border-left-0 oe_search_button" type="submit" aria-label="Search" title="Search">
+                                    <i class="fa fa-search"/>
+                                </button>
+                            </div>
+                        </div>
+                    </form> -->
+
+
+
+
+                </div>
+
+               
+            </div>
+            
+        </t>
+    </template>
+
+
+    <!-- <template id="report_vacation">
+        <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Report title</h2>
+                        <p>This object's name is </p>
+                    </div>
+                </t>
+        </t>
+    </template> -->
+
+    <!-- <report
+        id="report_vacation"
+        model="korm.korm"
+        string="Кормовое задание"
+        name="kormlenie.report_korm_view"
+        file="kormlenie.report_korm"
+        report_type="qweb-pdf" /> -->
+
+    <!-- <report
+        id="report_vacation"
+        model="report.website_mypage.report_vacation"
+        string="vacation"
+        report_type="qweb-pdf"
+        name="website_mypage.report_vacation"
+        file="website_mypage.report_vacation"
+        
+    /> -->
+
+    
+
+
+</odoo>
+
+

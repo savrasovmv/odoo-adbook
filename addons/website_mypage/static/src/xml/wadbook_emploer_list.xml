@@ -1,0 +1,144 @@
+
+<!-- Область контента -->
+<templates id="template" xml:space="preserve">
+    <t t-name="website_adbook.wadbook_emploer_list" >
+        <div class="column align-items-center mt-3">
+            <div class="col-12 col-md order-2 order-md-1 d-flex">
+                <div class="column  align-items-center w-100">
+                    <div class="d-flex">
+                        <t t-if="current_department_name">
+                            <h3 class="h4 my-0 mb-1 o_website_adbook_color_text">
+                                <t t-esc="current_branch_name"/><i class="fa fa-long-arrow-right small ml-1 mr-1"/><t t-esc="current_department_name"/>
+                            </h3>
+                        </t>
+                        <t t-if="is_limited">
+                            
+                        </t>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="o_wslides_lesson_content_type">
+            
+            <div class="p-0 mb-3">
+                <t t-if="employer_list">
+                    
+                
+                    <div class="row d-flex justify-content-end m-0">
+                        <div class="d-flex mr-3">
+                            <i class="fa fa-plane mr-2 align-items-center color-trip"/>
+                            <span class="font-weight-light small"> - Коммандировка </span>
+                        </div>
+                        <div class="d-flex mr-3">
+                            <i class="fa fa-sun-o mr-2 align-items-center color-vacation"/>
+                            <span class="font-weight-light small"> - Отпуск </span>
+                        </div>
+                        <div class="d-flex mr-3">
+                            <i class="fa fa-thermometer-3 mr-2 align-items-center color-sick"/>
+                            <span class="font-weight-light small"> - Больничный </span>
+                        </div>
+                    </div>
+
+                    <t t-set="i" t-value="0"/>
+                    
+                    <t t-foreach="employer_list" t-as="employer">
+                        <div class="card-body o_wprofile_slides_course_card_body p-0 d-flex mt-1 mb-1 ">
+                            <div width="90px" height="90px" class="d-flex o_website_adbook_photo">
+                                <t t-if="employer.photo">
+                                    <img t-if="employer.photo != False"
+                                        t-attа-src="data:image/png;base64,{{employer.photo}}"/>
+                                </t>
+                            </div>
+                            <div class="p-2 w-100 h6">
+                                <div class="row d-flex justify-content-between m-0">
+                                    <div class="d-flex">
+                                        <span class="font-weight-bold mb-0">
+                                            <t t-esc="employer.name"/>
+                                            <span class="mr-3"/>
+                                            
+                                        </span>
+                                    </div> 
+
+                                    <t t-if="service_status=='trip'">
+                                        <div class="d-flex justify-content-end ">
+                                            <span class="font-weight-light mr-2 small"> до <t t-esc="employer.service_status_end_date"/></span>
+                                            <i class="fa fa-plane  align-items-center color-trip"/> 
+                                        </div> 
+                                    </t>
+
+                                    <t t-if="service_status=='vacation'">
+                                        <div class="d-flex justify-content-end ">
+                                            <span class="font-weight-light small mr-2"> до <t t-esc="employer.service_status_end_date"/> </span>
+                                            <i class="fa fa-sun-o  align-items-center color-vacation"/>
+                                        </div>
+                                    </t>
+
+                                    <t t-if="service_status=='sick_leave'">
+                                        <div class="d-flex justify-content-end ">
+                                            <i class="fa fa-thermometer-3  align-items-center color-sick"/> 
+                                        </div>
+                                    </t>
+                                    
+                                    
+                                    <t t-set="i" t-value="i+1"/>
+                                </div> 
+
+                                <div class="mb-2">
+                                    <t t-if="employer.title" t-esc="employer.title"/>
+                                    <t t-if="current_department_name==false">
+                                        <div >
+                                            <t t-esc="employer.departpent_name"/>
+                                        </div>
+                                        
+                                    </t>
+                                </div>
+
+                                
+
+                                <div class="row d-flex justify-content-between m-0"> 
+
+                                    <div class="d-flex">
+                                        <t t-if="employer.ip_phone">
+                                            <i class="fa fa-phone mr-1"/><t t-esc="employer.ip_phone"/> <span class="mr-3"/>
+                                        </t>
+
+                                        <t t-if="employer.phone">
+                                            <i class="fa fa-mobile-phone mr-1"/><t t-esc="employer.phone"/> <span class="mr-3"/>
+                                        </t>
+
+                                        <t t-if="employer.sec_phone">
+                                            <i class="fa fa-phone mr-1"/><t t-esc="employer.sec_phone"/> <span class="mr-3"/>
+                                        </t> 
+                                    </div> 
+
+                                    <div class="d-flex justify-content-end ">
+                                        <t t-if="employer.email">
+                                            <i class="fa fa-envelope-o mr-1"/>
+                                            <a href="mailto:{{employer.email}}"><t t-esc="employer.email"/></a>
+
+                                        </t> 
+                                    </div>
+
+                                </div>
+
+                            
+                            </div>
+                        </div>
+                        
+                    </t>
+                </t>
+                <t t-else="">
+                    <div> Ничего не найдено </div>
+
+                </t>
+            </div>
+        </div>
+        
+        
+    </t>
+
+
+    
+</templates>
