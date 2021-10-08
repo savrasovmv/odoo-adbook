@@ -32,6 +32,8 @@
     # always loaded
     'data': [
         'views/website_mypage_templates.xml',
+        'views/assets.xml',
+
     ],
     
     'js': [

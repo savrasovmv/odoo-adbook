@@ -1,57 +1,261 @@
 <odoo>
 
     <template id="mypage_home" name="mypage_home">
-        <t t-set="body_classname" t-value="'o_wslides_body'"/>
+        <t t-set="body_classname" t-value="'o_wprofile_body'"/>
         <t t-call="website.layout">
         
-            <div id="wrap" class="wrap o_wslides_wrap" contentEditable="False">
+            <div id="wrap" class="wrap" contentEditable="False">
 
-                <div class="o_wslides_lesson_header o_wslides_gradient position-relative text-white pb-0 pt-2 pt-md-1">
+                <div class="position-relative mypage_head">
                     
-                    <div class="container o_wslides_lesson_header_container mt-5 mt-md-3 mt-xl-4">
+                    <div class="container">
 
                         <t t-call="website_mypage.mypage_head"/>
                         
                     </div>
                 </div>
-                <div class="container o_wslides_lesson_main">
-                    <div class="row">
-                        <div t-attf-class="o_wslides_lesson_aside col-lg-4">
-                            <t t-call="website_mypage.mypage_left_panel"/>
-                        </div>
-                        <div t-attf-class="o_wslides_lesson_content col-lg-8">
-                            <t t-call="website_mypage.mypage_content"/>
-                            
+                <!-- <div class="position-relative mypage_body"> -->
+
+                    <div class="container mypage_body">
+                        <div class="row ">
+                            <div t-attf-class="col-12 col-md-4 col-lg-3 mt-3 mt-md-0 bg-while">
+                                <t t-call="website_mypage.mypage_left_panel"/>
+                            </div>
+                            <div t-attf-class="col-12 col-md-8 col-lg-9">
+                                <t t-call="website_mypage.mypage_content"/>
+                                
+                            </div>
                         </div>
                     </div>
-                </div>
+                <!-- </div> -->
             </div>
 
         </t>
     </template>
 
     <template id="mypage_head" name="mypage_head">
-        <div class="row"> 
-            <div t-attf-class="o_wslides_lesson_aside col-lg-2">
-                <img t-attf-src="data:image/png;base64,{{photo}}"/>
-            </div>
-            <div t-attf-class="o_wslides_lesson_aside col-lg-8">
-                <h2> <span t-esc="employer.name"/> </h2>
-                <h5> <span t-esc="employer.job_title"/> </h5>
-                <h5> <span t-esc="employer.department_id.name"/> </h5>
-            </div>
+        <!-- <div class="bg-white p-0 m-0"> o_wslides_course_pict-->
+            <div class="row"> 
+                <div t-attf-class="col-12 col-md-4 col-lg-3 mt-3 mt-md-0 bg-while ">
+                    <img class="img img-fluid mypage_photo  d-inline-block mb-2 mt-3 my-md-0" t-attf-src="data:image/png;base64,{{photo}}"/>
+                </div>
+                <div t-attf-class="col-12 col-md-8 col-lg-9 mt-3">
+                    <h2> <span t-esc="employer.name"/> </h2>
+                    <h5> <span t-esc="employer.job_title"/> </h5>
+                    <h5> <span t-esc="employer.department_id.name"/> </h5>
+                    <div class="column">
+                        <div t-if="employer.ip_phone">
+                            Внутренний номер:<t t-esc="employer.ip_phone"/> <span class="mr-3"/>
+                        </div>
 
-        
-        </div>
+                        <div t-if="employer.mobile_phone">
+                            Мобильный: <t t-esc="employer.mobile_phone"/> <span class="mr-3"/>
+                        </div>
+
+                        <div t-if="employer.mobile_phone2">
+                            Мобильный: <t t-esc="employer.mobile_phone2"/> <span class="mr-3"/>
+                        </div> 
+                        <div t-if="employer.work_email">
+                            E-mail: <t t-esc="employer.work_email"/>
+
+                        </div> 
+                    </div> 
+
+                    <div class="d-flex justify-content-end ">
+                        <h5> Стаж работы 
+                                <t t-if="employer.service_duration_years>0">
+                                    <span t-esc="employer.service_duration_years"/> г.
+                                </t>
+                                <t t-if="employer.service_duration_months>0">
+                                    <span t-esc="employer.service_duration_months"/> мес.
+                                </t>
+                                <t t-if="employer.service_duration_days>0">
+                                    <span t-esc="employer.service_duration_days"/> дн.
+                                </t>
+                        </h5>
+                    </div>
+                </div>
+
+            
+            </div>
+        <!-- </div> -->
         
     </template>
 
     <template id="mypage_left_panel" name="mypage_left_panel">
-        <div> Левая панель </div>
+        <div class="column bg-white pt-3 pb-3"> 
+            <div class="mypage_menu_item">
+                <a href="#"  role="button" aria-expanded="true"
+                    t-attf-class="o_adbook_menu o_wslides_lesson_aside_list_link pl-2 text-600 text-decoration-none py-1 d-block o_website_branch_list text-uppercase"
+                    >
+                       <i class="fa fa-home"/> Главная
+                </a>
+            </div>
+            <div class="mypage_menu_item">
+                <a href="#"  role="button" aria-expanded="true"
+                    t-attf-class="o_adbook_menu o_wslides_lesson_aside_list_link pl-2 text-600 text-decoration-none py-1 d-block o_website_branch_list text-uppercase"
+                    >
+                        <i class="fa fa-graduation-cap"/>Обучение
+                </a>
+            </div>
+            <div class="mypage_menu_item">
+                <a href="#"  role="button" aria-expanded="true"
+                    t-attf-class="o_adbook_menu o_wslides_lesson_aside_list_link pl-2 text-600 text-decoration-none py-1 d-block o_website_branch_list text-uppercase"
+                    >
+                       <i class="fa fa-ruble"/> Зарплата
+                </a>
+            </div>
+            <div class="mypage_menu_item">
+                <a href="#"  role="button" aria-expanded="true"
+                    t-attf-class="o_adbook_menu o_wslides_lesson_aside_list_link pl-2 text-600 text-decoration-none py-1 d-block o_website_branch_list text-uppercase"
+                    >
+                       <i class="fa fa-list-alt"/> Заявки
+                </a>
+            </div>
+            <div class="mypage_menu_item">
+                <a href="#"  role="button" aria-expanded="true"
+                    t-attf-class="o_adbook_menu o_wslides_lesson_aside_list_link pl-2 text-600 text-decoration-none py-1 d-block o_website_branch_list text-uppercase"
+                    >
+                       <i class="fa fa-sun-o"/> Отпуска
+                </a>
+            </div>
+            <div class="mypage_menu_item">
+                <a href="#"  role="button" aria-expanded="true"
+                    t-attf-class="o_adbook_menu o_wslides_lesson_aside_list_link pl-2 text-600 text-decoration-none py-1 d-block o_website_branch_list text-uppercase"
+                    >
+                       <i class="fa fa-plane"/> Командировки
+                </a>
+            </div>
+            <div class="mypage_menu_item">
+                <a href="#"  role="button" aria-expanded="true"
+                    t-attf-class="o_adbook_menu o_wslides_lesson_aside_list_link pl-2 text-600 text-decoration-none py-1 d-block o_website_branch_list text-uppercase"
+                    >
+                       <i class="fa fa-thermometer-3"/> Больничный
+                </a>
+            </div>
+            <div class="mypage_menu_item">
+                <a href="#"  role="button" aria-expanded="true"
+                    t-attf-class="o_adbook_menu o_wslides_lesson_aside_list_link pl-2 text-600 text-decoration-none py-1 d-block o_website_branch_list text-uppercase"
+                    >
+                       <i class="fa fa-history"/> Кадровая история
+                </a>
+            </div>
+            
+        </div>
     </template>
 
     <template id="mypage_content" name="mypage_content">
-        <div> Контент </div>
+        <div class="column bg-white mt-3"> 
+
+            <div class="border p-3">
+                <h5 class="text-600"> <i class="fa fa-bell-o mr-2"/>Уведомления </h5>
+                <table class="text-700">
+                    <tr>
+                        <td>
+                            20.10.2021
+                        </td>
+                        <td>
+                            Заявка
+                        </td>
+                        <td>
+                            Выдть справку 2-НДФЛ
+                        </td>
+                        <td>
+                            Открыта
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            02.10.2021
+                        </td>
+                        <td>
+                            Заявка
+                        </td>
+                        <td>
+                            Вопрос по расчетному листу
+                        </td>
+                        <td>
+                            Открыта
+                        </td>
+                    </tr>
+
+
+                </table>
+            </div>
+
+            <div class="border p-3">
+                <h5 class="text-600"> <i class="fa fa-graduation-cap mr-2"/>Мои курсы </h5>
+                <div class="column">
+                    <table class="text-700">
+                    <thead>
+                        <tr>
+                            <th>
+                                Начат
+                            </th>
+                            <th>
+                                Наименование
+                            </th>
+                            <th>
+                                Завершено
+                            </th>
+                            
+                        </tr>
+                    </thead>
+
+                    <tr>
+                        <td>
+                            02.10.2021
+                        </td>
+                        <td>
+                            Контроль воздушной среды в газоопасных местах
+                        </td>
+                        <td>
+                            59%
+                        </td>
+                        
+                    </tr>
+
+
+                </table>
+                    
+                </div>
+            </div>
+
+            <div class="border p-3">
+                
+                <div class="column">
+                    <div class="row">
+                        <div>
+                            <h5 class="text-600"> <i class="fa fa-ruble mr-2"/>Зарплата </h5>
+                            <div class="border m-2">
+                                Запросить справку 2-НДФЛ
+                            </div>
+                            <div class="border m-2">
+                                Задать вопрос по расчетному листу
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-600"> <i class="fa fa-graduation-cap mr-2"/>Мои курсы </h5>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div>
+                            <h5 class="text-600"> <i class="fa fa-graduation-cap mr-2"/>Мои курсы </h5>
+                        </div>
+                        <div>
+                            <h5 class="text-600"> <i class="fa fa-graduation-cap mr-2"/>Мои курсы </h5>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+        
+        
+        
+        </div>
     </template>
 
 

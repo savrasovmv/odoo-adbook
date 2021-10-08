@@ -7,9 +7,9 @@
                 <div class="column  align-items-center w-100">
                     <div class="d-flex">
                         <t t-if="current_department_name">
-                            <h6 class="my-0 mb-1 o_website_adbook_color_text">
+                            <h3 class="h4 my-0 mb-1 o_website_adbook_color_text">
                                 <t t-esc="current_branch_name"/><i class="fa fa-long-arrow-right small ml-1 mr-1"/><t t-esc="current_department_name"/>
-                            </h6>
+                            </h3>
                         </t>
                         <t t-if="is_limited">
                             
@@ -44,21 +44,21 @@
                     <t t-set="i" t-value="0"/>
                     
                     <t t-foreach="employer_list" t-as="employer">
-                        <div class="card-body o_wprofile_slides_course_card_body p-0 d-flex mt-1 mb-2 adbook_shadow border">
-                            <div width="90px" height="90px" class="d-flex o_website_adbook_photo m-2">
+                        <div class="card-body o_wprofile_slides_course_card_body p-0 d-flex mt-1 mb-1 ">
+                            <div width="90px" height="90px" class="d-flex o_website_adbook_photo">
                                 <t t-if="employer.photo">
                                     <img t-if="employer.photo != False"
                                         t-attа-src="data:image/png;base64,{{employer.photo}}"/>
                                 </t>
                             </div>
-                            <div class="p-2 w-100 h6 ml-2 ">
+                            <div class="p-2 w-100 h6">
                                 <div class="row d-flex justify-content-between m-0">
                                     <div class="d-flex">
-                                        <!-- <span class="font-weight-bold mb-0"> -->
-                                            <h5 class="m-0"><t t-esc="employer.name"/></h5>
+                                        <span class="font-weight-bold mb-0">
+                                            <t t-esc="employer.name"/>
                                             <span class="mr-3"/>
                                             
-                                        <!-- </span> -->
+                                        </span>
                                     </div> 
 
                                     <t t-if="service_status=='trip'">
@@ -85,7 +85,7 @@
                                     <t t-set="i" t-value="i+1"/>
                                 </div> 
 
-                                <div class="mb-2 text-uppercase small" >
+                                <div class="mb-2">
                                     <t t-if="employer.title" t-esc="employer.title"/>
                                     <t t-if="current_department_name==false">
                                         <div >
@@ -97,7 +97,7 @@
 
                                 
 
-                                <div class="row d-flex justify-content-between m-0 mt-3"> 
+                                <div class="row d-flex justify-content-between m-0"> 
 
                                     <div class="d-flex">
                                         <t t-if="employer.ip_phone">

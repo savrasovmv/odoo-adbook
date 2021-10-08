@@ -399,7 +399,7 @@ $o-wslides-color-bg: mix($body-bg, #efeff4);
     display: block;
     width: 100%;
     height: calc(1.5em + 0.75rem + 2px);
-    padding: 0.375rem 0.75rem;
+    // padding: 0.375rem 0.75rem;
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
@@ -746,6 +746,14 @@ $o-wslides-color-bg: mix($body-bg, #efeff4);
     
 }
 
+.adbook_logo {
+    width: 80px;
+    height: 80px;
+}
+
+.o_adbook_header {
+    background-color: #a43b40;
+}
 
 // Больничный
 .color-sick {
@@ -766,12 +774,24 @@ $o-wslides-color-bg: mix($body-bg, #efeff4);
 
 .o_website_adbook_department_list {
 
-        /* overflow-x: auto; */
-        overflow-y: scroll;
+        overflow-y: auto;
+        // overflow-y: scroll;
         flex: auto;
         /* height: 100%; */
         height: 500px;
         display: -webkit-flex;
         -webkit-flex-direction: column;
+        // color: #0D4383 !important;
+}
+
+
+.adbook_navbar {
+    // top: -20px;
+}
+
+.adbook_shadow {
+    box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.1) !important;
+    // box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 2px 2px 0 rgba(0, 0, 0,0.16), 0 2px 6px -6px rgba(0, 0, 0,0.16) !important;
+    // border: 1px solid #46464617;
 }
 
