@@ -49,6 +49,41 @@ main {
 
     }
 
+    .navbar {
+        background-color: #a43b40 !important;
+
+        form {
+            color: #a43b40;
+            background-color: #FFFFFF;
+            background-clip: padding-box;
+            border: 0px solid #a43b40!important;
+            // border-radius: 0.25rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+        }
+        .form-control{
+            border: 0px solid #a43b40!important;
+        }
+        .input-group {
+            color: #a43b40 !important;
+            border: 0px solid #a43b40 !important;
+        }
+    
+        .input-group-append {
+            border: 0px solid #a43b40 !important;
+        }
+    
+        .oe_search_button {
+            color: #a43b40 !important;
+            border: 0px solid #a43b40 !important;
+            // border-left: 1px solid #a43b40;
+            
+    
+        }
+    }
+
+   
+
 
 
     
@@ -114,3 +149,32 @@ h1, h2, h3,h4,h5, h6 {
 
 
 
+.o_blog_post_title {
+    a {
+
+        color: #0D4383 !important;
+    }
+
+}
+
+
+
+
+// .navbar {
+//     .input-group {
+//         color: #a43b40 !important;
+//         border: 0px solid #a43b40 !important;
+//     }
+
+//     .input-group-append {
+//         border: 0px solid #a43b40 !important;
+//     }
+
+//     .oe_search_button {
+//         color: #a43b40 !important;
+//         border: 0px solid #a43b40 !important;
+//         // border-left: 1px solid #a43b40;
+        
+
+//     }
+// }
