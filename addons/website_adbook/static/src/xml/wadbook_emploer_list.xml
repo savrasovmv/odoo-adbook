@@ -45,7 +45,7 @@
                     
                     <t t-foreach="employer_list" t-as="employer">
                         <div class="card-body o_wprofile_slides_course_card_body p-0 d-flex mt-1 mb-2 adbook_shadow border">
-                            <div width="90px" height="90px" class="d-flex o_website_adbook_photo m-2">
+                            <div width="90px" height="90px" class="d-flex o_website_adbook_photo m-1">
                                 <t t-if="employer.photo">
                                     <img t-if="employer.photo != False"
                                         t-attа-src="data:image/png;base64,{{employer.photo}}"/>

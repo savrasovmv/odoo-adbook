@@ -4,36 +4,52 @@
         <t t-call="website.layout">
         
             <div id="wrap" class="wrap o_wslides_wrap" contentEditable="False">
-                <div class="o_adbook_header  position-relative text-white pb-0 pt-2 pt-md-1 p-5">
-                    
-                    <div class="container o_wslides_lesson_header_container mt-5 mt-md-3 mt-xl-4">
+                <div class="o_adbook_header  position-relative text-white pb-0 pt-2 pt-md-1 p-2">
+                    <div class="row">
+                        <div class="adbook-icon col-12 col-md-4 col-lg-4 d-flex justify-content-center">
+                            <i class="fa fa-group p-2" style="margin-top: 10px; font-size: 100px;"/>
+                            <!-- <i class="fa fa-vcard-o p-2" style="margin-top: 10px;"/> -->
+                            <i class="fa fa-envelope-o p-2" style="margin-top: 60px;"/>
+                            <i class="fa fa-phone p-2" style="margin-top: 60px;"/>
+                            <i class="fa fa-mobile-phone p-2" style="margin-top: 60px;"/>
+                        </div>
 
-                        <t t-call="website_adbook.wadbook_head"/>
-                        
-                    </div>
-                    <nav class="navbar navbar-expand-lg navbar-light" >
-                            <div class="col-12 col-md-4 col-lg-4  text-600 pt-2">
-                                <!-- <span class="p-2 text-700">Организационная структура</span> -->
-                                <!-- <h4>Организационная структура</h4> -->
-                            </div>
+                        <div class="col-12 col-md-8 col-lg-8">
 
-                            <div class="col-12 col-md-8 col-lg-8">
+                            <div class="container o_wslides_lesson_header_container mt-5 mt-md-3 mt-xl-4">
+                                <h1 class="d-flex justify-content-center font-weight-medium w-100">
+                
+                                    <a href="/wadbook" class="text-decoration-none text-white"> Справочник сотрудников</a>
+                                    
+                                </h1>
+                                <!-- <t t-call="website_adbook.wadbook_head"/> -->
                                 
-
-                                    <form method="GET" class="adbook-form-search order-lg-3" t-attf-action="/wadbook/search" role="search">
-                                        <div class="input-group">
-                                            <input type="search" name="search" class="form-control o_search_text" placeholder="Поиск: ФИО, тел, e-mail" aria-label="Search" t-att-value="search_term"/>
-                                            <div class="input-group-append">
-                                                <button class="btn border border-left-0 oe_search_button" type="submit" aria-label="Search" title="Search">
-                                                    <i class="fa fa-search"/>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-
                             </div>
+                            <nav class="navbar navbar-expand-lg navbar-light navbar-transparent" >
+                                    <!-- <div class="col-12 col-md-4 col-lg-4  text-600 pt-2"> -->
+                                        <!-- <span class="p-2 text-700">Организационная структура</span> -->
+                                        <!-- <h4>Организационная структура</h4> -->
+                                    <!-- </div> -->
 
-                    </nav>
+                                    <div class="col-12 col-md-12 col-lg-12 p-0">
+                                        
+
+                                            <form method="GET" class="adbook-form-search order-lg-3" t-attf-action="/wadbook/search" role="search">
+                                                <div class="input-group">
+                                                    <input type="search" name="search" class="form-control o_search_text small" placeholder="Поиск: ФИО, тел, e-mail" aria-label="Search" t-att-value="search_term"/>
+                                                    <div class="input-group-append">
+                                                        <button class="btn oe_search_button border-left" type="submit" aria-label="Search" title="Search">
+                                                            <i class="fa fa-search"/>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                    </div>
+
+                            </nav>
+                        </div>
+                    </div>
 
                     
                         
@@ -62,8 +78,8 @@
 
                 </div>
                 <div class="container o_wslides_lesson_main">
-                    <div class="row">
-                        <div t-attf-class="o_wslides_lesson_aside col-lg-4">
+                    <div class="row mt-3">
+                        <div t-attf-class="o_wslides_lesson_aside col-lg-4 border-bottom">
                             <t t-call="website_adbook.wadbook_left_panel"/>
                         </div>
                         <div t-attf-class="o_wslides_lesson_content col-lg-8">
@@ -96,17 +112,26 @@
 
     <template id="menu_item" name="Wadbook: menu_item">
         <t t-foreach="department_list.sorted(key=lambda r: r.sequence)" t-as="department">
-            <div t-attf-class="o_adbook_menu_block ml-{{department.level}} {{'dep-sub-menu' if department.level>0 else ''}} " t-attf-id="o_dep_parent_id_{{department.parent_id.id if department.parent_id else ''}}">
+            <div t-attf-class="o_adbook_menu_block {{'dep-sub-menu' if department.level>0 else 'dep-root-menu'}} " t-attf-id="o_dep_parent_id_{{department.parent_id.id if department.parent_id else ''}}">
+                
 
                 <a href="#"  role="button" aria-expanded="true"
-                    t-attf-class="border o_adbook_menu o_wslides_lesson_aside_list_link pl-2 text-600 text-decoration-none py-1 d-block o_website_branch_list {{'text-uppercase' if department.level==0 else ''}} "
+                    t-attf-class="text-uppercase border-top border-left border-right p-2 o_adbook_menu o_wslides_lesson_aside_list_link text-600 text-decoration-none d-block o_website_branch_list {{'text-uppercase' if department.level==0 else ''}} pl-{{2+department.level}}"
                     t-att-id="department.id"
                     t-attf-isrecords="{{department.is_records}}"
                     >
+                        <!-- <t t-if="department.child_ids">
+                    
+                            <i class="fa fa-plus-square-o"/>
+                        </t> -->
+                        <!-- <t t-foreach="range(department.level)" t-as="i">
+                            <span> - </span>
+                        </t> -->
+                         
                         <span t-esc="department.adbook_name"/>
                 </a>
                 
-
+                    
                     <t t-call="website_adbook.menu_item">
                             <t t-set="department_list" t-value="department.child_ids"/>
                     </t>
@@ -116,7 +141,7 @@
 
     <!-- Левая панель -->
     <template id="wadbook_left_panel" name="Wadbook: left panel">
-        <div class=" position-relative bg-white ">
+        <div class=" position-relative bg-white menu">
             
             <!-- <div class="text-600 h6 my-0 text-decoration-none ">
 
@@ -127,6 +152,7 @@
             <ul id="collapse_slide_aside" class="o_website_adbook_department_list list-unstyled my-0 pb-3 collapse d-lg-block">
                 <t t-set="i" t-value="0"/>
                 <t t-call="website_adbook.menu_item"/>
+                <div class="border-bottom"> </div>
                 <!-- <t t-foreach="department_list" t-as="department">
 
                     <t t-if="department.level==0">

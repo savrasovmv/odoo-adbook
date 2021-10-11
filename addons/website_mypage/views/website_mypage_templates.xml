@@ -18,7 +18,7 @@
 
                     <div class="container mypage_body">
                         <div class="row ">
-                            <div t-attf-class="col-12 col-md-4 col-lg-3 mt-3 mt-md-0 bg-while">
+                            <div t-attf-class="col-12 col-md-4 col-lg-3 mt-3 mt-md-0 bg-while menu">
                                 <t t-call="website_mypage.mypage_left_panel"/>
                             </div>
                             <div t-attf-class="col-12 col-md-8 col-lg-9">
@@ -184,7 +184,7 @@
                 </table>
             </div>
 
-            <div class="border p-3">
+            <div class="border p-3 mt-3">
                 <h5 class="text-600"> <i class="fa fa-graduation-cap mr-2"/>Мои курсы </h5>
                 <div class="column">
                     <table class="text-700">
@@ -222,30 +222,45 @@
                 </div>
             </div>
 
-            <div class="border p-3">
+            <div class="p-3">
                 
                 <div class="column">
                     <div class="row">
-                        <div>
+                        <div class="border p-3 col-12 col-md-6 col-lg-6">
                             <h5 class="text-600"> <i class="fa fa-ruble mr-2"/>Зарплата </h5>
-                            <div class="border m-2">
+                            <div class="border m-2 p-2 d-flex justify-content-center">
                                 Запросить справку 2-НДФЛ
                             </div>
-                            <div class="border m-2">
+                            <div class="border m-2 p-2 d-flex justify-content-center">
                                 Задать вопрос по расчетному листу
                             </div>
                         </div>
-                        <div>
-                            <h5 class="text-600"> <i class="fa fa-graduation-cap mr-2"/>Мои курсы </h5>
+                        <div class="border p-3 col-12 col-md-6 col-lg-6">
+                            <h5 class="text-600"> <i class="fa fa-sun-o mr-2"/>Отпуска </h5>
+                            <div class="border m-2 p-2 d-flex justify-content-center">
+                                Оформить отпуск
+                            </div>
+                            <div class="border m-2 p-2 d-flex justify-content-center">
+                                График отпусков
+                            </div>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div>
-                            <h5 class="text-600"> <i class="fa fa-graduation-cap mr-2"/>Мои курсы </h5>
+                    <div class="row mt-3">
+                        <div class="border p-3 col-12 col-md-6 col-lg-6">
+                            <h5 class="text-600"> <i class="fa fa-thermometer-3 mr-2"/>Больничный </h5>
+                            <div class="border m-2 p-2 d-flex justify-content-center">
+                                Оформить больничный
+                            </div>
+                            <div class="border m-2 p-2 d-flex justify-content-center">
+                                Передать больничный лист
+                            </div>
                         </div>
-                        <div>
-                            <h5 class="text-600"> <i class="fa fa-graduation-cap mr-2"/>Мои курсы </h5>
+                        <div class="border p-3 col-12 col-md-6 col-lg-6">
+                            <h5 class="text-600"> <i class="fa fa-list-alt mr-2"/>Заявки </h5>
+                            <div class="border m-2 p-2 d-flex justify-content-center">
+                                Справка с места работы
+                            </div>
                         </div>
                     </div>
                     

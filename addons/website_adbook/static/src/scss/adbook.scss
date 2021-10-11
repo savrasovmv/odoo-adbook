@@ -403,12 +403,27 @@ $o-wslides-color-bg: mix($body-bg, #efeff4);
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-    color: #495057;
+    color: #a43b40;
     background-color: #FFFFFF;
     background-clip: padding-box;
-    border: 0px solid #CED4DA;
-    border-radius: 0.25rem;
+    border: 0px solid #a43b40;
+    // border-radius: 0.25rem;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    .o_search_text {
+        border: 0px solid #a43b40;
+    }
+    .oe_search_button {
+        color: #a43b40;
+        border: 0px solid #a43b40;
+        // border-left: 1px solid #a43b40;
+        
+
+    }
+    .input-group-append {
+        border: 0px solid #a43b40;
+        
+    }
 }
 
 
@@ -699,6 +714,14 @@ $o-wslides-color-bg: mix($body-bg, #efeff4);
 }
 
 
+.dep-root-menu {
+    font-size: 14px;
+}
+
+.dep-sub-menu {
+    font-size: 14px;
+}
+
 .dep-sub-menu 
 { 
    display: none; 
@@ -793,5 +816,16 @@ $o-wslides-color-bg: mix($body-bg, #efeff4);
     box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.1) !important;
     // box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 2px 2px 0 rgba(0, 0, 0,0.16), 0 2px 6px -6px rgba(0, 0, 0,0.16) !important;
     // border: 1px solid #46464617;
+}
+
+
+.navbar-transparent {
+
+    background: transparent !important;
+}
+
+.adbook-icon {
+    font-size: 50px;
+    
 }
 
