@@ -14,6 +14,44 @@
     border-color: #a43b40;
 }
 
+#oe_main_menu_navbar .o_menu_systray > li > a[data-action="edit"]:not(:disabled):not(.disabled):active, #oe_main_menu_navbar .o_menu_systray > li > a[data-action="edit"]:not(:disabled):not(.disabled).active, .show > #oe_main_menu_navbar .o_menu_systray > li > a[data-action="edit"].dropdown-toggle, #oe_main_menu_navbar .o_menu_systray > li > a[data-action="translate"]:not(:disabled):not(.disabled):active, #oe_main_menu_navbar .o_menu_systray > li > a[data-action="translate"]:not(:disabled):not(.disabled).active, .show > #oe_main_menu_navbar .o_menu_systray > li > a[data-action="translate"].dropdown-toggle, #oe_main_menu_navbar .o_menu_systray > li > a.css_edit_dynamic:not(:disabled):not(.disabled):active, #oe_main_menu_navbar .o_menu_systray > li > a.css_edit_dynamic:not(:disabled):not(.disabled).active, .show > #oe_main_menu_navbar .o_menu_systray > li > a.css_edit_dynamic.dropdown-toggle {
+
+    color: #FFFFFF;
+    background-color: #0D4383;
+    border-color: #0D4383;
+
+}
+
+.o_main_navbar > ul > li > a:hover, .o_main_navbar > ul > li > label:hover {
+    background-color: #0D4383;
+}
+.o_main_navbar .show .dropdown-toggle {
+    background-color: #0D4383;
+}
+.o_main_navbar > ul > li > a:hover, .o_main_navbar > ul > li > label:hover {
+    background-color: #0D4383;
+}
+
+#oe_main_menu_navbar .o_menu_systray > li > a[data-action="edit"]:not(:disabled):not(.disabled):active, #oe_main_menu_navbar .o_menu_systray > li > a[data-action="edit"]:not(:disabled):not(.disabled).active, .show > #oe_main_menu_navbar .o_menu_systray > li > a[data-action="edit"].dropdown-toggle, #oe_main_menu_navbar .o_menu_systray > li > a[data-action="translate"]:not(:disabled):not(.disabled):active, #oe_main_menu_navbar .o_menu_systray > li > a[data-action="translate"]:not(:disabled):not(.disabled).active, .show > #oe_main_menu_navbar .o_menu_systray > li > a[data-action="translate"].dropdown-toggle, #oe_main_menu_navbar .o_menu_systray > li > a.css_edit_dynamic:not(:disabled):not(.disabled):active, #oe_main_menu_navbar .o_menu_systray > li > a.css_edit_dynamic:not(:disabled):not(.disabled).active, .show > #oe_main_menu_navbar .o_menu_systray > li > a.css_edit_dynamic.dropdown-toggle {
+    color: #FFFFFF;
+    background-color: #0D4383;
+    border-color: #0D4383;
+}
+
+#oe_main_menu_navbar .o_menu_systray > li > a[data-action="edit"]:not(:disabled):not(.disabled):active, #oe_main_menu_navbar .o_menu_systray > li > a[data-action="edit"]:not(:disabled):not(.disabled).active, .show > #oe_main_menu_navbar .o_menu_systray > li > a[data-action="edit"].dropdown-toggle, #oe_main_menu_navbar .o_menu_systray > li > a[data-action="translate"]:not(:disabled):not(.disabled):active, #oe_main_menu_navbar .o_menu_systray > li > a[data-action="translate"]:not(:disabled):not(.disabled).active, .show > #oe_main_menu_navbar .o_menu_systray > li > a[data-action="translate"].dropdown-toggle, #oe_main_menu_navbar .o_menu_systray > li > a.css_edit_dynamic:not(:disabled):not(.disabled):active, #oe_main_menu_navbar .o_menu_systray > li > a.css_edit_dynamic:not(:disabled):not(.disabled).active, .show > #oe_main_menu_navbar .o_menu_systray > li > a.css_edit_dynamic.dropdown-toggle {
+    color: #FFFFFF;
+    background-color: #0D4383;
+    border-color: #0D4383;
+}
+
+#oe_main_menu_navbar .o_menu_systray > li > a[data-action="edit"]:hover, #oe_main_menu_navbar .o_menu_systray > li > a[data-action="translate"]:hover, #oe_main_menu_navbar .o_menu_systray > li > a.css_edit_dynamic:hover {
+    color: #FFFFFF;
+    background-color: #0D4383;
+    border-color: #0D4383;
+}
+
+
+
 .o_main_navbar {
     position: relative;
     height: 46px;

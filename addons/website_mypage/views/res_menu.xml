@@ -1,0 +1,9 @@
+
+<odoo>
+    <template id="my_page_link" name="Link to mypage portal" inherit_id="portal.user_dropdown">
+        <xpath expr="//*[@id='o_logout_divider']" position="before">
+            <a href="/mypage" role="menuitem" class="dropdown-item">Личный кабинет</a>
+        </xpath>
+    </template>
+
+</odoo>

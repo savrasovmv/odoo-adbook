@@ -32,6 +32,7 @@
     # always loaded
     'data': [
         'views/website_mypage_templates.xml',
+        'views/res_menu.xml',
         'views/assets.xml',
 
     ],
