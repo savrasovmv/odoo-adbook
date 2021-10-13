@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<odoo>
+    
+    <record id="vote_vote_view_search" model="ir.ui.view">
+        <field name="name">vote.vote.view.search</field>
+        <field name="model">vote.vote</field>
+        <field name="arch" type="xml">
+            <search string="Search Opportunities">
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="vote_vote_view_form" model="ir.ui.view">
+        <field name="name">vote.vote.form</field>
+        <field name="model">vote.vote</field>
+        <field name="arch" type="xml">
+            <form string="Голосования">
+                <header>
+
+                    <field name="state" widget="statusbar"/>
+                </header>
+
+                <sheet>
+                    <field name="background_image" widget="image" class="oe_avatar"/>
+
+                    <div class="oe_title" style="width: 100%;">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name" placeholder="Наименование Голосования"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <!-- <field name="name"/> -->
+                            <field name="type"/>
+                            <field name="state"/>
+                            <!-- <field name="date_start"/>
+                            <field name="date_end"/> -->
+                            <label for="date_start" string="Период"/>
+                            <div class="o_row">
+                                <field name="date_start" widget="daterange" nolabel="1" class="oe_inline" options="{'related_end_date': 'date_end'}"/>
+                                <i class="fa fa-long-arrow-right mx-2" aria-label="Arrow icon" title="Arrow"/>
+                                <field name="date_end" widget="daterange" nolabel="1" class="oe_inline" options="{'related_start_date': 'date_start'}"/>
+                            </div>
+                        </group>
+
+                        
+                    </group>
+                    
+                    <notebook>
+                        <page string="Описание">
+                            <field name="description"/>
+                               
+                        </page>
+                        <page string="Список">
+                            <field name="vote_vote_line">
+                                <tree editable="botton">
+                                    <field name="users_id"/>
+                                    <field name="employee_id"/>
+                                    <field name="text_idea"/>
+                                    <field name="file_text"/>
+
+                                </tree>
+                            </field> 
+                        </page>
+                    </notebook>       
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="vote_vote_view_tree" model="ir.ui.view">
+        <field name="name">vote.vote.tree</field>
+        <field name="model">vote.vote</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="type"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+            </tree>
+        </field>
+    </record>
+  
+
+    <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
+    <record id="vote_vote_action" model="ir.actions.act_window">
+        <field name="name">Голосования</field>
+        <field name="res_model">vote.vote</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p>
+             Создайте новую запись
+          </p>
+        </field>
+    </record>
+
+  
+   
+</odoo>

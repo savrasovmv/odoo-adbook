@@ -1,0 +1,44 @@
+<odoo>
+
+    <template id="vote_home" name="vote_home">
+        <t t-set="body_classname" t-value="'o_wprofile_body'"/>
+        <t t-call="website.layout">
+        
+            <div id="wrap" class="wrap" contentEditable="False">
+
+                <div class="position-relative">
+                    
+                    <div class="container">
+
+                        <!-- <t t-call="website_vote.mypage_head"/> -->
+                        <h3> Открытые голосования </h3>
+                        <t t-foreach="open_list" t-as="line">
+                            <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between" href="/vote/{{line.id}}"><t t-esc="line.name"/></a>
+                            <t t-if="line.description"><div t-field='line.description' class="oe_no_empty"/></t>
+                            
+                        </t>
+                    </div>
+                </div>
+
+                    <!-- <div class="container mypage_body">
+                        <div class="row ">
+                            <div t-attf-class="col-12 col-md-4 col-lg-3 mt-3 mt-md-0 bg-while menu">
+                                <t t-call="website_mypage.mypage_left_panel"/>
+                            </div>
+                            <div t-attf-class="col-12 col-md-8 col-lg-9">
+                                <t t-call="website_mypage.mypage_content"/>
+                                
+                            </div>
+                        </div>
+                    </div> -->
+            </div>
+
+        </t>
+    </template>
+
+    
+
+
+</odoo>
+
+

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vote_vote_manager,vote.vote,model_vote_vote,group_vote_manager,1,1,1,1
+access_vote_vote_users,vote.vote,model_vote_vote,group_vote_users,1,0,0,0
+access_vote_vote_line_manager,vote.vote_line,model_vote_vote_line,group_vote_manager,1,1,1,1
+access_vote_vote_line_users,vote.vote_line,model_vote_vote_line,group_vote_users,1,0,0,0

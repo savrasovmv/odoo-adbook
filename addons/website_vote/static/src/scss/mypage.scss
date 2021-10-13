@@ -1,0 +1,31 @@
+
+.mypage_head{
+    @extend .pt-3;
+    background-color: #163b7861;
+    color: white;
+}
+
+.mypage_body{
+    // background-color: #e8e8e8;
+}
+
+
+.mypage_menu_item{
+    @extend .m-2;
+    i {
+        // @extend .mr-1;
+        @extend .py-2, .mx-2;
+        width: 16px;
+    }
+
+}
+
+
+.mypage_photo{
+    // @extend .border;
+    border: 1px solid #e8e8e8;
+    border-bottom-width: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

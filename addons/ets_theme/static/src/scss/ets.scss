@@ -197,6 +197,46 @@ h1, h2, h3,h4,h5, h6 {
 
 
 
+// Portal
+.o_portal_wrap .o_portal_navbar {
+    background-color: #a43b40 !important;
+    a:hover {
+        color: #ddd !important;
+        text-decoration: none;
+    }
+    a:focus{
+        color: #ddd !important;
+        text-decoration: none;
+        
+    }
+}
+.breadcrumb-item.active {
+    color: #FFFFFF;
+}
+.breadcrumb-item {
+    color: #FFFFFF !important;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    display: inline-block;
+    padding-right: 0;
+    color: #ffffff;
+    content: "/";
+}
+
+
+
+
+
+.o_cc4 a:not(.btn), .navbar-light a:not(.btn), .o_cc4 .btn-link, .navbar-light .btn-link, .o_colored_level .o_cc4 a:not(.btn), .o_colored_level .navbar-light a:not(.btn), .o_colored_level .o_cc4 .btn-link, .o_colored_level .navbar-light .btn-link {
+    color: #FFFFFF;
+    a:focus{
+        color: #ddd !important;
+    }
+}
+
+
+
 
 // .navbar {
 //     .input-group {
