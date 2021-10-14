@@ -34,7 +34,7 @@
         'views/vote_views.xml',
         'views/menu.xml',
         'views/website_vote_templates.xml',
-        # 'views/assets.xml',
+        'views/assets.xml',
         'security/security.xml',
         'security/ir.model.access.csv',
 

@@ -6,6 +6,7 @@ from odoo.addons.web.controllers.main import content_disposition, ensure_db
 import werkzeug.utils
 import base64
 import json
+from odoo.tools import html2plaintext
 
 class WebsiteVote(http.Controller):
 
@@ -19,7 +20,7 @@ class WebsiteVote(http.Controller):
     
 
     @http.route(['/vote'], type='http', auth="user", website=True, sitemap=True)
-    def my_page(self):
+    def vote_home(self):
         # user = self._check_user_profile_access(request.env.user.id)
         # print('+++++++', user[0].name)
         # if not user:
@@ -32,17 +33,57 @@ class WebsiteVote(http.Controller):
         # if len(employer) == 0:
         #     return request.redirect("/")
         
-        open_list = request.env['vote.vote'].search([
-            ('state', '=', 'open')
-        ])
+        reg_list_search = request.env['vote.vote'].sudo().search([
+            ('state', '=', 'reg')
+        ], limit=3, order='reg_date_start asc')
 
-        closed_list = request.env['vote.vote'].search([
-            ('state', '=', 'closed')
-        ])
+        reg_list = []
+        for line in reg_list_search:
+            reg_list.append(
+                {
+                    'id': line.id,
+                    'name': line.name,
+                    'description':html2plaintext(line.description).replace('\n', ' ')[:200] + '...',
+                    'background_image': line.background_image
+                }
+            )
         
+        vote_list_search = request.env['vote.vote'].sudo().search([
+            ('state', '=', 'vote')
+        ], limit=3, order='date_start asc')
+        
+        print('+++++++++', reg_list)
         return http.request.render(
             'website_vote.vote_home', 
             {
-                'open_list':open_list,
-                'closed_list': closed_list,
+                'reg_list':reg_list,
+                'vote_list': vote_list_search,
+            })
+
+
+    @http.route(['/vote/<int:vote_id>'], type='http', auth="user", website=True, sitemap=True)
+    def vote_page(self, vote_id=False):
+        if not vote_id:
+            return request.redirect("/vote")
+        # user = self._check_user_profile_access(request.env.user.id)
+        # print('+++++++', user[0].name)
+        # if not user:
+        #     return request.redirect("/")
+
+        # employer = request.env['hr.employee'].sudo().search([
+        #     ('user_id', '=', user.id)
+        # ])
+
+        # if len(employer) == 0:
+        #     return request.redirect("/")
+        
+        vote = request.env['vote.vote'].sudo().search([
+            ('id', '=', vote_id)
+        ], limit=1)
+
+       
+        return http.request.render(
+            'website_vote.vote_page', 
+            {
+                'vote':vote,
             })

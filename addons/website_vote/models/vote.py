@@ -9,9 +9,12 @@ class Vote(models.Model):
     _order = "name"
 
     name = fields.Char(u'Наименование', required=True)
-    date_start = fields.Date(string='Начало')
-    date_end = fields.Date(string='Окончание')
+    date_start = fields.Date(string='Начало голосования')
+    date_end = fields.Date(string='Окончание голосования')
+    reg_date_start = fields.Date(string='Начало регистрации')
+    reg_date_end = fields.Date(string='Окончание регистрации')
 
+    is_reg = fields.Boolean(string='Регистрация', help="Если установлена, разрешает участникам регистрацию на сайте")
 
     type = fields.Selection([
         ('ideas', 'Идеи'),
@@ -24,13 +27,35 @@ class Vote(models.Model):
     
     background_image = fields.Binary("Изображение")
     state = fields.Selection(selection=[
-        ('draft', 'Draft'), ('open', 'In Progress'), ('closed', 'Closed')
-    ], string="Статус", default='draft', required=True,
+            ('draft', 'Черновик'), 
+            ('reg', 'Регистрация'), 
+            ('vote', 'Голосование'), 
+            ('closed', 'Закрыто')
+        ], string="Статус", default='draft', required=True,
     )
+
+    user_id = fields.Many2one('res.users', string='Организатор', required=False, default=lambda self: self.env.user)
+
 
     active = fields.Boolean(string='Активна', default=True)
 
     vote_vote_line = fields.One2many('vote.vote_line', 'vote_vote_id', string=u"Строка Голосования")
+
+    def button_draft(self):
+        for line in self:
+            line.state = "draft"
+    
+    def button_reg(self):
+        for line in self:
+            line.state = "reg"
+
+    def button_vote(self):
+        for line in self:
+            line.state = "vote"
+
+    def button_closed(self):
+        for line in self:
+            line.state = "closed"
 
 class VoteLine(models.Model):
     _name = "vote.vote_line"

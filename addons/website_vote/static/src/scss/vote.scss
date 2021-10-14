@@ -1,0 +1,18 @@
+
+.o_vote_title {
+    text-shadow: 1px 1px 2px, 0 0 1em black;
+    font-size: calc(1.475rem + 2.7vw);
+    font-weight: 300;
+    color: white;
+}
+
+
+.mypage_menu_item{
+    @extend .m-2;
+    i {
+        // @extend .mr-1;
+        @extend .py-2, .mx-2;
+        width: 16px;
+    }
+
+}
