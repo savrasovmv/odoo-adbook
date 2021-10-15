@@ -40,7 +40,7 @@
                                     </div>
 
                                     <div>
-                                        <a class="text-reset text-decoration-none" t-attf-href="/vote/{{line['id']}}">
+                                        <a class="text-reset text-decoration-none vote_list_text" t-attf-href="/vote/{{line['id']}}">
                                             <t t-esc="line['description']"/>
 
                                         </a>
@@ -97,7 +97,7 @@
                     <div class="container ">
                         <div class="row">
                             <div class='d-flex flex-column justify-content-around h-100 w-100 o_record_cover_component o_record_cover_image' t-attf-style="background-image: url(data:image/png;base64,{{vote.background_image}}); background-size: cover;background-position: center;
-                                                    background-repeat: no-repeat; min-height: 55vh !important;">
+                                                    background-repeat: no-repeat; min-height: 35vh !important;">
                                 
                                 <div style="opacity: 0.2;" class="o_record_cover_component o_record_cover_filter oe_black" ></div>
                                 
@@ -179,9 +179,31 @@
                 <span t-field="vote.date_end" t-options='{"format": "dd.MM.yyyy"}'/>
             </div>
 
+            <div class="mt-4">
+                <h5 > Участников:  <span t-esc="len(vote.vote_vote_participant)"/> </h5>
+                
+            </div>
+
 
             <div class="mt-4">
-                <a t-attf-href="/vote/reg/{{vote.id}}" class="mb-2 btn btn-primary">Участвовать</a>
+                <t t-if="participant">
+                    <h5> Вы участник: </h5>
+                    <div class="d-flex m-1">
+                        <t t-if="participant.file">
+                            <div class="column">
+                                <img t-if="participant.file != False" class="w-100"
+                                    t-attf-src="data:image/png;base64,{{participant.file}}">
+                                        
+                                    </img>
+                                <div class="w-100 text-center"><span t-esc="participant.file_text"/></div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+                
+                <t t-else="">
+                    <a t-attf-href="/vote/reg/{{vote.id}}" class="mb-2 btn btn-primary">Участвовать</a>
+                </t>
                 
             </div>
          
@@ -195,7 +217,21 @@
 
         
             <div t-field="vote.description"/>
+
+            <div class="row">
+                <t t-foreach="vote.vote_vote_participant" t-as="participant">
+
+                    <div class="column">
+                        <img t-if="participant.file != False" class="w-100"
+                            t-attf-src="data:image/png;base64,{{participant.file}}">
+                                
+                            </img>
+                        <div class="w-100 text-center"><span t-esc="participant.file_text"/></div>
+                    </div>
+
+                </t>
         
+            </div>
         </div>
     </template>
 
