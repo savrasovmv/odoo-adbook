@@ -251,9 +251,21 @@ h1, h2, h3,h4,h5, h6 {
 .s_cover  {
 
     min-height: 35vh !important;
+    
+    
 
 }
+.parallax.s_parallax_is_fixed > .s_parallax_bg {
+    background-attachment: local !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
 
+//  Ширина контента создания поста
+.website_forum .o_wforum_readable {
+    max-width: 100% !important;
+}
 
 // .navbar {
 //     .input-group {
