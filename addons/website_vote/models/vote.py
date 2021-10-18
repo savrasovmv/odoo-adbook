@@ -31,7 +31,9 @@ class Vote(models.Model):
         "Условия", translate=True, sanitize=False,  # TDE FIXME: find a way to authorize videos
         help="Условия участия, которое будет отображаться на странице регистрации")
 
-    
+    description_votes = fields.Html(
+        "Условия голосования", translate=True, sanitize=False,  # TDE FIXME: find a way to authorize videos
+        help="Описание для голосующих, которое будет отображаться на странице голосования в период голосования")
     
     background_image = fields.Binary("Изображение")
     state = fields.Selection(selection=[
@@ -44,11 +46,14 @@ class Vote(models.Model):
 
     user_id = fields.Many2one('res.users', string='Организатор', required=False, default=lambda self: self.env.user)
 
+    numder_votes = fields.Integer(string='Кол-во голосов', help="Сколько раз можно проголосовать (выбрать несколько)", default=1)
+
 
     active = fields.Boolean(string='Активна', default=True)
 
     vote_vote_participant = fields.One2many('vote.vote_participant', 'vote_vote_id', string=u"Зарегистрированные Участники")
     vote_vote_voting = fields.One2many('vote.vote_voting', 'vote_vote_id', string=u"Участники голосования")
+
 
     def button_draft(self):
         for line in self:

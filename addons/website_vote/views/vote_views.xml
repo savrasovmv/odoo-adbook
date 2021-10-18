@@ -43,6 +43,8 @@
                                     <field name="type"/>
                                     <!-- <field name="state"/> -->
                                     <field name="is_reg"/>
+                                    <field name="numder_votes"/>
+
                                 
                                 </group>
                             </group>
@@ -79,6 +81,10 @@
                         </page>
                         <page string="Условия участия">
                             <field name="conditions"/>
+                               
+                        </page>
+                        <page string="Условия голосования">
+                            <field name="description_votes"/>
                                
                         </page>
                         <page string="Список">

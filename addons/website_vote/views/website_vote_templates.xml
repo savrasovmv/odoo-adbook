@@ -217,22 +217,43 @@
 
         
             <div t-field="vote.description"/>
+            
+            <div t-field="vote.description_votes"/>
+
+            <a t-attf-href="/vote/voting/{{vote.id}}" class="mb-2 btn btn-primary">Начать голосование</a>
+            <div class="h3"> Работы участников: </div>
 
             <div class="row">
                 <t t-foreach="vote.vote_vote_participant" t-as="participant">
 
-                    <div class="column">
-                        <!-- <a t-attf-href="#"
-                               t-field="participant.image_128"
-                               class="mr-3 text-center o_width_128"
-                               t-options='{"widget": "image", "qweb_img_responsive": False, "class": "o_image_128_max"}'
-                            ></a> -->
+                    <div class="column vote_image_preview_block m-2">
 
-
-                        <img t-if="participant.image_128 != False" class="w-100"
-                            t-attf-src="data:image/png;base64,{{participant.image_128}}">
+                        <div class="row vote_image_preview d-flex justify-content-center">
+                            <a t-attf-href="#"
+                                class="text-center text-decoration-none"
                                 
-                            </img>
+                                >
+                                    <img t-if="participant.image_128 != False" class="w-100 vote_image_preview_img"
+                                        t-attf-src="data:image/png;base64,{{participant.image_128}}"/>
+                                
+                            </a> 
+                            
+                        </div>
+
+
+                        <!-- <div
+                            class="vote_image_preview m-1"
+                            >  
+                            <div 
+                                class='vote_image_preview_img' 
+                                t-attf-style="background-image: url(data:image/png;base64,{{participant.image_128}}); ">
+                            </div> -->
+                            <!-- <img t-if="participant.image_128 != False" class="w-100"
+                                t-attf-src="data:image/png;base64,{{participant.image_128}}">
+                                    
+                            </img> -->
+                        <!-- </div> -->
+                        
                         <!-- <div class="w-100 text-center"><span t-esc="participant.image_128"/></div> -->
                     </div>
 
@@ -244,33 +265,50 @@
 
 
     <template id="vote_image_views" name="vote_image_views">
-        <div class="vote_image_views"> 
-
         
-            <div t-field="vote.description"/>
+        <t t-call="website_vote.layout">
+            <div class="o_votes_main"> 
 
-            <div class="row">
-                <t t-foreach="vote.vote_vote_participant" t-as="participant">
+                <div class="o_votes_head">
+                    <a class="d-flex align-items-center px-3" t-attf-href="/vote/{vote.id}">
+                        <i class="fa fa-home"></i><span class="d-none d-md-inline-block ml-1">Назад</span>
+                    </a>
 
-                    <div class="column">
-                        <!-- <a t-attf-href="#"
-                               t-field="participant.image_128"
-                               class="mr-3 text-center o_width_128"
-                               t-options='{"widget": "image", "qweb_img_responsive": False, "class": "o_image_128_max"}'
-                            ></a> -->
-
-                            
-                        <img t-if="participant.image_128 != False" class="w-100 vote_image_preview"
-                            t-attf-src="data:image/png;base64,{{participant.image_128}}">
-                                
-                        </img>
-                        <!-- <div class="w-100 text-center"><span t-esc="participant.image_128"/></div> -->
+                </div>
+                <div class="o_votes_content w-100 h-100">
+                    <div 
+                        class='o_vote_image w-100 h-100 ml-5 mr-5 mb-5' 
+                        t-attf-style="background-image: url(data:image/png;base64,{{participant.image_1920}}); ">
                     </div>
+                    <!-- <div class="row">
+                        <t t-foreach="vote.vote_vote_participant" t-as="participant">
 
-                </t>
+                            <div class="column vote_image_preview_block m-2">
+
+                                <div class="row vote_image_preview d-flex justify-content-center">
+                                    <a t-attf-href="#"
+                                        class="text-center text-decoration-none"
+                                        
+                                        >
+                                            <img t-if="participant.image_128 != False" class="w-100 vote_image_preview_img"
+                                                t-attf-src="data:image/png;base64,{{participant.image_128}}"/>
+                                        
+                                    </a> 
+                                    
+                                </div>
+
+                               
+                            </div>
+
+                        </t>
         
+                    </div> -->
+                    
+
+                </div>
+                
             </div>
-        </div>
+        </t>
     </template>
 
 

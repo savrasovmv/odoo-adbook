@@ -167,3 +167,26 @@ class WebsiteVote(http.Controller):
                 'reg_list':reg_list,
                 'vote_list': vote_list_search,
             })
+
+
+    # Голосование
+    @http.route(['/vote/voting/<int:vote_id>'], type='http', auth="user", website=True, sitemap=True)
+    def vote_voting(self, vote_id=False):
+        if not vote_id:
+            return request.redirect("/vote")
+        
+        vote = request.env['vote.vote'].sudo().search([
+            ('id', '=', vote_id)
+        ], limit=1)
+
+        participant = request.env['vote.vote_participant'].sudo().search([
+            ('id', '=', 12),
+        ], limit=1)
+
+       
+        return http.request.render(
+            'website_vote.vote_image_views', 
+            {
+                'vote':vote,
+                'participant': participant
+            })
