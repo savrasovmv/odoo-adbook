@@ -114,7 +114,7 @@
                             
                             <div class="form-group">
                                 <div t-attf-class="o_web_sign_load_file col-auto ">
-                                    <input type="file" role="button" name="file" class="btn btn-link py-0"/>
+                                    <input type="file" accept="image/*" role="button" name="file" class="btn btn-link py-0"/>
                                 </div>
                             </div>
                             

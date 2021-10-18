@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from odoo import http, api, models
+from odoo import http, api, models,tools
 from odoo.http import request
 from odoo.addons.website.controllers.main import Website
 from odoo.addons.web.controllers.main import content_disposition, ensure_db
+from odoo.tools.mimetypes import guess_mimetype
 import werkzeug.utils
 import base64
 import json
@@ -88,21 +89,25 @@ class WebsiteVote(http.Controller):
 
     @http.route("/vote/submitted/<int:vote_id>", type="http", auth="user", website=True, csrf=True)
     def submit_vote(self, vote_id=False, **kw):
-        print('++++++++++++', kw)
         data = False
+        file = ""
         if kw.get("file"):
             for c_file in request.httprequest.files.getlist("file"):
-                print('++++++++++++', c_file)
-
                 data = c_file.read()
-                file = c_file
-            
+        if data:
+            binary = base64.b64encode(data).decode("utf-8")
+            mimetype = guess_mimetype(data)
+            if mimetype.startswith("image/"):
+                file = binary
+            else:
+                return werkzeug.utils.redirect("/vote/%s" % str(vote_id))
+
         vals = {
             "file_text": kw.get("file_text"),
             "users_id": http.request.env.user.id,
             "vote_vote_id": vote_id,
-            "file": base64.b64encode(data).decode("utf-8") if file else '',
-            # "file": base64.b64encode(file) if file else '',
+            "file": file,
+            # "file_small": tools.image_resize_image_small(base64.b64encode(base64.b64encode(data))) if file else '',
         }
         new_vote_line = request.env["vote.vote_participant"].sudo().create(vals)
         # new_ticket.message_subscribe(partner_ids=request.env.user.partner_id.ids)

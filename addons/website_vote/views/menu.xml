@@ -7,6 +7,10 @@
             
         </menuitem>
 
+        <menuitem id="vote_participant_first_level_menu" name="Участники" action="vote_vote_participant_action" sequence="20">
+            
+        </menuitem>
+
        
 
         <!-- <menuitem id="adbook_branch_first_level_menu" name="Подразделения" action="adbook_branch_action" sequence="30">

@@ -1,4 +1,6 @@
 from odoo import fields, models, api
+from odoo import tools
+import base64
 
 
 
@@ -79,11 +81,23 @@ class VoteParticipant(models.Model):
     text_idea = fields.Text(string='Текст идеи')
     file = fields.Binary('Файл', default=None)
     file_text = fields.Char(string='Подпись к файлу')
+    image_1920 = fields.Image("image_1920",compute="_get_default_image", store=True, readonly=True)
+    image_128 = fields.Image("Image_128", max_width=128, max_height=128, compute='_get_default_image', store=True, readonly=True)
+    # mimetype = fields.Char(
+    #     compute="_compute_mimetype", string="Type", readonly=True, store=True
+    # )
 
     @api.depends("users_id")
     def _get_name(self):
         if self.users_id:
             self.name = self.users_id.name 
+
+    @api.depends("file")
+    def _get_default_image(self):
+        if self.file:
+            self.image_128 = self.file
+            self.image_1920 = self.file
+    
 
 
 class VoteVoting(models.Model):
@@ -107,6 +121,15 @@ class VoteVoting(models.Model):
     def _get_name(self):
         if self.users_id:
             self.name = self.users_id.name 
+    
+    @api.model
+    def create(self, vals):
+        if 'file' in vals:
+            vals['file_small'] = tools.image_resize_image_small(base64.b64encode(vals['file_small']))
+
+        print("==============", vals)  
+        return super(VoteVoting, self).create(vals)
+
     
 
   
