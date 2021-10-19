@@ -180,13 +180,64 @@ class WebsiteVote(http.Controller):
         ], limit=1)
 
         participant = request.env['vote.vote_participant'].sudo().search([
-            ('id', '=', 12),
+            ('vote_vote_id', '=', vote.id),
         ], limit=1)
+
+
 
        
         return http.request.render(
             'website_vote.vote_image_views', 
             {
                 'vote':vote,
-                'participant': participant
+                'participant': participant,
+                'list_ids': vote.vote_vote_participant.ids
             })
+
+    @http.route(['/vote/participant/<int:participant_id>'], type='json', auth="user", website=True, sitemap=True)
+    def vote_get_participant_image(self, participant_id=False):
+        print("+++++++++++++++++vote_get_participant_image")
+        if not participant_id:
+            return request.redirect("/vote")
+        
+       
+        participant = request.env['vote.vote_participant'].sudo().search([
+            ('id', '=', participant_id),
+        ], limit=1)
+
+
+        if not participant:
+            return request.redirect("/vote")
+       
+        return {
+            'image_1920': participant.image_1920
+        }
+
+    @http.route(['/vote/json/voting/<int:vote_id>'], type='json', auth="user", website=True, sitemap=True)
+    def vote_json_voting(self, vote_id=False):
+        if not vote_id:
+            return request.redirect("/vote")
+        
+       
+        vote = request.env['vote.vote'].sudo().search([
+            ('id', '=', vote_id),
+        ], limit=1)
+
+
+        if not vote:
+            return request.redirect("/vote")
+
+        participant = request.env['vote.vote_participant'].sudo().search([
+            ('vote_vote_id', '=', vote_id),
+        ], limit=1)
+
+        if not participant:
+            return request.redirect("/vote")
+       
+        return {
+            'list_id': vote.vote_vote_participant.ids,
+            'next_id': vote.vote_vote_participant.ids[1],
+            'prev_id': vote.vote_vote_participant.ids[-1],
+            'image_1920': participant.image_1920,
+            'file_text': participant.file_text,
+        }

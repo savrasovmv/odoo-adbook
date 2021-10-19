@@ -2,13 +2,20 @@
 <odoo>
     <data>
 
-        <template id="assets_frontend_mypage" inherit_id="website.assets_frontend" name="Mypage Frontend Assets">
+        <template id="assets_frontend_vote" inherit_id="website.assets_frontend" name="Vote Frontend Assets">
             <xpath expr="//link[last()]" position="after">
                 <link rel="stylesheet" type="text/scss" href="/website_vote/static/src/scss/vote.scss" t-ignore="true"/>
             </xpath>
             <xpath expr="//script[last()]" position="after">
                 <script type="text/javascript" src="/website_vote/static/src/js/toggle_widget.js"></script>
             </xpath>
+        </template>
+
+
+        <template id="vote_voting_assets" name="vote_voting_assets">
+            <script type="text/javascript" src="/website_vote/static/src/js/voting.js"></script>
+
+            <link rel="stylesheet" type="text/scss" href="/website_vote/static/src/scss/voting.scss" t-ignore="true"/>
         </template>
 
     </data>

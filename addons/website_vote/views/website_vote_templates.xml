@@ -264,52 +264,7 @@
     </template>
 
 
-    <template id="vote_image_views" name="vote_image_views">
-        
-        <t t-call="website_vote.layout">
-            <div class="o_votes_main"> 
-
-                <div class="o_votes_head">
-                    <a class="d-flex align-items-center px-3" t-attf-href="/vote/{vote.id}">
-                        <i class="fa fa-home"></i><span class="d-none d-md-inline-block ml-1">Назад</span>
-                    </a>
-
-                </div>
-                <div class="o_votes_content w-100 h-100">
-                    <div 
-                        class='o_vote_image w-100 h-100 ml-5 mr-5 mb-5' 
-                        t-attf-style="background-image: url(data:image/png;base64,{{participant.image_1920}}); ">
-                    </div>
-                    <!-- <div class="row">
-                        <t t-foreach="vote.vote_vote_participant" t-as="participant">
-
-                            <div class="column vote_image_preview_block m-2">
-
-                                <div class="row vote_image_preview d-flex justify-content-center">
-                                    <a t-attf-href="#"
-                                        class="text-center text-decoration-none"
-                                        
-                                        >
-                                            <img t-if="participant.image_128 != False" class="w-100 vote_image_preview_img"
-                                                t-attf-src="data:image/png;base64,{{participant.image_128}}"/>
-                                        
-                                    </a> 
-                                    
-                                </div>
-
-                               
-                            </div>
-
-                        </t>
-        
-                    </div> -->
-                    
-
-                </div>
-                
-            </div>
-        </t>
-    </template>
+    
 
 
     
