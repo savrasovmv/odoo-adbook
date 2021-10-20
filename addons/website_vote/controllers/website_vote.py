@@ -187,7 +187,8 @@ class WebsiteVote(http.Controller):
 
        
         return http.request.render(
-            'website_vote.vote_image_views', 
+            # 'website_vote.vote_image_views', 
+            'website_vote.voting_page', 
             {
                 'vote':vote,
                 'participant': participant,
@@ -210,7 +211,13 @@ class WebsiteVote(http.Controller):
             return request.redirect("/vote")
        
         return {
-            'image_1920': participant.image_1920
+            'participant_id': participant.id,
+            'image_1920': participant.image_1920,
+            'file_text': participant.file_text,
+            'autor': participant.employee_id.name if participant.employee_id else participant.users_id.name,
+            'title': participant.employee_id.job_title if participant.employee_id else '',
+            'department': participant.employee_id.department_id.name if participant.employee_id.department_id else '',
+            'description': participant.description,
         }
 
     @http.route(['/vote/json/voting/<int:vote_id>'], type='json', auth="user", website=True, sitemap=True)
@@ -240,4 +247,8 @@ class WebsiteVote(http.Controller):
             'prev_id': vote.vote_vote_participant.ids[-1],
             'image_1920': participant.image_1920,
             'file_text': participant.file_text,
+            'autor': participant.employee_id.name if participant.employee_id else participant.users_id.name,
+            'title': participant.employee_id.job_title if participant.employee_id else '',
+            'department': participant.employee_id.department_id.name if participant.employee_id.department_id else '',
+            'description': participant.description,
         }

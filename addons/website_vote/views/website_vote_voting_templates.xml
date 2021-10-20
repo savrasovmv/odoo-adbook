@@ -18,14 +18,108 @@
         
     </template>
 
+    <template id="voting_page" name="voting_page">
+        <t t-call="website_vote.voting_layout">
+
+            <div id="wrap" class="wrap" contentEditable="False">
+
+                <div class="position-relative o_voting_main" t-att-voteId='vote.id'>
+                    
+                    <div class="container">
+                        <a t-attf-href="/vote/{{vote.id}}"  class="o_voting_exit" ><i class="fa fa-remove"/></a>
+                        <div class="row voting_head p-2">
+                            <div t-attf-class="col-12 col-md-4 col-lg-3">
+                                <div> </div>
+                            </div>
+                            <div t-attf-class="col-12 col-md-8 col-lg-9">
+                                <t t-call="website_vote.voting_head"/>
+                            </div>
+                        </div>
+
+                        <div class="row voting_content ">
+                            <div t-attf-class="voting_left_panel border col-12 col-md-4 col-lg-3 mt-3 mt-md-0">
+                                <t t-call="website_vote.voting_left_panel"/>
+                            </div>
+                            <div t-attf-class="col-12 col-md-8 col-lg-9">
+                                <t t-call="website_vote.voting_image"/>
+                                
+                            </div>
+                        </div>
+                        <div class="row voting_footer">
+                            <div t-attf-class="col-12 col-md-4 col-lg-3 mt-3 mt-md-0 ">
+                                <div class="voting_button">
+                                    <a class="o_voting_button" >Мне нравится <i class="fa fa-thumbs-o-up"/></a>
+
+                                </div>
+                            </div>
+                            <div t-attf-class="col-12 col-md-8 col-lg-9">
+                                <t t-call="website_vote.voting_footer"/>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                </div>
+
+                   
+            </div>
+        </t>
+    </template>
+
+    <template id="voting_head" name="voting_head">
+        <div class="text-white o_voting_file_text"></div>
+        
+
+    </template>
+
+    <template id="voting_left_panel" name="voting_left_panel">
+        <!-- <div class="voting_left_panel"> -->
+            <div class="column">
+                <div class="o_voting_autor text-uppercase mt-3 mb-3"> </div>
+                <div class="o_voting_title small mt-1"> </div>
+                <div class="o_voting_department small mt-1"> </div>
+                <div class="o_voting_description mt-3"> </div>
+                <!-- <div class="voting_button">
+                    <a class="o_voting_button" >Мне нравится <i class="fa fa-thumbs-o-up"/></a>
+
+                </div> -->
+
+            </div>
+
+        <!-- </div> -->
+    </template>
+
+    <template id="voting_image" name="voting_image">
+
+        <div  class='o_voting_image'> 
+
+                    <a class="o_voting_prev" ><i class="fa fa-chevron-left"/></a>
+                    <a class="o_voting_next" ><i class="fa fa-chevron-right"/></a>
+        </div>
+
+    </template>
+
+    <template id="voting_footer" name="voting_footer">
+        <div class="o_voting_count"> </div>
+
+    </template>
+
+
 
     <template id="vote_image_views" name="vote_image_views">
          <!-- <t t-set="body_classname" t-value="'o_vote_body'"/> -->
         
         <t t-call="website_vote.voting_layout">
-            <div class="o_voting_main"
+        <div class="o_voting_main" t-att-voteId='vote.id'>
+                    
+            <div class="container">
+                <div class="column">
+
+                </div>
+
+            <!-- <div class="o_voting_main"
                 t-att-voteId='vote.id'
-            > 
+            >  -->
 
                 <!-- <div class="o_voting_head">
                     <a class="d-flex align-items-center px-3" t-attf-href="/vote/{{vote.id}}">
@@ -48,13 +142,25 @@
 
                         >
                     </div> -->
+                    <div class="o_voting_head">
+                        <div class="column">
+                            <div class="o_voting_autor"> </div>
+                            <div class="o_voting_title"> </div>
+                        </div>
+                        <h3 class="text-white o_voting_file_text"></h3>
+                        <!-- <h3 class="text-white"><t t-esc="participant.file_text"/></h3>
+                        
+                        <t t-esc="list_ids.index(participant.id)+1"/> из <t t-esc="len(list_ids)"/> -->
+                    </div>
+
                     <a t-attf-href="/vote/{{vote.id}}"  class="o_voting_exit" ><i class="fa fa-remove"/></a>
 
-                    <a class="o_voting_prev" t-att-name='list_ids[current_index-1]'><i class="fa fa-chevron-left"/></a>
-                    <a class="o_voting_next" t-att-name='list_ids[current_index+1]'><i class="fa fa-chevron-right"/></a>
+                    <a class="o_voting_button" >Мне нравится <i class="fa fa-thumbs-o-up"/></a>
+                    <a class="o_voting_prev" ><i class="fa fa-chevron-left"/></a>
+                    <a class="o_voting_next" ><i class="fa fa-chevron-right"/></a>
 
                     <div class="o_voting_footer">
-                        <h3 class="text-white o_voting_file_text"></h3>
+                        <!-- <h3 class="text-white o_voting_file_text"></h3> -->
                         <div class="o_voting_count"> </div>
                         <!-- <h3 class="text-white"><t t-esc="participant.file_text"/></h3>
                         
@@ -65,6 +171,7 @@
 
                 </div>
                 
+            </div>
             </div>
         </t>
     </template>

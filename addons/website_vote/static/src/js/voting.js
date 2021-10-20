@@ -3,10 +3,10 @@ odoo.define('website_vote.Voting', function (require) {
 
     var publicWidget = require('web.public.widget');
 
-    var rpc = require('web.rpc');
+    // var rpc = require('web.rpc');
     const ajax = require('web.ajax');
-    var core = require('web.core');
-    var QWeb = core.qweb;
+    // var core = require('web.core');
+    // var QWeb = core.qweb;
     
     publicWidget.registry.Voting = publicWidget.Widget.extend({
         // template: 'website_adbook.wadbook_emploer_list',
@@ -21,19 +21,25 @@ odoo.define('website_vote.Voting', function (require) {
             // $('.o_wslides_lesson_content_type').append(QWeb.render('website_adbook.wadbook_content' , {}))
         },
 
-        _replaceContent: function (voteId) {
-            ajax.jsonRpc('/vote/json/voting/'+voteId, 'call', {})
-                .then(function(json_data) { 
-                        console.log(json_data); 
-                        // console.log(json_data['image_1920']); 
-                        // var $content = $(QWeb.render('website_adbook.wadbook_emploer_list' , json_data))
-                        $('.o_voting_image').css('backgroundImage', 'url(data:image/png;base64,'+ json_data['image_1920'] +' )'); 
-                        $('.o_voting_file_text').html(json_data['file_text'])
-                        this.nextId = json_data['next_id']
-                        // this.attr('prevId',json_data['prev_id'])
+        _replaceContent: function (json_data) {
+            $('.o_voting_image').css('backgroundImage', 'url(data:image/png;base64,'+ json_data['image_1920'] +' )'); 
+            $('.o_voting_file_text').html(json_data['file_text'])
+            $('.o_voting_autor').html(json_data['autor'])
+            $('.o_voting_title').html(json_data['title'])
+            $('.o_voting_department').html(json_data['department'])
+            $('.o_voting_description').html(json_data['description'])
+            // ajax.jsonRpc('/vote/json/voting/'+voteId, 'call', {})
+            //     .then(function(json_data) { 
+            //             console.log(json_data); 
+            //             // console.log(json_data['image_1920']); 
+            //             // var $content = $(QWeb.render('website_adbook.wadbook_emploer_list' , json_data))
+            //             $('.o_voting_image').css('backgroundImage', 'url(data:image/png;base64,'+ json_data['image_1920'] +' )'); 
+            //             $('.o_voting_file_text').html(json_data['file_text'])
+            //             this.nextId = json_data['next_id']
+            //             // this.attr('prevId',json_data['prev_id'])
 
-                        // return;
-                });
+            //             // return;
+            //     });
 
         },
 
@@ -51,15 +57,19 @@ odoo.define('website_vote.Voting', function (require) {
                     // this._replaceContent(voteId)
                     ajax.jsonRpc('/vote/json/voting/'+voteId, 'call', {})
                     .then(function(json_data) { 
-                            console.log(json_data); 
-                            // console.log(json_data['image_1920']); 
-                            // var $content = $(QWeb.render('website_adbook.wadbook_emploer_list' , json_data))
-                            $('.o_voting_image').css('backgroundImage', 'url(data:image/png;base64,'+ json_data['image_1920'] +' )'); 
-                            $('.o_voting_file_text').html(json_data['file_text'])
+                            console.log(json_data);
+                            self._replaceContent(json_data) 
+                            // $('.o_voting_image').css('backgroundImage', 'url(data:image/png;base64,'+ json_data['image_1920'] +' )'); 
+                            // $('.o_voting_file_text').html(json_data['file_text'])
+                            // $('.o_voting_autor').html(json_data['autor'])
+                            // $('.o_voting_title').html(json_data['title'])
+                            // $('.o_voting_description').html(json_data['description'])
                             self.nextId = json_data['next_id']
                             self.prevId = json_data['prev_id']
                             self.listId = json_data['list_id']
+                            self.amount = self.listId.length
                             self.index = 0
+                            $('.o_voting_count').html('1 из ' + self.amount)
                             // this.attr('prevId',json_data['prev_id'])
 
                             // return;
@@ -86,7 +96,11 @@ odoo.define('website_vote.Voting', function (require) {
             if (nextId) {
                 ajax.jsonRpc('/vote/participant/'+nextId, 'call', {})
                 .then(function(json_data) { 
-                        $('.o_voting_image').css('backgroundImage', 'url(data:image/png;base64,'+ json_data['image_1920'] +' )'); 
+                        // $('.o_voting_image').css('backgroundImage', 'url(data:image/png;base64,'+ json_data['image_1920'] +' )'); 
+                        // $('.o_voting_file_text').html(json_data['file_text'])
+
+                        self._replaceContent(json_data)
+
                         if (self.index == self.listId.length-1) {
                             // self.nextId = self.listId[0]
                             // self.prevtId = self.listId[self.index-1]
@@ -108,6 +122,7 @@ odoo.define('website_vote.Voting', function (require) {
                             self.prevtId = self.listId[self.index-1]
                             
                         } 
+                        $('.o_voting_count').html(self.index+1+' из ' + self.amount)
                         // self.index = self.index + 1
 
                 });
@@ -120,7 +135,11 @@ odoo.define('website_vote.Voting', function (require) {
             if (prevtId) {
                 ajax.jsonRpc('/vote/participant/'+prevtId, 'call', {})
                 .then(function(json_data) { 
-                        $('.o_voting_image').css('backgroundImage', 'url(data:image/png;base64,'+ json_data['image_1920'] +' )'); 
+
+                        self._replaceContent(json_data)
+                        // $('.o_voting_image').css('backgroundImage', 'url(data:image/png;base64,'+ json_data['image_1920'] +' )'); 
+                        // $('.o_voting_file_text').html(json_data['file_text'])
+
                         if (self.index == 0) {
                             self.index = self.listId.length-1
                         } else {
@@ -140,6 +159,8 @@ odoo.define('website_vote.Voting', function (require) {
                             self.prevtId = self.listId[self.index-1]
                             
                         } 
+                        $('.o_voting_count').html(self.index+1+' из ' + self.amount)
+
                 });
             }
         },

@@ -86,16 +86,21 @@ class VoteParticipant(models.Model):
     text_idea = fields.Text(string='Текст идеи')
     file = fields.Binary('Файл', default=None)
     file_text = fields.Char(string='Подпись к файлу')
+    description = fields.Text( "Описание", translate=True, sanitize=False)
+
     image_1920 = fields.Image("image_1920",compute="_get_default_image", store=True, readonly=True)
     image_128 = fields.Image("Image_128", max_width=128, max_height=128, compute='_get_default_image', store=True, readonly=True)
     # mimetype = fields.Char(
     #     compute="_compute_mimetype", string="Type", readonly=True, store=True
     # )
 
-    @api.depends("users_id")
+    @api.depends("users_id", "employee_id")
     def _get_name(self):
-        if self.users_id:
-            self.name = self.users_id.name 
+        for line in self:
+            if line.users_id:
+                line.name = line.users_id.name 
+            if line.employee_id:
+                line.name = line.employee_id.name 
 
     @api.depends("file")
     def _get_default_image(self):
@@ -132,7 +137,7 @@ class VoteVoting(models.Model):
         if 'file' in vals:
             vals['file_small'] = tools.image_resize_image_small(base64.b64encode(vals['file_small']))
 
-        print("==============", vals)  
+        # print("==============", vals)  
         return super(VoteVoting, self).create(vals)
 
     
