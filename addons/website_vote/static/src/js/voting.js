@@ -88,18 +88,27 @@ odoo.define('website_vote.Voting', function (require) {
                 .then(function(json_data) { 
                         $('.o_voting_image').css('backgroundImage', 'url(data:image/png;base64,'+ json_data['image_1920'] +' )'); 
                         if (self.index == self.listId.length-1) {
-                            self.nextId = self.listId[0]
-                            self.prevtId = self.listId[self.index-1]
-                            self.index = -1
-                        } if (self.index == 0) {
+                            // self.nextId = self.listId[0]
+                            // self.prevtId = self.listId[self.index-1]
+                            self.index = 0
+                        } else {
+                            self.index = self.index + 1
+                        }
+                        
+                        if (self.index == 0) {
                             self.nextId = self.listId[self.index+1]
                             self.prevtId = self.listId[self.listId.length-1]
                         } else {
-                            self.nextId = self.listId[self.index+1]
+                            if (self.index == self.listId.length-1) {
+                                self.nextId = self.listId[0] 
+                            } else {
+                                self.nextId = self.listId[self.index+1]
+                            }
+                            
                             self.prevtId = self.listId[self.index-1]
                             
                         } 
-                        self.index = self.index + 1
+                        // self.index = self.index + 1
 
                 });
             }
@@ -112,20 +121,25 @@ odoo.define('website_vote.Voting', function (require) {
                 ajax.jsonRpc('/vote/participant/'+prevtId, 'call', {})
                 .then(function(json_data) { 
                         $('.o_voting_image').css('backgroundImage', 'url(data:image/png;base64,'+ json_data['image_1920'] +' )'); 
-                        if (self.index == self.listId.length-1) {
-                            self.nextId = self.listId[0]
-                            self.prevtId = self.listId[self.index-1]
-                            
-                        } if (self.index == 0) {
+                        if (self.index == 0) {
+                            self.index = self.listId.length-1
+                        } else {
+                            self.index = self.index - 1
+                        }
+                        
+                        if (self.index == 0) {
                             self.nextId = self.listId[self.index+1]
                             self.prevtId = self.listId[self.listId.length-1]
-                            self.index = self.listId.length
                         } else {
-                            self.nextId = self.listId[self.index+1]
+                            if (self.index == self.listId.length-1) {
+                                self.nextId = self.listId[0] 
+                            } else {
+                                self.nextId = self.listId[self.index+1]
+                            }
+                            
                             self.prevtId = self.listId[self.index-1]
                             
                         } 
-                        self.index = self.index - 1
                 });
             }
         },
