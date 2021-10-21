@@ -43,6 +43,7 @@
                                     <field name="type"/>
                                     <!-- <field name="state"/> -->
                                     <field name="is_reg"/>
+                                    <field name="numder_winner"/>
                                     <field name="numder_votes"/>
 
                                 
@@ -87,13 +88,22 @@
                             <field name="description_votes"/>
                                
                         </page>
-                        <page string="Список">
+                        <page string="Участники">
                             <field name="vote_vote_participant">
                                 <tree editable="botton">
                                     <field name="users_id"/>
                                     <field name="employee_id"/>
-                                    <field name="text_idea"/>
-                                    <field name="file_text"/>
+                                    <field name="score"/>
+
+                                </tree>
+                            </field> 
+                        </page>
+                        <page string="Работы участников">
+                            <field name="vote_vote_participant_item">
+                                <tree editable="botton">
+                                    <field name="users_id"/>
+                                    <field name="employee_id"/>
+                                    <field name="score"/>
 
                                 </tree>
                             </field> 

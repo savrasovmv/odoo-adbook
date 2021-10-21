@@ -47,11 +47,16 @@ class Vote(models.Model):
     user_id = fields.Many2one('res.users', string='Организатор', required=False, default=lambda self: self.env.user)
 
     numder_votes = fields.Integer(string='Кол-во голосов', help="Сколько раз можно проголосовать (выбрать несколько)", default=1)
+    numder_winner = fields.Integer(string='Кол-во победителей', help="Сколько участников будут награждены", default=1)
+    numder_files = fields.Integer(string='Кол-во работ', help="Количество работ участника", default=1)
+
+
 
 
     active = fields.Boolean(string='Активна', default=True)
 
-    vote_vote_participant = fields.One2many('vote.vote_participant', 'vote_vote_id', string=u"Зарегистрированные Участники")
+    vote_vote_participant = fields.One2many('vote.vote_participant', 'vote_vote_id', string=u"Участники")
+    vote_vote_participant_item = fields.One2many('vote.vote_participant_item', 'vote_vote_id', string=u"Работы Участников")
     vote_vote_voting = fields.One2many('vote.vote_voting', 'vote_vote_id', string=u"Участники голосования")
 
 
@@ -71,6 +76,12 @@ class Vote(models.Model):
         for line in self:
             line.state = "closed"
 
+    
+
+
+
+            
+
 class VoteParticipant(models.Model):
     _name = "vote.vote_participant"
     _description = "Зарегистрированные Участники"
@@ -83,13 +94,50 @@ class VoteParticipant(models.Model):
     vote_vote_id = fields.Many2one('vote.vote',
 		ondelete='cascade', string=u"Голосования", required=True)
     
-    text_idea = fields.Text(string='Текст идеи')
+    description = fields.Text( "Описание", translate=True, sanitize=False)
+
+    score = fields.Integer(string='Набранно голосов', compute='get_score', store=True)
+
+    # mimetype = fields.Char(
+    #     compute="_compute_mimetype", string="Type", readonly=True, store=True
+    # )
+
+    @api.depends("users_id", "employee_id")
+    def _get_name(self):
+        for line in self:
+            if line.users_id:
+                line.name = line.users_id.name 
+            if line.employee_id:
+                line.name = line.employee_id.name 
+
+    @api.depends("vote_vote_id.vote_vote_voting")
+    def get_score(self):
+        for participant in self:
+            voting_list = self.env['vote.vote_voting'].search([('vote_vote_participant_id', '=', participant.id)])
+            participant.score = len(voting_list)
+
+class VoteParticipantItem(models.Model):
+    _name = "vote.vote_participant_item"
+    _description = "Работы Участников"
+    _order = "name"
+
+    name = fields.Char(u'Наименование', compute="_get_name")
+    employee_id = fields.Many2one("hr.employee", string="Сотрудник")
+
+    users_id = fields.Many2one("res.users", string="пользователь")
+    participant_id = fields.Many2one("vote.vote_participant", string="Участник")
+
+    vote_vote_id = fields.Many2one('vote.vote',
+		ondelete='cascade', string=u"Голосования", required=True)
+    
     file = fields.Binary('Файл', default=None)
     file_text = fields.Char(string='Подпись к файлу')
-    description = fields.Text( "Описание", translate=True, sanitize=False)
 
     image_1920 = fields.Image("image_1920",compute="_get_default_image", store=True, readonly=True)
     image_128 = fields.Image("Image_128", max_width=128, max_height=128, compute='_get_default_image', store=True, readonly=True)
+
+    score = fields.Integer(string='Набранно голосов', compute='get_score', store=True)
+
     # mimetype = fields.Char(
     #     compute="_compute_mimetype", string="Type", readonly=True, store=True
     # )
@@ -107,6 +155,14 @@ class VoteParticipant(models.Model):
         if self.file:
             self.image_128 = self.file
             self.image_1920 = self.file
+
+    @api.depends("vote_vote_id.vote_vote_voting")
+    def get_score(self):
+        for item in self:
+            voting_list = self.env['vote.vote_voting'].search([('vote_vote_participant_item_id', '=', item.id)])
+            item.score = len(voting_list)
+
+
     
 
 
@@ -121,7 +177,8 @@ class VoteVoting(models.Model):
     vote_vote_id = fields.Many2one('vote.vote',
 		ondelete='cascade', string=u"Голосования", required=True)
     
-    vote_vote_participant = fields.Many2one('vote.vote_participant', string=u"Зарегистрированные Участники")
+    vote_vote_participant_id = fields.Many2one('vote.vote_participant', string=u"Участник")
+    vote_vote_participant_item_id = fields.Many2one('vote.vote_participant_item', string=u"Работа Участника")
    
     score = fields.Integer(string='Голос', default=1)
 

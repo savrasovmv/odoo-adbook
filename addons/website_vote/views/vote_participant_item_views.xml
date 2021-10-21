@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <odoo>
     
-    <record id="vote_vote_participant_view_search" model="ir.ui.view">
-        <field name="name">vote.vote_participant.view.search</field>
-        <field name="model">vote.vote_participant</field>
+    <record id="vote_vote_participant_item_view_search" model="ir.ui.view">
+        <field name="name">vote.vote_participant_item.view.search</field>
+        <field name="model">vote.vote_participant_item</field>
         <field name="arch" type="xml">
             <search string="Search Opportunities">
                 <field name="name"/>
@@ -11,20 +11,28 @@
         </field>
     </record>
 
-    <record id="vote_vote_participant_view_form" model="ir.ui.view">
-        <field name="name">vote.vote_participant.form</field>
-        <field name="model">vote.vote_participant</field>
+    <record id="vote_vote_participant_item_view_form" model="ir.ui.view">
+        <field name="name">vote.vote_participant_item.form</field>
+        <field name="model">vote.vote_participant_item</field>
         <field name="arch" type="xml">
-            <form string="Зарегистрированные Участники">
+            <form string="Работы Участников">
                 
                 <sheet>
-                    
+                    <field name="file" widget="image" class="oe_avatar"/>
+
+                    <div class="oe_title" style="width: 100%;">
+                        <label for="file_text" class="oe_edit_only"/>
+                        <h1><field name="file_text" placeholder="Наименованиея"/></h1>
+                    </div>
                     <group>
                         <group>
+                            <field name="participant_id"/>
                             <field name="create_date"/>
                             <field name="users_id"/>
                             <field name="employee_id"/>
                             <field name="vote_vote_id"/>
+                            <field name="image_1920"/>
+                            <field name="image_128"/>
                         
                         </group>
                     </group>
@@ -40,9 +48,9 @@
         </field>
     </record>
 
-    <record id="vote_vote_participant_view_tree" model="ir.ui.view">
-        <field name="name">vote.vote_participant.tree</field>
-        <field name="model">vote.vote_participant</field>
+    <record id="vote_vote_participant_item_view_tree" model="ir.ui.view">
+        <field name="name">vote.vote_participant_item.tree</field>
+        <field name="model">vote.vote_participant_item</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="create_date"/>
@@ -54,9 +62,9 @@
   
 
     <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
-    <record id="vote_vote_participant_action" model="ir.actions.act_window">
-        <field name="name">Зарегистрированные Участники</field>
-        <field name="res_model">vote.vote_participant</field>
+    <record id="vote_vote_participant_item_action" model="ir.actions.act_window">
+        <field name="name">Работы Участников</field>
+        <field name="res_model">vote.vote_participant_item</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
           <p>

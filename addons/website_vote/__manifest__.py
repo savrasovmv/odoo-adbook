@@ -35,6 +35,7 @@
         # 'views/assets_voting.xml',
         'views/vote_views.xml',
         'views/vote_participant_views.xml',
+        'views/vote_voiting_views.xml',
         'views/menu.xml',
         'views/website_vote_templates.xml',
         'views/website_vote_reg_page_templates.xml',

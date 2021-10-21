@@ -218,10 +218,22 @@
         
             <div t-field="vote.description"/>
             
-            <div t-field="vote.description_votes"/>
+            <div t-if="vote.state=='vote'">
+                <div t-field="vote.description_votes"/>
 
-            <a t-attf-href="/vote/voting/{{vote.id}}" class="mb-2 btn btn-primary">Начать голосование</a>
-            <div class="h3"> Работы участников: </div>
+                <a t-attf-href="/vote/voting/{{vote.id}}" class="mb-2 btn btn-primary">Начать голосование</a>
+            </div>
+            <div t-if="vote.state=='closed'">
+                <div class="mt-3"> <h3> Победители: </h3></div>
+                <div class="column">
+                    <t t-foreach="vote.vote_vote_participant" t-as="participant">
+
+                    </t>
+
+                </div>
+                
+            </div>
+            <div class="mt-3"> <h3> Работы участников: </h3></div>
 
             <div class="row">
                 <t t-foreach="vote.vote_vote_participant" t-as="participant">
@@ -229,7 +241,7 @@
                     <div class="column vote_image_preview_block m-2">
 
                         <div class="row vote_image_preview d-flex justify-content-center">
-                            <a t-attf-href="#"
+                            <a t-attf-href="/vote/voting/{{vote.id}}/{{participant.id}}"
                                 class="text-center text-decoration-none"
                                 
                                 >

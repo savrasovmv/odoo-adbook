@@ -11,6 +11,10 @@
             
         </menuitem>
 
+        <menuitem id="vote_voting_first_level_menu" name="Голоса" action="vote_vote_voting_action" sequence="20">
+            
+        </menuitem>
+
        
 
         <!-- <menuitem id="adbook_branch_first_level_menu" name="Подразделения" action="adbook_branch_action" sequence="30">

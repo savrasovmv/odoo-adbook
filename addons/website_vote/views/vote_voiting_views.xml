@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <odoo>
     
-    <record id="vote_vote_participant_view_search" model="ir.ui.view">
-        <field name="name">vote.vote_participant.view.search</field>
-        <field name="model">vote.vote_participant</field>
+    <record id="vote_vote_voting_view_search" model="ir.ui.view">
+        <field name="name">vote.vote_voting.view.search</field>
+        <field name="model">vote.vote_voting</field>
         <field name="arch" type="xml">
             <search string="Search Opportunities">
                 <field name="name"/>
@@ -11,27 +11,24 @@
         </field>
     </record>
 
-    <record id="vote_vote_participant_view_form" model="ir.ui.view">
-        <field name="name">vote.vote_participant.form</field>
-        <field name="model">vote.vote_participant</field>
+    <record id="vote_vote_voting_view_form" model="ir.ui.view">
+        <field name="name">vote.vote_voting.form</field>
+        <field name="model">vote.vote_voting</field>
         <field name="arch" type="xml">
-            <form string="Зарегистрированные Участники">
+            <form string="Голоса">
                 
                 <sheet>
-                    
                     <group>
                         <group>
                             <field name="create_date"/>
                             <field name="users_id"/>
-                            <field name="employee_id"/>
                             <field name="vote_vote_id"/>
+                            <field name="vote_vote_participant_id"/>
+                            <field name="score"/>
                         
                         </group>
                     </group>
-                    <group>
-                        <field name="description"/>
-
-                    </group>
+                   
                     
                    
                     
@@ -40,23 +37,25 @@
         </field>
     </record>
 
-    <record id="vote_vote_participant_view_tree" model="ir.ui.view">
-        <field name="name">vote.vote_participant.tree</field>
-        <field name="model">vote.vote_participant</field>
+    <record id="vote_vote_voting_view_tree" model="ir.ui.view">
+        <field name="name">vote.vote_voting.tree</field>
+        <field name="model">vote.vote_voting</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="create_date"/>
-                <field name="name"/>
+                <field name="users_id"/>
                 <field name="vote_vote_id"/>
+                <field name="vote_vote_participant_id"/>
+                <field name="score"/>
             </tree>
         </field>
     </record>
   
 
     <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
-    <record id="vote_vote_participant_action" model="ir.actions.act_window">
-        <field name="name">Зарегистрированные Участники</field>
-        <field name="res_model">vote.vote_participant</field>
+    <record id="vote_vote_voting_action" model="ir.actions.act_window">
+        <field name="name">Голоса</field>
+        <field name="res_model">vote.vote_voting</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
           <p>

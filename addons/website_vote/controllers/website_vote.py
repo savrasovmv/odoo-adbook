@@ -43,49 +43,63 @@ class WebsiteVote(http.Controller):
             ('id', '=', vote_id)
         ], limit=1)
 
-        participant = request.env['vote.vote_participant'].sudo().search([
+        participant = request.env['vote.vote_participant_item'].sudo().search([
             ('vote_vote_id', '=', vote_id),
             ('users_id', '=', request.env.user.id)
-        ], limit=1)
+        ])
+
+        if vote.state == 'closed':
+            winner = request.env['vote.vote_participant_item'].sudo().search([
+                ('vote_vote_id', '=', vote_id),
+            ],limit=vote.numder_winner, order='score asc')
+        else:
+            winner = []
+
 
        
         return http.request.render(
             'website_vote.vote_page', 
             {
                 'vote':vote,
-                'participant': participant
+                'participant': participant,
+                'winner': winner
             })
 
 
     @http.route(['/vote/reg/<int:vote_id>'], type='http', auth="user", website=True, sitemap=True)
     def vote_reg_page(self, vote_id=False):
+        """Регистрация участника"""
+
         if not vote_id:
             return request.redirect("/vote")
-        # user = self._check_user_profile_access(request.env.user.id)
+
         user = request.env.user
-        # print('+++++++', user[0].name)
-        # if not user:
-        #     return request.redirect("/")
 
-        # employer = request.env['hr.employee'].sudo().search([
-        #     ('user_id', '=', user.id)
-        # ])
-
-        # if len(employer) == 0:
-        #     return request.redirect("/")
-        
         vote = request.env['vote.vote'].sudo().search([
             ('id', '=', vote_id)
         ], limit=1)
 
+        if len(vote) == 0:
+            return request.redirect("/vote")
        
         return http.request.render(
             'website_vote.vote_reg_page', 
             {
-                'vote':vote,
+                'vote': vote,
                 'user': user
             })
 
+
+    @http.route("/vote/reg/file/<int:vote_id>", type="http", auth="user", website=True, csrf=True)
+    def submit_vote(self, vote_id=False, **kw):
+        
+        return http.request.render(
+            'website_vote.vote_reg_file_page', 
+            {
+                "description": kw.get("description"),
+                "users_id": http.request.env.user.id,
+                "vote_vote_id": vote_id,
+            })
 
     @http.route("/vote/submitted/<int:vote_id>", type="http", auth="user", website=True, csrf=True)
     def submit_vote(self, vote_id=False, **kw):
@@ -103,6 +117,7 @@ class WebsiteVote(http.Controller):
                 return werkzeug.utils.redirect("/vote/%s" % str(vote_id))
 
         vals = {
+            "description": kw.get("description"),
             "file_text": kw.get("file_text"),
             "users_id": http.request.env.user.id,
             "vote_vote_id": vote_id,
@@ -110,19 +125,6 @@ class WebsiteVote(http.Controller):
             # "file_small": tools.image_resize_image_small(base64.b64encode(base64.b64encode(data))) if file else '',
         }
         new_vote_line = request.env["vote.vote_participant"].sudo().create(vals)
-        # new_ticket.message_subscribe(partner_ids=request.env.user.partner_id.ids)
-        # if kw.get("attachment"):
-        #     for c_file in request.httprequest.files.getlist("attachment"):
-        #         data = c_file.read()
-        #         if c_file.filename:
-        #             request.env["ir.attachment"].sudo().create(
-        #                 {
-        #                     "name": c_file.filename,
-        #                     "datas": base64.b64encode(data),
-        #                     "res_model": "vote.vote_line",
-        #                     "res_id": new_vote_line.id,
-        #                 }
-        #             )
         return werkzeug.utils.redirect("/vote/%s" % str(vote_id))
 
 
@@ -159,8 +161,9 @@ class WebsiteVote(http.Controller):
         vote_list_search = request.env['vote.vote'].sudo().search([
             ('state', '=', 'vote')
         ], limit=3, order='date_start asc')
+
+
         
-        print('+++++++++', reg_list)
         return http.request.render(
             'website_vote.vote_home', 
             {
@@ -170,34 +173,40 @@ class WebsiteVote(http.Controller):
 
 
     # Голосование
-    @http.route(['/vote/voting/<int:vote_id>'], type='http', auth="user", website=True, sitemap=True)
-    def vote_voting(self, vote_id=False):
+    @http.route(['/vote/voting/<int:vote_id>', '/vote/voting/<int:vote_id>/<int:participant_id>' ], type='http', auth="user", website=True, sitemap=True)
+    def vote_voting(self, vote_id=False, participant_id=False):
         if not vote_id:
             return request.redirect("/vote")
         
-        vote = request.env['vote.vote'].sudo().search([
-            ('id', '=', vote_id)
-        ], limit=1)
-
-        participant = request.env['vote.vote_participant'].sudo().search([
-            ('vote_vote_id', '=', vote.id),
-        ], limit=1)
-
-
+        # vote = request.env['vote.vote'].sudo().search([
+        #     ('id', '=', vote_id)
+        # ], limit=1)
+        if participant_id:
+            participant = request.env['vote.vote_participant'].sudo().search([
+                    ('vote_vote_id', '=', vote_id),
+                    ('id', '=', participant_id),
+                ], limit=1)
+        else:
+            participant = request.env['vote.vote_participant'].sudo().search([
+                    ('vote_vote_id', '=', vote_id),
+                ], limit=1)
 
        
         return http.request.render(
             # 'website_vote.vote_image_views', 
             'website_vote.voting_page', 
             {
-                'vote':vote,
-                'participant': participant,
-                'list_ids': vote.vote_vote_participant.ids
+                'vote_id':participant.vote_vote_id.id,
+                'participant_id': participant.id,
+                'vote_start': True if participant.vote_vote_id.state=='vote' else False,
+                # 'list_ids': vote.vote_vote_participant.ids
             })
 
     @http.route(['/vote/participant/<int:participant_id>'], type='json', auth="user", website=True, sitemap=True)
     def vote_get_participant_image(self, participant_id=False):
-        print("+++++++++++++++++vote_get_participant_image")
+        # import time
+        # time.sleep(5) #задержка в течение 5 секунд
+        # print("+++++++++++++++++vote_get_participant_image")
         if not participant_id:
             return request.redirect("/vote")
         
@@ -217,38 +226,96 @@ class WebsiteVote(http.Controller):
             'autor': participant.employee_id.name if participant.employee_id else participant.users_id.name,
             'title': participant.employee_id.job_title if participant.employee_id else '',
             'department': participant.employee_id.department_id.name if participant.employee_id.department_id else '',
-            'description': participant.description,
+            'description': participant.description if participant.description else '',
         }
 
-    @http.route(['/vote/json/voting/<int:vote_id>'], type='json', auth="user", website=True, sitemap=True)
-    def vote_json_voting(self, vote_id=False):
-        if not vote_id:
-            return request.redirect("/vote")
-        
+    @http.route(['/vote/json/voting/<int:participant_id>'], type='json', auth="user", website=True, sitemap=True)
+    def vote_json_voting(self, vote_id=False, participant_id=False):
+        """ Возвращает начальные данные в форму голосования"""
+        # if not vote_id:
+        #     return request.redirect("/vote")
        
-        vote = request.env['vote.vote'].sudo().search([
-            ('id', '=', vote_id),
-        ], limit=1)
+        # vote = request.env['vote.vote'].sudo().search([
+        #     ('id', '=', vote_id),
+        # ], limit=1)
 
 
-        if not vote:
+        # if not vote:
+        #     return request.redirect("/vote")
+        if not participant_id:
             return request.redirect("/vote")
 
         participant = request.env['vote.vote_participant'].sudo().search([
-            ('vote_vote_id', '=', vote_id),
+            ('id', '=', participant_id),
         ], limit=1)
 
         if not participant:
             return request.redirect("/vote")
+
+
+        voting = request.env['vote.vote_voting'].sudo().search([
+            ('vote_vote_id', '=', participant.vote_vote_id.id),
+            ('users_id', '=', http.request.env.user.id),
+        ])
+        list_voting = []
+        for line in voting:
+            list_voting.append(line.vote_vote_participant_id.id)
        
         return {
-            'list_id': vote.vote_vote_participant.ids,
-            'next_id': vote.vote_vote_participant.ids[1],
-            'prev_id': vote.vote_vote_participant.ids[-1],
+            'list_id': participant.vote_vote_id.vote_vote_participant.ids,
+            # 'participant_id': participant.id,
+            # 'next_id': vote.vote_vote_participant.ids[1],
+            # 'prev_id': vote.vote_vote_participant.ids[-1],
             'image_1920': participant.image_1920,
             'file_text': participant.file_text,
             'autor': participant.employee_id.name if participant.employee_id else participant.users_id.name,
             'title': participant.employee_id.job_title if participant.employee_id else '',
             'department': participant.employee_id.department_id.name if participant.employee_id.department_id else '',
-            'description': participant.description,
+            'description': participant.description if participant.description else '',
+            'list_voting': list_voting,
+            'max_voting': participant.vote_vote_id.numder_votes
+        }
+
+
+    @http.route(['/vote/voting_participant/<int:participant_id>'], type='json', auth="user", website=True, sitemap=True)
+    def vote_json_voting_participant(self, participant_id=False):
+        """ Принимает голос за кандидата"""
+        if not participant_id:
+            return {
+                'result': 'error',
+                'data': 'Не указан id участника'
+            }
+        
+        participant = request.env['vote.vote_participant'].sudo().search([
+            ('id', '=', participant_id),
+        ], limit=1)
+
+        if not participant:
+            return {
+                'result': 'error',
+                'data': 'Нет такого участника'
+            }
+
+        voting = request.env['vote.vote_voting'].sudo().search([
+            ('vote_vote_id', '=', participant.vote_vote_id.id),
+            ('users_id', '=', http.request.env.user.id),
+        ])
+
+        # Проверка может ли голосовать
+        if len(voting)>participant.vote_vote_id.numder_votes:
+            return {
+                'result': 'error',
+                'data': 'Превышен лимит голосований'
+            }
+        
+        vals = {
+            "users_id": http.request.env.user.id,
+            "vote_vote_id": participant.vote_vote_id.id,
+            "vote_vote_participant_id": participant_id,
+        }
+        new_voting_line = request.env["vote.vote_voting"].sudo().create(vals)
+       
+        return {
+            'result': 'success',
+            'data': participant_id
         }
