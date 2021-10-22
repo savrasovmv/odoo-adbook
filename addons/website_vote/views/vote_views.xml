@@ -43,8 +43,6 @@
                                     <field name="type"/>
                                     <!-- <field name="state"/> -->
                                     <field name="is_reg"/>
-                                    <field name="numder_winner"/>
-                                    <field name="numder_votes"/>
 
                                 
                                 </group>
@@ -60,6 +58,9 @@
                                         <i class="fa fa-long-arrow-right mx-2" aria-label="Arrow icon" title="Arrow"/>
                                         <field name="reg_date_end" widget="daterange" nolabel="1" class="oe_inline" options="{'related_start_date': 'reg_date_start'}"/>
                                     </div>
+                                    
+                                    <field name="numder_files"/>
+
                                 </group>
 
                                 <group string="Проведение голосования">
@@ -70,6 +71,14 @@
                                         <i class="fa fa-long-arrow-right mx-2" aria-label="Arrow icon" title="Arrow"/>
                                         <field name="date_end" widget="daterange" nolabel="1" class="oe_inline" options="{'related_start_date': 'date_start'}"/>
                                     </div>
+                                    <field name="numder_votes"/>
+
+                                </group>
+
+                                <group string="Число победителей">
+                                    <field name="numder_winner_item"/>
+                                    <field name="numder_winner_participant"/>
+                                    <field name="numder_winner"/>
                                 </group>
 
                                 
@@ -88,11 +97,20 @@
                             <field name="description_votes"/>
                                
                         </page>
+                        <page string="Победителям">
+                            <div> <p>Подпись к победившим работам, которое будет отображаться над блоком списка победивших работ </p> </div>
+                            <field name="description_winner_item"/>
+
+                            <div> <p>Подпись к победившим участникам, которое будет отображаться над блоком списка победивших участников </p> </div>
+                            <field name="description_winner_participant"/>
+                               
+                        </page>
                         <page string="Участники">
                             <field name="vote_vote_participant">
                                 <tree editable="botton">
                                     <field name="users_id"/>
                                     <field name="employee_id"/>
+                                    <field name="number_item"/>
                                     <field name="score"/>
 
                                 </tree>
@@ -103,6 +121,18 @@
                                 <tree editable="botton">
                                     <field name="users_id"/>
                                     <field name="employee_id"/>
+                                    <field name="score"/>
+
+                                </tree>
+                            </field> 
+                        </page>
+                        <page string="Голоса">
+                            <field name="vote_vote_voting">
+                                <tree editable="botton">
+                                    <field name="users_id"/>
+                                    <field name="employee_id"/>
+                                    <field name="vote_vote_participant_id"/>
+                                    <field name="vote_vote_participant_item_id"/>
                                     <field name="score"/>
 
                                 </tree>

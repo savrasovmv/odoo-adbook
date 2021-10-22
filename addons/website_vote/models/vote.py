@@ -1,5 +1,6 @@
 from odoo import fields, models, api
 from odoo import tools
+from odoo.tools import html2plaintext
 import base64
 
 
@@ -16,7 +17,7 @@ class Vote(models.Model):
     reg_date_start = fields.Date(string='Начало регистрации')
     reg_date_end = fields.Date(string='Окончание регистрации')
 
-    is_reg = fields.Boolean(string='Регистрация', help="Если установлена, разрешает участникам регистрацию на сайте")
+    is_reg = fields.Boolean(string='Регистрация на сайте', help="Если установлена, разрешает участникам регистрацию на сайте")
 
     type = fields.Selection([
         ('ideas', 'Идеи'),
@@ -27,6 +28,13 @@ class Vote(models.Model):
         "Описание", translate=True, sanitize=False,  # TDE FIXME: find a way to authorize videos
         help="Описание Голосования, которое будет отображаться на странице голосования")
 
+
+    description_text = fields.Text(
+        "Описание", translate=True, sanitize=False,  # TDE FIXME: find a way to authorize videos
+        help="Описание Голосования в текстовом формате, которое будет отображаться на главной странице голосования",
+        compute="get_description_text"
+        )
+
     conditions = fields.Html(
         "Условия", translate=True, sanitize=False,  # TDE FIXME: find a way to authorize videos
         help="Условия участия, которое будет отображаться на странице регистрации")
@@ -34,6 +42,17 @@ class Vote(models.Model):
     description_votes = fields.Html(
         "Условия голосования", translate=True, sanitize=False,  # TDE FIXME: find a way to authorize videos
         help="Описание для голосующих, которое будет отображаться на странице голосования в период голосования")
+
+    description_winner_item = fields.Html(
+        "Подпись к победившим работам ", translate=True, sanitize=False,  # TDE FIXME: find a way to authorize videos
+        help="Подпись к победившим работам, которое будет отображаться над блоком списка победивших работ",
+        default="<h5>Лучшие работы</h5>"
+        )
+    description_winner_participant = fields.Html(
+        "Подпись к победившим участникам ", translate=True, sanitize=False,  # TDE FIXME: find a way to authorize videos
+        help="Подпись к победившим участникам, которое будет отображаться над блоком списка победивших участников",
+        default="<h5>Лучшие участники</h5>"
+        )
     
     background_image = fields.Binary("Изображение")
     state = fields.Selection(selection=[
@@ -46,8 +65,12 @@ class Vote(models.Model):
 
     user_id = fields.Many2one('res.users', string='Организатор', required=False, default=lambda self: self.env.user)
 
-    numder_votes = fields.Integer(string='Кол-во голосов', help="Сколько раз можно проголосовать (выбрать несколько)", default=1)
-    numder_winner = fields.Integer(string='Кол-во победителей', help="Сколько участников будут награждены", default=1)
+    numder_votes = fields.Integer(string='Кол-во голосов', help="Сколько раз можно проголосовать (выбрать несколько) голосующему", default=1)
+
+    numder_winner = fields.Integer(string='Итого победителей', help="Сколько участников будут награждены", readonly=True, compute='_get_winner', store=True)
+    numder_winner_item = fields.Integer(string='Лучшая работа', help="Сколько участников будут награждены за лучшую работу", default=1)
+    numder_winner_participant = fields.Integer(string='Лучший участник', help="Сколько участников будут награждены за сумму голосов по всем работам", default=1)
+
     numder_files = fields.Integer(string='Кол-во работ', help="Количество работ участника", default=1)
 
 
@@ -76,6 +99,16 @@ class Vote(models.Model):
         for line in self:
             line.state = "closed"
 
+    @api.depends("numder_winner_item", "numder_winner_participant")
+    def _get_winner(self):
+        for line in self:
+            line.numder_winner = line.numder_winner_item + line.numder_winner_participant
+
+    @api.depends("conditions")
+    def get_description_text(self):
+        for line in self:
+            line.description_text = html2plaintext(line.description).replace('\n', ' ')[:200] + '...'
+
     
 
 
@@ -88,19 +121,34 @@ class VoteParticipant(models.Model):
     _order = "name"
 
     name = fields.Char(u'Наименование', compute="_get_name")
-    users_id = fields.Many2one("res.users", string="пользователь")
+    users_id = fields.Many2one("res.users", string="Пользователь")
     employee_id = fields.Many2one("hr.employee", string="Сотрудник")
 
     vote_vote_id = fields.Many2one('vote.vote',
 		ondelete='cascade', string=u"Голосования", required=True)
     
     description = fields.Text( "Описание", translate=True, sanitize=False)
+    number_item = fields.Integer(string='Число работ', compute='get_item', store=True)
 
     score = fields.Integer(string='Набранно голосов', compute='get_score', store=True)
+
+    vote_vote_participant_item = fields.One2many('vote.vote_participant_item', 'participant_id', string=u"Работы Участников")
+
 
     # mimetype = fields.Char(
     #     compute="_compute_mimetype", string="Type", readonly=True, store=True
     # )
+
+    @api.model
+    def create(self, vals):
+        if vals['employee_id'] == '' or vals['employee_id'] == False :
+            empl = self.env['hr.employee'].sudo().search([
+                ('user_id', '=', vals['users_id']),
+            ], limit=1)
+            if len(empl)>0:
+                vals['employee_id'] = empl.id
+            
+        return super(VoteParticipant, self).create(vals)
 
     @api.depends("users_id", "employee_id")
     def _get_name(self):
@@ -116,6 +164,14 @@ class VoteParticipant(models.Model):
             voting_list = self.env['vote.vote_voting'].search([('vote_vote_participant_id', '=', participant.id)])
             participant.score = len(voting_list)
 
+    @api.depends("vote_vote_participant_item")
+    def get_item(self):
+        for participant in self:
+            # item = self.env['vote.vote_participant_item'].search([('participant_id', '=', participant.id)])
+            participant.number_item = len(participant.vote_vote_participant_item)
+
+
+
 class VoteParticipantItem(models.Model):
     _name = "vote.vote_participant_item"
     _description = "Работы Участников"
@@ -124,8 +180,8 @@ class VoteParticipantItem(models.Model):
     name = fields.Char(u'Наименование', compute="_get_name")
     employee_id = fields.Many2one("hr.employee", string="Сотрудник")
 
-    users_id = fields.Many2one("res.users", string="пользователь")
-    participant_id = fields.Many2one("vote.vote_participant", string="Участник")
+    users_id = fields.Many2one("res.users", string="Пользователь")
+    participant_id = fields.Many2one("vote.vote_participant", ondelete='cascade', string="Участник")
 
     vote_vote_id = fields.Many2one('vote.vote',
 		ondelete='cascade', string=u"Голосования", required=True)
@@ -138,9 +194,20 @@ class VoteParticipantItem(models.Model):
 
     score = fields.Integer(string='Набранно голосов', compute='get_score', store=True)
 
-    # mimetype = fields.Char(
-    #     compute="_compute_mimetype", string="Type", readonly=True, store=True
-    # )
+    vote_vote_voting = fields.One2many('vote.vote_voting', 'vote_vote_participant_item_id', string=u"Участники голосования")
+
+
+
+    @api.model
+    def create(self, vals):
+        if vals['employee_id'] == '' or vals['employee_id'] == False :
+            empl = self.env['hr.employee'].sudo().search([
+                ('user_id', '=', vals['users_id']),
+            ], limit=1)
+            if len(empl)>0:
+                vals['employee_id'] = empl.id
+        return super(VoteParticipantItem, self).create(vals)
+
 
     @api.depends("users_id", "employee_id")
     def _get_name(self):
@@ -172,13 +239,15 @@ class VoteVoting(models.Model):
     _order = "name"
 
     name = fields.Char(u'Наименование', compute="_get_name")
-    users_id = fields.Many2one("res.users", string="пользователь")
+    users_id = fields.Many2one("res.users", string="Пользователь")
+    employee_id = fields.Many2one("hr.employee", string="Сотрудник")
+
 
     vote_vote_id = fields.Many2one('vote.vote',
 		ondelete='cascade', string=u"Голосования", required=True)
     
     vote_vote_participant_id = fields.Many2one('vote.vote_participant', string=u"Участник")
-    vote_vote_participant_item_id = fields.Many2one('vote.vote_participant_item', string=u"Работа Участника")
+    vote_vote_participant_item_id = fields.Many2one('vote.vote_participant_item', ondelete='cascade', string=u"Работа Участника")
    
     score = fields.Integer(string='Голос', default=1)
 
@@ -191,10 +260,12 @@ class VoteVoting(models.Model):
     
     @api.model
     def create(self, vals):
-        if 'file' in vals:
-            vals['file_small'] = tools.image_resize_image_small(base64.b64encode(vals['file_small']))
-
-        # print("==============", vals)  
+        if vals['employee_id'] == '' or vals['employee_id'] == False :
+            empl = self.env['hr.employee'].sudo().search([
+                ('user_id', '=', vals['users_id']),
+            ], limit=1)
+            if len(empl)>0:
+                vals['employee_id'] = empl.id
         return super(VoteVoting, self).create(vals)
 
     

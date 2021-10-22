@@ -2,6 +2,7 @@ spisok = []
 # spisok.append(['adbook.branch','', 1])
 spisok.append(['vote.vote','', 1])
 spisok.append(['vote.vote_participant','', 1])
+spisok.append(['vote.vote_participant_item','', 1])
 spisok.append(['vote.vote_voting','', 1])
 
 

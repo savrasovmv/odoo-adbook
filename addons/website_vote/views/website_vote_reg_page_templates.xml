@@ -2,15 +2,8 @@
 
     <template id="website_vote.reg_layout" name="Vote Layout" inherit_id="web.frontend_layout" primary="True">
         <xpath expr="//div[@id='wrapwrap']" position="before">
-            <!--TODO DBE Fix me : If one day, there is a survey_livechat bridge module, put this in that module-->
             <t t-set="no_livechat" t-value="True"/>
         </xpath>
-        <!-- <xpath expr="//div[@id='wrapwrap']" position="attributes">
-            <attribute name="t-att-style" add="(('height: 100%; overflow: auto; background: url(' + '/survey/get_background_image/%s/%s' % (survey.access_token, answer.access_token) + ') no-repeat fixed center; box-shadow: inset 0 0 0 10000px rgba(255,255,255,.7); background-size: cover;') if survey and survey.background_image and answer else 'height: 100%; overflow: auto;')"/>
-        </xpath> -->
-        <!-- <xpath expr="//head/t[@t-call-assets][last()]" position="after">
-            <t t-call-assets="survey.survey_assets" lazy_load="True"/>
-        </xpath> -->
         <xpath expr="//header" position="before">
             <t t-set="no_header" t-value="True"/>
             <t t-set="no_footer" t-value="True"/>
@@ -18,31 +11,7 @@
         <xpath expr="//header" position="after">
             <div id="wrap" class="oe_structure oe_empty"/>
         </xpath>
-        <!-- <xpath expr="//footer" position="after">
-            <div class="py-3 m-0 p-0 text-right">
-                <div class="o_survey_progress_wrapper d-inline-block pr-5 text-left">
-                    <t t-call="survey.survey_progression"
-                        t-if="survey and survey.questions_layout != 'one_page' and answer and answer.state == 'in_progress' and (not question or not question.is_page)">
-                        <t t-if="survey.questions_layout == 'page_per_section'">
-                            <t t-set="page_ids" t-value="survey.page_ids.ids"/>
-                            <t t-set="page_number" t-value="page_ids.index(page.id) + (1 if survey.progression_mode == 'number' else 0)"/>
-                        </t>
-                        <t t-else="">
-                            <t t-set="page_ids" t-value="survey.question_ids.ids"/>
-                            <t t-set="page_number" t-value="page_ids.index(question.id)"/>
-                        </t>
-                    </t>
-                </div>
-                <div class="o_survey_brand_message float-right rounded mr-3 border">
-                    <div class="px-2 py-2 d-inline-block" t-call="web.brand_promotion_message">
-                        <t t-set="_message"></t>
-                        <t t-set="_utm_medium" t-valuef="survey"/>
-                    </div>
-                    <div class="o_survey_navigation_wrapper d-inline-block" t-call="survey.survey_navigation">
-                    </div>
-                </div>
-            </div>
-        </xpath> -->
+
     </template>
 
     <template id="vote_reg_page" name="vote_reg_page">
@@ -63,56 +32,37 @@
                     </div>
 
                     <div>
-                        <!-- <h5> ФИО участника:</h5>
-                        <h5> <b><t t-esc="user.name"/> </b> </h5>
-
-                        <p> </p> -->
-                       
-
                         <form
                             t-attf-action="/vote/reg/file/{{vote.id}}"
                             method="POST"
                             class="form-horizontal mt32 vote_reg_form"
                             enctype="multipart/form-data"
                         >
-                            <input
-                                type="hidden"
-                                name="csrf_token"
-                                t-att-value="request.csrf_token()"
-                            />
-
-                            
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                             
                             <div class="form-group">
-                                <label
-                                    class="control-label"
-                                    for="name"
-                                >ФИО участника</label>
+                                <label class="control-label" for="name">
+                                    ФИО участника
+                                </label>
                                 <div class="">
                                     <t t-esc="user.name"/>
                                 </div>
                             </div>
+                            
                             <div class="form-group">
-                                    <label
-                                        class="control-label"
-                                        for="description"
-                                    >О себе</label>
-                                    <textarea
-                                        type="text"
-                                        class="form-control"
-                                        name="description"
-                                        t-attf-value="#{description}"
-                                        required="True"
-                                    />
+                                    <label class="control-label" for="description">
+                                        О себе
+                                    </label>
+                                    <textarea type="text" class="form-control" name="description" t-attf-value="#{description}" required="True"/>
                             </div>
                            
-                            
                             <div class="form-group mt-5">
                                 <input type="checkbox" id="oe_agree" class="oe_agree"/>
                                 <label for="oe_agree">
                                     С условиями участия ознакомлен и согласен
                                 </label>
                             </div>
+
                             <div class="form-group mt-2">
                                 <div class="col-md-offset-3 col-sm-offset-4 col-sm-8 col-md-7">
                                     <button disabled="disabled" class="btn btn-primary btn-lg oe_vote_reg">Далее</button>
@@ -142,38 +92,42 @@
                         <div><h1>"<t t-esc="vote.name"/>"</h1></div>
                         </div>
                     </div>
+                    
+                    <div><h3> Загруженные работы </h3></div>
+                    <div><h5> <t t-esc="len(participant_item)"/> из <t t-esc="vote.numder_files"/> </h5></div>
+
+                    <div class="row">
+                        <t t-foreach="participant_item" t-as="item">
+                            <div class="column vote_image_preview_block m-2">
+                                <div class="row vote_image_preview d-flex justify-content-center">
+                                    <a t-attf-href="#" class="text-center text-decoration-none">
+                                        <img t-if="item.image_128 != False" class="w-100 vote_image_preview_img"
+                                             t-attf-src="data:image/png;base64,{{item.image_128}}"/>
+                                    </a> 
+                                </div>
+                            </div>
+                        </t>
+                    </div>
 
                     <div>
+                        <div> Выберите файл и нажмите Отправить. Если вы не хотите больше добавлять файлы нажмите Завершить</div>
+                        <a t-attf-href="/vote/{{vote.id}}" class="mb-2 btn btn-primary">Завершить</a>
+
                         <form
-                            t-attf-action="/vote/submitted/{{vote.id}}"
+                            t-attf-action="/vote/reg/add_item/{{vote.id}}"
                             method="POST"
                             class="form-horizontal mt32 vote_reg_form"
                             enctype="multipart/form-data"
                         >
-                            <input
-                                type="hidden"
-                                name="csrf_token"
-                                t-att-value="request.csrf_token()"
-                            />
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
-                            <input
-                                type="hidden"
-                                name="description"
-                                t-attf-value="#{description}"
-                            />
+                            <input type="hidden" name="description" t-attf-value="#{description}"/>
 
                             <div class="form-group">
-                                    <label
-                                        class="control-label"
-                                        for="file_text"
-                                    >Подпись к файлу</label>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        name="file_text"
-                                        t-attf-value="#{file_text}"
-                                        required="True"
-                                    />
+                                    <label class="control-label" for="file_text">
+                                        Подпись к файлу
+                                    </label>
+                                    <input type="text" class="form-control" name="file_text" t-attf-value="#{file_text}" required="True"/>
                             </div>
                             
                             <div class="form-group">
@@ -187,6 +141,7 @@
                                     <button class="btn btn-primary btn-lg oe_vote_reg">Отправить</button>
                                 </div>
                             </div>
+                            
                             
                             
                         </form>

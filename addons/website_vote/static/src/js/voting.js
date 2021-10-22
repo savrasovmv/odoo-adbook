@@ -36,13 +36,13 @@ odoo.define('website_vote.Voting', function (require) {
         _replaceVotingButton: function (self) {
             if (!self.allowedVoting) {
                 $('.voting_button').css('display', 'none');
-                if (self.listVoting.includes(self.participantId)) {
+                if (self.listVoting.includes(self.participantItemId)) {
                     $('.voting_button_finish').css('display', 'block');
                 } else {
                     $('.voting_button_finish').css('display', 'none');
                 }
             } else {
-                if (self.listVoting.includes(self.participantId)) {
+                if (self.listVoting.includes(self.participantItemId)) {
                     $('.voting_button').css('display', 'none');
                     $('.voting_button_finish').css('display', 'block');
                 } else {
@@ -55,7 +55,7 @@ odoo.define('website_vote.Voting', function (require) {
         },
 
         _setNexPrevId: function (self) {
-            self.index = self.listId.indexOf(parseInt(self.participantId))
+            self.index = self.listId.indexOf(parseInt(self.participantItemId))
             
             if (self.index == 0) {
                 self.nextId = self.listId[self.index+1]
@@ -82,7 +82,7 @@ odoo.define('website_vote.Voting', function (require) {
             console.log("---------------")
             console.log(this)
             var voteId = this.$el[0].attributes.voteId.value;
-            var participantId = this.$el[0].attributes.participantId.value;
+            var participantItemId = this.$el[0].attributes.participantItemId.value;
 
             return this._super.apply(this, arguments).then(function () {
                 
@@ -96,13 +96,13 @@ odoo.define('website_vote.Voting', function (require) {
                     }
                 });
                 
-                if (participantId) {
+                if (participantItemId) {
                     $('.load').css('display', 'block');
 
                     self.voteId = voteId
-                    self.participantId = participantId
+                    self.participantItemId = participantItemId
                     // this._replaceContent(voteId)
-                    ajax.jsonRpc('/vote/json/voting/'+participantId, 'call', {})
+                    ajax.jsonRpc('/vote/json/voting/'+participantItemId, 'call', {})
                     .then(function(json_data) { 
                             // console.log(json_data);
                             self._replaceContent(json_data) 
@@ -127,7 +127,7 @@ odoo.define('website_vote.Voting', function (require) {
                             // console.log(self.listVoting)
                             // console.log(self.maxVoting)
                             // console.log(self.allowedVoting)
-                            // console.log(self.participantId)
+                            // console.log(self.participantItemId)
                             // this.attr('prevId',json_data['prev_id'])
 
                             // return;
@@ -156,13 +156,13 @@ odoo.define('website_vote.Voting', function (require) {
             if (nextId) {
                 $('.load').css('display', 'block');
 
-                ajax.jsonRpc('/vote/participant/'+nextId, 'call', {})
+                ajax.jsonRpc('/vote/participant_item/'+nextId, 'call', {})
                 .then(function(json_data) { 
                         // $('.o_voting_image').css('backgroundImage', 'url(data:image/png;base64,'+ json_data['image_1920'] +' )'); 
                         // $('.o_voting_file_text').html(json_data['file_text'])
 
                         self._replaceContent(json_data)
-                        self.participantId = self.nextId
+                        self.participantItemId = self.nextId
 
                         self._setNexPrevId(self)
 
@@ -206,11 +206,11 @@ odoo.define('website_vote.Voting', function (require) {
             if (prevId) {
                 $('.load').css('display', 'block');
 
-                ajax.jsonRpc('/vote/participant/'+prevId, 'call', {})
+                ajax.jsonRpc('/vote/participant_item/'+prevId, 'call', {})
                 .then(function(json_data) { 
 
                         self._replaceContent(json_data)
-                        self.participantId = self.prevId
+                        self.participantItemId = self.prevId
                         self._setNexPrevId(self)
 
                         // if (self.index == 0) {
@@ -243,12 +243,12 @@ odoo.define('website_vote.Voting', function (require) {
         _onClickVoting: function () {
             var self = this;
             var voteId = this.voteId;
-            var participantId = this.participantId
+            var participantItemId = this.participantItemId
 
             if (voteId) {
                 $('.load').css('display', 'block');
 
-                ajax.jsonRpc('/vote/voting_participant/'+participantId, 'call', {})
+                ajax.jsonRpc('/vote/voting_participant_item/'+participantItemId, 'call', {})
                 .then(function(json_data) { 
                     if (json_data['result'] == 'success') {
                         self.listVoting.push(json_data['data'])

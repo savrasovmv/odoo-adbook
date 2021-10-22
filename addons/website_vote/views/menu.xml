@@ -7,7 +7,9 @@
             
         </menuitem>
 
-        <menuitem id="vote_participant_first_level_menu" name="Участники" action="vote_vote_participant_action" sequence="20">
+        <menuitem id="vote_participant_first_level_menu" name="Участники" sequence="20">
+            <menuitem id="vote_participant_menu_action" action="vote_vote_participant_action"/>
+            <menuitem id="vote_participant_item_menu_action" action="vote_vote_participant_item_action"/>
             
         </menuitem>
 

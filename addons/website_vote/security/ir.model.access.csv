@@ -3,5 +3,7 @@ access_vote_vote_manager,vote.vote,model_vote_vote,group_vote_manager,1,1,1,1
 access_vote_vote_users,vote.vote,model_vote_vote,group_vote_users,1,0,0,0
 access_vote_vote_participant_manager,vote.vote_participant,model_vote_vote_participant,group_vote_manager,1,1,1,1
 access_vote_vote_participant_users,vote.vote_participant,model_vote_vote_participant,group_vote_users,1,0,0,0
+access_vote_vote_participant_item_manager,vote.vote_participant_item,model_vote_vote_participant_item,group_vote_manager,1,1,1,1
+access_vote_vote_participant_item_users,vote.vote_participant_item,model_vote_vote_participant_item,group_vote_users,1,0,0,0
 access_vote_vote_voting_manager,vote.vote_voting,model_vote_vote_voting,group_vote_manager,1,1,1,1
 access_vote_vote_voting_users,vote.vote_voting,model_vote_vote_voting,group_vote_users,1,0,0,0

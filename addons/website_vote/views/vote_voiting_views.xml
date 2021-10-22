@@ -22,8 +22,11 @@
                         <group>
                             <field name="create_date"/>
                             <field name="users_id"/>
+                            <field name="employee_id"/>
                             <field name="vote_vote_id"/>
                             <field name="vote_vote_participant_id"/>
+                            <field name="vote_vote_participant_item_id"/>
+                            
                             <field name="score"/>
                         
                         </group>

@@ -82,6 +82,7 @@
     box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.1) !important;
     background-color: rgba(255, 255, 255, 0.9) !important;
     border: 1px solid #DEE2E6 !important;
+    max-height: 120px;
 
     // // padding: 1rem;
 
@@ -188,4 +189,9 @@
     body.o_connected_user {
         padding-top: 0 !important;
     }
+}
+
+
+.winner_number {
+    text-align: center;
 }

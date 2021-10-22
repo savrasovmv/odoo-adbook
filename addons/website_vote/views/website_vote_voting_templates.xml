@@ -23,7 +23,7 @@
 
             <div id="wrap" class="wrap" contentEditable="False">
 
-                <div class="position-relative o_voting_main" t-att-voteId='vote_id' t-att-participantId='participant_id'>
+                <div class="position-relative o_voting_main" t-att-voteId='vote_id' t-att-participantItemId='participant_item_id'>
                     
                     <div class="container">
 
