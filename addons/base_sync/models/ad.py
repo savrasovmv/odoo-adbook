@@ -501,7 +501,7 @@ flags = [
 
 class AdSyncUsers(models.AbstractModel):
     _name = 'ad.sync_users'
-    _description = 'Пользователи AD'
+    _description = 'Синхронизация Пользователи AD'
     _inherit = ['ad.connect']
 
     # Синхронизация пользователей

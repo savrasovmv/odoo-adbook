@@ -209,13 +209,13 @@ class VoteParticipantItem(models.Model):
         return super(VoteParticipantItem, self).create(vals)
 
 
-    @api.depends("users_id", "employee_id")
+    @api.depends("file_text", "employee_id")
     def _get_name(self):
         for line in self:
-            if line.users_id:
-                line.name = line.users_id.name 
-            if line.employee_id:
-                line.name = line.employee_id.name 
+            if line.file_text:
+                line.name = line.employee_id.name + " " + line.file_text 
+            else:
+                line.name = line.employee_id.name + "(без имени)"
 
     @api.depends("file")
     def _get_default_image(self):
