@@ -120,12 +120,13 @@ class VoteParticipant(models.Model):
     _description = "Зарегистрированные Участники"
     _order = "name"
 
-    name = fields.Char(u'Наименование', compute="_get_name")
+    name = fields.Char(u'Наименование', compute="_get_name", stote=True)
     users_id = fields.Many2one("res.users", string="Пользователь")
     employee_id = fields.Many2one("hr.employee", string="Сотрудник")
 
     vote_vote_id = fields.Many2one('vote.vote',
 		ondelete='cascade', string=u"Голосования", required=True)
+    
     
     description = fields.Text( "Описание", translate=True, sanitize=False)
     number_item = fields.Integer(string='Число работ', compute='get_item', store=True)
@@ -162,14 +163,14 @@ class VoteParticipant(models.Model):
     def get_score(self):
         for participant in self:
             voting_list = self.env['vote.vote_voting'].search([('vote_vote_participant_id', '=', participant.id)])
-            participant.score = len(voting_list)
+            participant.score = sum(line['score'] for line in voting_list)
 
     @api.depends("vote_vote_participant_item")
     def get_item(self):
         for participant in self:
             # item = self.env['vote.vote_participant_item'].search([('participant_id', '=', participant.id)])
             participant.number_item = len(participant.vote_vote_participant_item)
-
+            
 
 
 class VoteParticipantItem(models.Model):
@@ -177,14 +178,17 @@ class VoteParticipantItem(models.Model):
     _description = "Работы Участников"
     _order = "name"
 
-    name = fields.Char(u'Наименование', compute="_get_name")
+
+    name = fields.Char(u'Наименование', compute="_get_name", store=True)
     employee_id = fields.Many2one("hr.employee", string="Сотрудник")
 
     users_id = fields.Many2one("res.users", string="Пользователь")
-    participant_id = fields.Many2one("vote.vote_participant", ondelete='cascade', string="Участник")
+    vote_vote_id = fields.Many2one('vote.vote', ondelete='cascade', string=u"Голосования", required=True)
 
-    vote_vote_id = fields.Many2one('vote.vote',
-		ondelete='cascade', string=u"Голосования", required=True)
+    participant_id = fields.Many2one("vote.vote_participant", ondelete='cascade', string="Участник")
+                #    domain="[('id', 'in', vote_vote_id.vote_vote_participant.ids)]")
+    # participant_list
+
     
     file = fields.Binary('Файл', default=None)
     file_text = fields.Char(string='Подпись к файлу')
@@ -196,7 +200,7 @@ class VoteParticipantItem(models.Model):
 
     vote_vote_voting = fields.One2many('vote.vote_voting', 'vote_vote_participant_item_id', string=u"Участники голосования")
 
-
+    
 
     @api.model
     def create(self, vals):
@@ -213,7 +217,7 @@ class VoteParticipantItem(models.Model):
     def _get_name(self):
         for line in self:
             if line.file_text:
-                line.name = line.employee_id.name + " " + line.file_text 
+                line.name = str(line.employee_id.name) + " (" + str(line.file_text) + ")" 
             else:
                 line.name = line.employee_id.name + "(без имени)"
 
@@ -227,7 +231,7 @@ class VoteParticipantItem(models.Model):
     def get_score(self):
         for item in self:
             voting_list = self.env['vote.vote_voting'].search([('vote_vote_participant_item_id', '=', item.id)])
-            item.score = len(voting_list)
+            item.score = sum(line['score'] for line in voting_list)
 
 
     
@@ -238,7 +242,8 @@ class VoteVoting(models.Model):
     _description = "Участники голосования"
     _order = "name"
 
-    name = fields.Char(u'Наименование', compute="_get_name")
+
+    name = fields.Char(u'Наименование', compute="_get_name", store=True)
     users_id = fields.Many2one("res.users", string="Пользователь")
     employee_id = fields.Many2one("hr.employee", string="Сотрудник")
 
@@ -246,7 +251,8 @@ class VoteVoting(models.Model):
     vote_vote_id = fields.Many2one('vote.vote',
 		ondelete='cascade', string=u"Голосования", required=True)
     
-    vote_vote_participant_id = fields.Many2one('vote.vote_participant', string=u"Участник")
+    vote_vote_participant_id = fields.Many2one('vote.vote_participant', string=u"Участник",)
+                                                # search="[('vote_vote_id', '=', vote_vote_id)]")
     vote_vote_participant_item_id = fields.Many2one('vote.vote_participant_item', ondelete='cascade', string=u"Работа Участника")
    
     score = fields.Integer(string='Голос', default=1)
@@ -255,8 +261,9 @@ class VoteVoting(models.Model):
 
     @api.depends("users_id")
     def _get_name(self):
-        if self.users_id:
-            self.name = self.users_id.name 
+        for line in self:
+            if line.users_id:
+                line.name = line.users_id.name 
     
     @api.model
     def create(self, vals):

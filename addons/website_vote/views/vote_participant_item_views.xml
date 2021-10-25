@@ -26,11 +26,11 @@
                     </div>
                     <group>
                         <group>
-                            <field name="participant_id"/>
-                            <field name="create_date"/>
                             <field name="users_id"/>
                             <field name="employee_id"/>
                             <field name="vote_vote_id"/>
+                            <field name="participant_id" domain="[('vote_vote_id', '=', vote_vote_id)]"/>
+                            <field name="create_date"/>
                             <field name="image_1920"/>
                             <field name="image_128"/>
                         

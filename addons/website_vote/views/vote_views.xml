@@ -106,29 +106,33 @@
                                
                         </page>
                         <page string="Участники">
+                            <field name="id" invisible="1"/>
                             <field name="vote_vote_participant">
-                                <tree editable="botton">
+                                <tree create="true" delete="true" edit="false" >
                                     <field name="users_id"/>
                                     <field name="employee_id"/>
                                     <field name="number_item"/>
                                     <field name="score"/>
+                                    <field name="vote_vote_id" invisible="1"/>
 
                                 </tree>
+                                
                             </field> 
                         </page>
                         <page string="Работы участников">
                             <field name="vote_vote_participant_item">
-                                <tree editable="botton">
+                                <tree create="true" delete="true" edit="false">
                                     <field name="users_id"/>
                                     <field name="employee_id"/>
                                     <field name="score"/>
 
                                 </tree>
+                                
                             </field> 
                         </page>
                         <page string="Голоса">
                             <field name="vote_vote_voting">
-                                <tree editable="botton">
+                                <tree create="true" delete="true" edit="false">
                                     <field name="users_id"/>
                                     <field name="employee_id"/>
                                     <field name="vote_vote_participant_id"/>
