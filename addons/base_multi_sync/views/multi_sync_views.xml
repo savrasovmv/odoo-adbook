@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="base_multi_sync_server_view_form" model="ir.ui.view">
+        <field name="name">base.multi_sync_server.form</field>
+        <field name="model">base.multi_sync_server</field>
+        <field name="arch" type="xml">
+            <form string="Сервер">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="server_url"/>
+                            <field name="server_port"/>
+                        </group>
+                        <group>
+                            <field name="db_name"/>
+                            <field name="login"/>
+                            <field name="password" password="True"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="obj_ids"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <record id="base_multi_sync_server_action" model="ir.actions.act_window">
+        <field name="name">Сервера</field>
+        <field name="res_model">base.multi_sync_server</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p>
+             Создайте новую запись
+          </p>
+        </field>
+    </record>
+
+
+    <record id="base_multi_sync_obj_action" model="ir.actions.act_window">
+        <field name="name">Объекты</field>
+        <field name="res_model">base.multi_sync_obj</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p>
+             Создайте новую запись
+          </p>
+        </field>
+    </record>
+
+    <record id="base_multi_sync_line_action" model="ir.actions.act_window">
+        <field name="name">Синхронизированные объекты</field>
+        <field name="res_model">base.multi_sync_line</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p>
+             Создайте новую запись
+          </p>
+        </field>
+    </record>
+
+
+
+    <record id="base_multi_sync_log_view_tree" model="ir.ui.view">
+        <field name="name">base.multi_sync_log.tree</field>
+        <field name="model">base.multi_sync_log</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="date"/>
+                <field name="name"/>
+                <field name="server_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="base_multi_sync_log_action" model="ir.actions.act_window">
+        <field name="name">Результаты синхронизации</field>
+        <field name="res_model">base.multi_sync_log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p>
+             Создайте новую запись
+          </p>
+        </field>
+    </record>
+
+  
+   
+</odoo>
