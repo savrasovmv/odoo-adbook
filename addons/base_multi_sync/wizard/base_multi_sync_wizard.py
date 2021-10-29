@@ -71,6 +71,19 @@ class BaseMultiSyncWizard(models.TransientModel):
 
     result = fields.Text(string='Результат')
 
+    
+    def get_sync_obj_line_by_id(self, obj_id, obj_line_id):
+        s = self.env['base.multi_sync_line'].search([
+            ('obj_id', '=', obj_id),
+            ('local_id', '=', obj_line_id),
+        ], limit=1).id
+        return s
+
+    def sync_obj_line(self, obj_line):
+        pass
+
+
+
 
 
     def sync_obj(self, obj):
@@ -91,7 +104,7 @@ class BaseMultiSyncWizard(models.TransientModel):
             )
 
         for obj_line in obj.get_ids():
-            pass
+            self.sync_obj_line(obj_line)
 
 
 

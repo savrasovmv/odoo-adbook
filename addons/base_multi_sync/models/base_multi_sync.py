@@ -98,6 +98,9 @@ class BaseMultiSyncLine(models.Model):
     local_id = fields.Integer("Local ID", readonly=True)
     remote_id = fields.Integer("Remote ID", readonly=True)
 
+        
+
+
 
 class BaseMultiSyncLog(models.Model):
     """Результат синхронизации"""
