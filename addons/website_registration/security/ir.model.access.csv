@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_adbook_department_manager,adbook.department,model_adbook_department,group_adbook_manager,1,1,1,1
+access_adbook_department_users,adbook.department,model_adbook_department,group_adbook_users,1,0,0,0
+access_adbook_employer_manager,adbook.employer,model_adbook_employer,group_adbook_manager,1,1,1,1
+access_adbook_employer_users,adbook.employer,model_adbook_employer,group_adbook_users,1,0,0,0
+access_adbook_build_manager,adbook.build,model_adbook_build,group_adbook_manager,1,1,1,1
+access_adbook_build_wizard_manager,adbook.build_wizard,model_adbook_build_wizard,group_adbook_manager,1,1,1,1
+access_adbook_department_users,adbook.department,model_adbook_department,base.group_user,1,0,0,0
+access_adbook_department_users,adbook.department,model_adbook_department,base.group_portal,1,0,0,0
+access_adbook_employer_users,adbook.employer,model_adbook_employer,base.group_user,1,0,0,0
+access_adbook_employer_users,adbook.employer,model_adbook_employer,base.group_portal,1,0,0,0

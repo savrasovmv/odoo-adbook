@@ -73,6 +73,7 @@ class BaseMultiSyncWizard(models.TransientModel):
 
     
     def get_sync_obj_line_by_id(self, obj_id, obj_line_id):
+        """Ищит была ли ранее синхронизация, возвращает id запись удаленной базы"""
         s = self.env['base.multi_sync_line'].search([
             ('obj_id', '=', obj_id),
             ('local_id', '=', obj_line_id),
