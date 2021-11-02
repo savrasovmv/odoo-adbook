@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<odoo>
+    
+    
+
+    <record id="registration_allowed_ip_view_form" model="ir.ui.view">
+        <field name="name">reg.allowed_ip.form</field>
+        <field name="model">reg.allowed_ip</field>
+        <field name="arch" type="xml">
+            <form string="Разрешенные IP">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="networks" placeholder="например: 172.16.0.0/24"/>
+                        </group>
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="registration_allowed_ip_view_tree" model="ir.ui.view">
+        <field name="name">reg.allowed_ip.tree</field>
+        <field name="model">reg.allowed_ip</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+  
+
+    <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
+    <record id="registration_allowed_ip_action" model="ir.actions.act_window">
+        <field name="name">Разрешенные IP</field>
+        <field name="res_model">reg.allowed_ip</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p>
+             Создайте новую запись
+          </p>
+        </field>
+    </record>
+
+  
+   
+</odoo>

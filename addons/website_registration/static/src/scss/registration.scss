@@ -1,0 +1,27 @@
+circle {
+    background: #0D4383;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: inline-block;
+    text-align: center;
+    line-height: 25px;
+    // margin:5px;
+    color: white;
+    font-weight: bold;
+}
+
+.oe_website_login_container {
+    form {
+        @extend .p-3, .border;
+        background-color: white;
+
+    }
+    a {
+        @extend .text-decoration-none;
+
+    }
+    form label {
+        font-weight: 400;
+    }
+}

@@ -2,14 +2,13 @@
 <odoo>
     <data>
 
-        <template id="assets_frontend_mypage" inherit_id="website.assets_frontend" name="Mypage Frontend Assets">
+        <template id="assets_frontend_registration" inherit_id="website.assets_frontend" name="Website registration Frontend Assets">
             <xpath expr="//link[last()]" position="after">
-                <link rel="stylesheet" type="text/scss" href="/website_mypage/static/src/scss/mypage.scss" t-ignore="true"/>
+                <link rel="stylesheet" type="text/scss" href="/website_registration/static/src/scss/registration.scss" t-ignore="true"/>
             </xpath>
-            <!-- <xpath expr="//script[last()]" position="after">
-                <script type="text/javascript" src="/website_adbook/static/src/js/menu.js"></script>
-                <script type="text/javascript" src="/website_adbook/static/src/js/search.js"></script>
-            </xpath> -->
+            <xpath expr="//script[last()]" position="after">
+                <script type="text/javascript" src="/website_registration/static/src/js/agree.js"></script>
+            </xpath>
         </template>
 
     </data>

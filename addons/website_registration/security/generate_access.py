@@ -1,16 +1,14 @@
 spisok = []
-# spisok.append(['adbook.branch','', 1])
-spisok.append(['adbook.department','', 1])
-spisok.append(['adbook.employer','', 1])
-spisok.append(['adbook.build','', 0])
-spisok.append(['adbook.build_wizard','', 0])
+spisok.append(['reg.reg','', 1])
+spisok.append(['reg.conditions','', 1])
+spisok.append(['reg.allowed_ip','', 1])
 
 
 
 spisok_read = []
 # spisok_read.append(['adbook.branch',''])
-spisok_read.append(['adbook.department',''])
-spisok_read.append(['adbook.employer',''])
+# spisok_read.append(['adbook.department',''])
+# spisok_read.append(['adbook.employer',''])
 
 
 
@@ -24,15 +22,15 @@ for name in spisok:
 	
 	if len(name[1])>0:
 		modul_name = name[1] + '.'
-	print('access_%(class_name)s_manager,%(name)s,%(modul_name)smodel_%(class_name)s,group_adbook_manager,1,1,1,1' % {'name':name[0], 'class_name': class_name, 'modul_name': modul_name})
-	if name[2]>0:
-		print('access_%(class_name)s_users,%(name)s,%(modul_name)smodel_%(class_name)s,group_adbook_users,1,0,0,0'  % {'name':name[0], 'class_name': class_name, 'modul_name': modul_name})
-for name in spisok_read:
-	class_name = name[0].replace('.','_')
-	modul_name = ''
+	print('access_%(class_name)s_manager,%(name)s,%(modul_name)smodel_%(class_name)s,base.group_system,1,1,1,1' % {'name':name[0], 'class_name': class_name, 'modul_name': modul_name})
+	# if name[2]>0:
+	# 	print('access_%(class_name)s_users,%(name)s,%(modul_name)smodel_%(class_name)s,group_vote_users,1,0,0,0'  % {'name':name[0], 'class_name': class_name, 'modul_name': modul_name})
+# for name in spisok_read:
+# 	class_name = name[0].replace('.','_')
+# 	modul_name = ''
 	
-	if len(name[1])>0:
-		modul_name = name[1] + '.'
+# 	if len(name[1])>0:
+# 		modul_name = name[1] + '.'
 	
-	print('access_%(class_name)s_users,%(name)s,%(modul_name)smodel_%(class_name)s,base.group_user,1,0,0,0'  % {'name':name[0], 'class_name': class_name, 'modul_name': modul_name})
-	print('access_%(class_name)s_users,%(name)s,%(modul_name)smodel_%(class_name)s,base.group_portal,1,0,0,0'  % {'name':name[0], 'class_name': class_name, 'modul_name': modul_name})
+# 	print('access_%(class_name)s_users,%(name)s,%(modul_name)smodel_%(class_name)s,base.group_user,1,0,0,0'  % {'name':name[0], 'class_name': class_name, 'modul_name': modul_name})
+# 	print('access_%(class_name)s_users,%(name)s,%(modul_name)smodel_%(class_name)s,base.group_portal,1,0,0,0'  % {'name':name[0], 'class_name': class_name, 'modul_name': modul_name})

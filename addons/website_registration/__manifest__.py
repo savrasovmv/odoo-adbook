@@ -32,9 +32,14 @@
 
     # always loaded
     'data': [
+        'views/registration_allowed_ip_views.xml',
+        'views/registration_conditions_views.xml',
         'views/website_registration_templates.xml',
-        # 'views/res_menu.xml',
-        # 'views/assets.xml',
+        'views/website_registration_step1_templates.xml',
+        'views/website_registration_step2_templates.xml',
+        'views/res_menu.xml',
+        'views/assets.xml',
+        'security/ir.model.access.csv',
 
     ],
     

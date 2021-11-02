@@ -1,9 +1,23 @@
-
+<?xml version="1.0"?>
 <odoo>
-    <template id="my_page_link" name="Link to mypage portal" inherit_id="portal.user_dropdown">
-        <xpath expr="//*[@id='o_logout_divider']" position="before">
-            <a href="/mypage" role="menuitem" class="dropdown-item">Личный кабинет</a>
-        </xpath>
-    </template>
+
+    <menuitem
+            id="registration_conditions_menu"
+            name="Соглашения"
+            sequence="11"
+            parent="base.menu_users"
+            action="registration_conditions_action"
+            />
+
+    <menuitem
+            id="registration_allowed_ip_menu"
+            name="Разрешенные IP"
+            sequence="12"
+            parent="base.menu_users"
+            action="registration_allowed_ip_action"
+            />
+
+
+       
 
 </odoo>
