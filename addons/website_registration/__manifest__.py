@@ -27,7 +27,12 @@
     'depends': [
                 'base',
                 'ad_base',
-                'website'
+                'website',
+                'auth_password_policy',
+                'auth_password_policy_signup',
+                'auth_password_policy_portal',
+                'auth_signup',
+
                 ],
 
     # always loaded
