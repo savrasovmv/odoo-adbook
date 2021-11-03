@@ -50,6 +50,8 @@ class Registration(http.Controller):
     
     @http.route(['/web/registrationtest'], type='http', auth="public", website=True, sitemap=True, methods=['GET'])
     def test_registration(self, **kw):
+
+        error = ''
         empl = request.env['hr.employee'].sudo().search([
             ('name', '=', 'Саврасов Михаил Владимирович'),
         ], limit=1)
@@ -64,15 +66,26 @@ class Registration(http.Controller):
             if email == None:
                 error += "Не существует email, регистрация не возможна, обратитесь в службу поддержку \n"
             else:
-                email = email_cipher(email)
+                email = get_email_cipher(email)
+            
+        if error=='':
+            empl.reg_create_user()
 
-        return http.request.render(
-            'website_registration.registration_success', 
-            {
-                'name': empl.name,
-                'email': email,
-            },
-            )
+            return http.request.render(
+                'website_registration.registration_success', 
+                {
+                    'name': empl.name,
+                    'email': email,
+                },
+                )
+        else:
+            return http.request.render(
+                'website_registration.registration_success', 
+                {
+                    'name': empl.name,
+                    'email': "Ошибка создания пользователя с " + email,
+                },
+                )
 
 
     @http.route(['/web/registration/step1'], type='http', auth="public", website=True, sitemap=True, methods=['GET','POST'])
@@ -206,13 +219,19 @@ class Registration(http.Controller):
                 error += "Не верно указан код с картинки \n"
 
             if error == '':
-                return http.request.render(
-                    'website_registration.registration_success', 
-                    {
-                        'name': empl.name,
-                        'email': email,
-                    },
-                    )
+                try:
+                    empl.reg_create_user()
+                    return http.request.render(
+                        'website_registration.registration_success', 
+                        {
+                            'name': empl.name,
+                            'email': email,
+                        },
+                        )
+                except Exception as e:
+                    _logger.warning("Ошибка при создании пользователя %s  %s" % ( email, str(e)))
+
+                
 
         _logger.debug("error = %s" % (error))
 
