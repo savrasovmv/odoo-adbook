@@ -1,7 +1,11 @@
 <odoo>
 
+
     <!-- Представление для входа и регистрации без верха и низа -->
+
     <template id="website_registration.registration_layout" name="Website registration Layout" inherit_id="web.frontend_layout" primary="True">
+        
+       
         <xpath expr="//div[@id='wrapwrap']" position="before">
             <t t-set="no_livechat" t-value="True"/>
         </xpath>
@@ -12,19 +16,20 @@
             <t t-set="no_footer" t-value="True"/>
         </xpath>
         
+       
         
     </template>
 
-    <!-- <template id="website_registration.layout" name="Website registration Layout" inherit_id="portal.frontend_layout">
-        <xpath expr="//div[@id='wrapwrap']" position="before">
-            <t t-set="no_livechat" t-value="True"/>
-        </xpath>
-        <xpath expr="//header" position="replace">
-            <t t-set="no_header" t-value="True"/>
-        </xpath>
-        <xpath expr="//footer" position="replace">
-            <t t-set="no_footer" t-value="True"/>
-        </xpath>
+    <!-- <template  id="website_registration.layout_not_auth" name="Website registration Layout not_auth" inherit_id="website.layout">
+            <xpath  expr="//div[@id='wrapwrap']" position="before">
+                <t t-set="no_livechat" t-value="True"/>
+            </xpath>
+            <xpath expr="//header" position="replace">
+                <t t-set="no_header" t-value="True"/>
+            </xpath>
+            <xpath expr="//footer" position="replace">
+                <t t-set="no_footer" t-value="True"/>
+            </xpath>
         
         
     </template> -->

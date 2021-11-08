@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+
     <menuitem
             id="hr_menu_personal_doc"
             name="Документы"
@@ -62,6 +64,9 @@
             sequence="1"
             groups="hr.group_hr_manager"
             />
+
+
+
 
 
 </odoo>

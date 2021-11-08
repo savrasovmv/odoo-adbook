@@ -122,6 +122,8 @@ class Registration(http.Controller):
             if len(empl) == 0:
                 error += "Не найден сотрудник с указанным ФИО \n"
             else:
+                if empl.user_id:
+                    error += "Пользователь с таким ФИО уже зарегистрирован. Если вы забыли пароль, выполните его сброс на странице авторизации"
                 email = None
                 if empl.work_email:
                     email = empl.work_email
