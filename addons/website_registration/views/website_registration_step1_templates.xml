@@ -43,8 +43,8 @@
                         Ознакомьтесь с условиями использования: 
                         <a t-attf-href="/web/registration/confidentiality" class="btn btn-link text-decoration-none p-0" role="button">Политикой конфиденциальности и</a>
                         
-                        <a t-attf-href="/web/registration/conditions" class="btn btn-link text-decoration-none p-0" role="button">Пользовательским соглашением</a>
-                        .
+                        <a t-attf-href="/web/registration/conditions" class="btn btn-link text-decoration-none p-0" role="button">Пользовательским соглашением.</a>
+                        
                         
                     </div>
                 </div>
@@ -55,10 +55,10 @@
                         
                     </div>
                     <div t-attf-class="col-12 col-md-10 col-lg-10 mt-1">
-                        <p>Заполните форму регистрации</p>
-                        <p>- укажите полностью ФИО</p>
+                        <p>Заполните форму регистрации:</p>
+                        <p>- укажите полностью ФИО,</p>
                         <!-- <p>- задайте пароль (пароль должен состоять из строчных и прописных символов латинского алфавита, содержать цифры, длина не менее 10 и не более 25 символов)</p> -->
-                        <p>- заполните код с картинки</p>
+                        <p>- заполните код с картинки.</p>
                         
                     </div>
                 </div>
