@@ -37,7 +37,7 @@
 
     # always loaded
     'data': [
-        'views/mail_auth_signup_templates.xml',
+        # 'views/mail_auth_signup_templates.xml',
         'views/res_config_settings_views.xml',
         'views/registration_allowed_ip_views.xml',
         'views/registration_conditions_views.xml',

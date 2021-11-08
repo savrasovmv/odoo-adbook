@@ -17,7 +17,17 @@
             action="registration_allowed_ip_action"
             />
 
+        <record id="go_portal" model="ir.actions.act_url">
+                <field name="name">Портал</field>
+                <field name="type">ir.actions.act_url</field>
+                <field name="target">self</field>
+                <field name="url">/</field>
+        </record>
 
+        <menuitem action="go_portal"
+                name="Портал"
+                id="menu_go_portal"
+                sequence="0"/>
        
 
 </odoo>
