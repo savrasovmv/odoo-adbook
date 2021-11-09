@@ -84,7 +84,7 @@ class HrEmployee(models.Model):
                 with self.env.cr.savepoint():
                     new_user =  template_user.with_context(no_reset_password=True, create_user=True).copy(user_vals)
                     new_user.with_context(create_user=True).action_reset_password()
-                    _logger.warning("Пользователь создан  %s" % (email))
+                    _logger.debug("Пользователь создан  %s" % (email))
 
             except Exception as e:
                 # copy may failed if asked login is not available.
@@ -102,6 +102,20 @@ class HrEmployee(models.Model):
         for user in users:
             user.karma = VALIDATION_KARMA_GAIN
 
+
+    @api.model
+    def disabled_users_fired_employee(self):
+        """Отключает учетные записи уволенных сотрудников"""
+
+        empls = self.env['hr.employee'].sudo().search([
+            ('is_fired', '=', True),
+            ])
+        for empl in empls:
+            if empl.user_id:
+                if empl.user_id.active:
+                    empl.user_id.active = False
+                    if empl.user_id.partner_id:
+                        empl.user_id.partner_id.active = False
 
 
     # @api.model

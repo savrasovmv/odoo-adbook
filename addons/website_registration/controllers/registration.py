@@ -117,6 +117,7 @@ class Registration(http.Controller):
 
             empl = request.env['hr.employee'].sudo().search([
                 ('name', '=', name),
+                ('is_fired', '=', False),
             ], limit=1)
 
             if len(empl) == 0:
