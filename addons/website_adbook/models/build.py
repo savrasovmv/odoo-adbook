@@ -85,6 +85,8 @@ class AdbookBuild(models.AbstractModel):
                             ])
         adbook_emloyer = self.env['adbook.employer'].sudo()
         for user in ad_users_list:
+
+            is_fired = False
             search_emloyer = adbook_emloyer.search([
                                 ('ad_users_id', '=', user.id),
                             ])
@@ -96,6 +98,7 @@ class AdbookBuild(models.AbstractModel):
                     'hr_employee_id': hr_employer.id,
                     'title': hr_employer.job_title,
                 }
+                is_fired = hr_employer.is_fired
             
                 # Добавить поиск по документам Отпус и прочее
             
@@ -122,10 +125,11 @@ class AdbookBuild(models.AbstractModel):
             }
 
             vals = {**ad_vals, **hr_vals, **b_vals}
-            if search_emloyer:
-                search_emloyer.write(vals)
-            else:
-                search_emloyer.create(vals)
+            if not is_fired:
+                if search_emloyer:
+                    search_emloyer.write(vals)
+                else:
+                    search_emloyer.create(vals)
 
 
         # Удаляем записи которые небыли обновлены

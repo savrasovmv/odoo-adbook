@@ -289,6 +289,21 @@ class HrEmployee(models.Model):
                 line.service_status_start_date = sick_leave.start_date
                 line.service_status_end_date = sick_leave.end_date
 
+            fired = self.env['hr.termination_doc'].search([
+                ('service_termination_date', '<=', date),
+                ('posted', '=', True),
+                ('employee_id', '=', line.id),
+            ], limit=1, order='date desc')
+
+            if len(fired)>0:
+                line.service_status = 'fired'
+                line.service_termination_date = fired.service_termination_date
+                line.is_fired = True
+            else:
+                line.service_termination_date = False
+                line.is_fired = False
+
+
     def set_fired(self, fired=True, date=False):
         print('-----------------', fired)
         self.is_fired = fired
