@@ -82,7 +82,7 @@ class ZupConnect(models.AbstractModel):
                 total_entries - общее количество полученных записей
                 data - данные
          """
-        _logger.info("Подключение к ЗУП")
+        _logger.info("Подключение к ЗУП (post)")
 
         ZUP_USER = self.env['ir.config_parameter'].sudo().get_param('zup_user')
         ZUP_PASSWORD = self.env['ir.config_parameter'].sudo().get_param('zup_password')
@@ -116,6 +116,7 @@ class ZupConnect(models.AbstractModel):
             #return total_entries, data
             return total_entries, data
         else:
+            _logger.info("Подключение выполнено успешно, без возврата данных")
             return True
 
 
@@ -142,6 +143,9 @@ class ZupSyncDep(models.AbstractModel):
 
     def zup_sync_dep(self):
         """Загрузка информации по подразделениям из ЗУП"""
+
+        _logger.info("Загрузка информации по подразделениям из ЗУП zup_sync_dep")
+
         date = datetime.today()
         URL_API = self.env['ir.config_parameter'].sudo().get_param('zup_url_get_dep_list')
         if not URL_API:
@@ -234,6 +238,9 @@ class ZupSyncEmployer(models.AbstractModel):
 
     def zup_sync_employer(self, by_guid_1c=False):
         """Загрузка информации по Сотрудникам из ЗУП"""
+
+        _logger.info("Загрузка информации по Сотрудникам из ЗУП zup_sync_employer")
+
         date = datetime.today()
 
         if by_guid_1c:
@@ -482,6 +489,9 @@ class ZupSyncPassport(models.AbstractModel):
 
         
         """
+
+        _logger.info("Загрузка информации по удостоверениям личности и адресам Сотрудников из ЗУП zup_sync_passport")
+
         date = datetime.today()
         URL_API = self.env['ir.config_parameter'].sudo().get_param('zup_url_get_passport_list')
         if not URL_API:
@@ -657,6 +667,9 @@ class ZupSyncPersonalDoc(models.AbstractModel):
 
     def zup_sync_personal_doc_full(self, date_start=False, date_end=False):
         """Загрузка всех типов документов"""
+
+        _logger.info("Загрузка всех типов документов zup_sync_personal_doc_full")
+
         if not date_start or not date_end:
             raise Exception("Не указан период для синхронизации")
         
@@ -683,6 +696,7 @@ class ZupSyncPersonalDoc(models.AbstractModel):
 
     def zup_sync_personal_doc(self, doc_obj=False, date_start=False, date_end=False):
         """Загрузка документов ЗУП
+
             Пример ответа:
             {
                 'dataType': 'recruitmentDocumentList', 
@@ -700,6 +714,8 @@ class ZupSyncPersonalDoc(models.AbstractModel):
 
         
         """
+
+        _logger.info("Загрузка документов ЗУП zup_sync_personal_doc")
 
         if not date_start or not date_end or not date_end:
             raise Exception("Не указан период или объект для синхронизации")
@@ -885,6 +901,7 @@ class ZupSyncPersonalDoc(models.AbstractModel):
         """Загрузка документов групповых переводов ЗУП
         
         """
+        _logger.info("Загрузка документов групповых переводов ЗУП zup_sync_multi_transfer_doc")
 
         if not data:
             raise Exception("Нет данных для синхронизации")
@@ -989,6 +1006,9 @@ class ZupSyncPersonalDoc(models.AbstractModel):
 
 
     def update_personal_doc(self, doc_obj, data, create_employer=False):
+
+        _logger.info("Обновление персональных документв ЗУП update_personal_doc")
+
         message_update = ''
         message_create = ''
         message_error = ''
@@ -1169,6 +1189,8 @@ class ZupSyncPersonalDoc(models.AbstractModel):
 
         
         """
+
+        _logger.info("Загрузка измененных документов из ЗУП zup_sync_personal_doc_change")
 
         date = datetime.today()
 
