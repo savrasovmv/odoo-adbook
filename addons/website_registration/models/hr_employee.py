@@ -6,6 +6,8 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+VALIDATION_KARMA_GAIN = 3
+
 class HrEmployee(models.Model):
     """Добавляет возможность создания партнера и пользователя из сотрудника"""
     _inherit = "hr.employee"
@@ -55,7 +57,8 @@ class HrEmployee(models.Model):
         user_vals = {
             'login': email,
             'partner_id': new_partner.id,
-            'active': True
+            'active': True,
+            'karma': VALIDATION_KARMA_GAIN,
         }
 
         user_search = self.env['res.users'].search([
@@ -91,6 +94,13 @@ class HrEmployee(models.Model):
         
         if new_user:
             self.user_id = new_user.id
+
+    @api.model
+    def set_users_default_karma(self):
+        """Устанавливает всем пользователям карму 3 для отключения предупреждения о валидации почты"""
+        users = self.env['res.users'].sudo().search([('karma', '=', 0)])
+        for user in users:
+            user.karma = VALIDATION_KARMA_GAIN
 
 
 
