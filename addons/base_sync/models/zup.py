@@ -267,7 +267,9 @@ class ZupSyncEmployer(models.AbstractModel):
             self.create_ad_log(date=date,result=error, is_error=True)
             raise error
 
-        if res:
+        total_entries = 0
+        
+        if res and isinstance(res, tuple):
             if by_guid_1c:
                 total_entries, line = res
                 data = [line,] # Преобразуем в массив для, т.к результат содержит одну запись
