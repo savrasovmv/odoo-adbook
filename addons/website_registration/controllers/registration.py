@@ -48,44 +48,44 @@ class Registration(http.Controller):
             return user_sudo
         return False
     
-    @http.route(['/web/registrationtest'], type='http', auth="public", website=True, sitemap=True, methods=['GET'])
-    def test_registration(self, **kw):
+    # @http.route(['/web/registrationtest'], type='http', auth="public", website=True, sitemap=True, methods=['GET'])
+    # def test_registration(self, **kw):
 
-        error = ''
-        empl = request.env['hr.employee'].sudo().search([
-            ('name', '=', 'Саврасов Михаил Владимирович'),
-        ], limit=1)
-        if len(empl) == 0:
-            error += "Не найден сотрудник с указанным ФИО \n"
-        else:
-            email = None
-            if empl.work_email:
-                email = empl.work_email
-            elif empl.personal_email:
-                email = empl.personal_email
-            if email == None:
-                error += "Не существует email, регистрация не возможна, обратитесь в службу поддержку \n"
-            else:
-                email = get_email_cipher(email)
+    #     error = ''
+    #     empl = request.env['hr.employee'].sudo().search([
+    #         ('name', '=', 'Саврасов Михаил Владимирович'),
+    #     ], limit=1)
+    #     if len(empl) == 0:
+    #         error += "Не найден сотрудник с указанным ФИО \n"
+    #     else:
+    #         email = None
+    #         if empl.work_email:
+    #             email = empl.work_email
+    #         elif empl.personal_email:
+    #             email = empl.personal_email
+    #         if email == None:
+    #             error += "Не существует email, регистрация не возможна, обратитесь в службу поддержку \n"
+    #         else:
+    #             email = get_email_cipher(email)
             
-        if error=='':
-            empl.reg_create_user()
+    #     if error=='':
+    #         empl.reg_create_user()
 
-            return http.request.render(
-                'website_registration.registration_success', 
-                {
-                    'name': empl.name,
-                    'email': email,
-                },
-                )
-        else:
-            return http.request.render(
-                'website_registration.registration_success', 
-                {
-                    'name': empl.name,
-                    'email': "Ошибка создания пользователя с " + email,
-                },
-                )
+    #         return http.request.render(
+    #             'website_registration.registration_success', 
+    #             {
+    #                 'name': empl.name,
+    #                 'email': email,
+    #             },
+    #             )
+    #     else:
+    #         return http.request.render(
+    #             'website_registration.registration_success', 
+    #             {
+    #                 'name': empl.name,
+    #                 'email': "Ошибка создания пользователя с " + email,
+    #             },
+    #             )
 
 
     @http.route(['/web/registration/step1'], type='http', auth="public", website=True, sitemap=True, methods=['GET','POST'])
