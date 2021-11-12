@@ -3,7 +3,7 @@
 
 <template id="s_birthday" name="Дни рождения">
     <section class="s_text_image pt32 pb32">
-        <div class="row align-items-center">
+        <div class="row align-items-center s_allow_columns container">
             
             <div class="col-lg-6 pt16 pb16">
                 <img src="/web/image/website.s_image_text_default_image" class="img img-fluid mx-auto" alt=""/>
