@@ -89,8 +89,8 @@
                 <div class="o_voting_autor text-uppercase mt-3 mb-3"> </div>
                 <div class="o_voting_title small mt-1"> </div>
                 <div class="o_voting_department small mt-1"> </div>
-                <div class="mt-3">
-                    <q class="o_voting_description mt-3"></q>
+                <div class="o_voting_description_blok mt-3">
+                    <q class="o_voting_description mt-3 row m-0"></q>
                 </div>
                 <!-- <div class="voting_button">
                     <a class="o_voting_button" >Мне нравится <i class="fa fa-thumbs-o-up"/></a>

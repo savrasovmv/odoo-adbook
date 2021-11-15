@@ -58,14 +58,59 @@ main {
     font-style: italic;
 }
 
+// @media screen and  (min-height: 600px), (max-width: 768px) {
+//     o_voting_description {
+//       max-height: 350px;
+//     }
+//   }
+  
+//   @media (min-height: 768px) {
+//     o_voting_description {
+//       max-height: 500px;
+//     }
+//   }
+  
+//   @media (min-height: 900px) {
+//     o_voting_description {
+//       max-height: 600px;
+//     }
+//   }
+  
+//   @media (min-height: 1200px) {
+//     o_voting_description {
+//       max-height: 800px;
+//     }
+//   }
+//   @media (min-height: 1600px) {
+//     o_voting_description {
+//       max-height: 1200px;
+//     }
+//   }
+//   @media (min-height: 1600px) {
+//     o_voting_description {
+//       max-height: 1200px;
+//     }
+//   }
+
 .o_voting_description {
     font-style: italic;
+    overflow-y: auto;
+    // height: 500px;
+    min-height: min-content;
+    display: flex;
+    flex: 1;
     br {
         content: "";
         margin: 2em;
         display: block;
         font-size: 24%;
     }
+}
+
+.o_voting_description_blok {
+    height: 70%;
+    position: absolute;
+    overflow: auto;
 }
 
 

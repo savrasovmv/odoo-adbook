@@ -15,7 +15,7 @@
 
            <tr>
            <td style="width: 800px; font-family: Arial, sans-serif, serif, EmojiFont;">
-                <h4>Здраствуйте, ${object.name}!</h4>
+                <h4>Здравствуйте, ${object.name}!</h4>
                 <p style="line-height:28px;font-size:14px;">
                 Мы запускаем Корпоративной портал на новой цифровой платформе.<br/>
 
