@@ -39,7 +39,11 @@
             <field name="birthday" position="after">
                 <field name="age" />
             </field>
+            
+            <xpath expr="//header" position="inside">
+                <button name="action_send_invitation_on_portal" string="Пригласить сотрудника на портал" type="object" groups="hr.group_hr_manager"/>
 
+            </xpath>
             
             <xpath expr="//page[@name='hr_settings']/group" position="inside">
                 <group

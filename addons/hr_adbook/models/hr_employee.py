@@ -321,3 +321,35 @@ class HrEmployee(models.Model):
         else:
             self.service_termination_date = False
             self.service_status = 'work'
+
+
+    def action_send_invitation_on_portal(self):
+        """Отправляет приглшение для регистрации на портале"""
+        template = self.env.ref('hr_adbook.hr_invitation_mail_templates')
+        
+        for record in self:
+            email_to = False
+            if record.work_email:
+                email_to = record.work_email
+            else:
+                email_to = record.personal_email
+
+            # email_from = 'noreply@tmenergo.ru'
+            if email_to:
+                # self.env['mail.thread'].message_post_with_template(
+                #     template.id,
+                #     model=record._name,
+                #     res_id=record.id,
+                #     composition_mode='mass_mail',
+                # )
+                email_values={
+                   'email_to': email_to,
+                #    'email_from': email_from,
+                #    'object': record,
+                }
+                template.send_mail(record.id, force_send=True, email_values=email_values)
+
+            else:
+                return False
+
+        

@@ -11,6 +11,7 @@
     "depends": ["hr", "ad_base"],
     "data": [
         "views/hr_employee.xml",
+        "views/hr_invitation_mail_templates.xml",
         "views/hr_department.xml",
         "views/res_country.xml",
         "views/res_company.xml",
