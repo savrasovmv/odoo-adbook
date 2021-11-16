@@ -116,21 +116,18 @@ class Registration(http.Controller):
 
 
             empl = request.env['hr.employee'].sudo().search([
-                ('name', '=', name),
+                ('name', 'ilike', name),
                 ('is_fired', '=', False),
             ], limit=1)
 
-            if len(empl) == 0:
+            if len(empl) == 0 or empl.name.lower()!=name.lower():
                 error += "Не найден сотрудник с указанным ФИО \n"
             else:
                 if empl.user_id:
                     error += "Пользователь с таким ФИО уже зарегистрирован. Если вы забыли пароль, выполните его сброс на странице авторизации"
-                email = None
-                if empl.work_email:
-                    email = empl.work_email
-                elif empl.personal_email:
-                    email = empl.personal_email
-                if email == None:
+                email = empl.get_registration_email()
+                
+                if not email:
                     error += "Не существует email, регистрация не возможна, обратитесь в службу поддержку \n"
                 else:
                     email_cipher = get_email_cipher(email)
@@ -203,12 +200,8 @@ class Registration(http.Controller):
             if len(empl) == 0:
                 error += "Не найден сотрудник с указанным ФИО \n"
             else:
-                email = None
-                if empl.work_email:
-                    email = empl.work_email
-                elif empl.personal_email:
-                    email = empl.personal_email
-                if email == None:
+                email = empl.get_registration_email()
+                if not email:
                     error += "Не существует email, регистрация не возможна, обратитесь в службу поддержку \n"
                 elif write_email.lower()!=email.lower():
                     _logger.debug("Не верно указан email write_email= %s email=%s" % (write_email, email))

@@ -4,6 +4,9 @@ from math import fabs
 
 from odoo import api, fields, models
 
+# import unidecode
+
+
 
 FLAGS = [
     [0x0001, 'SCRIPT'],
@@ -51,6 +54,7 @@ class HrEmployee(models.Model):
     mobile_phone2 = fields.Char(string='Мобильный телефон 2')
     ip_phone = fields.Char(string='Внутренний номер')
     
+    is_collective_work_email = fields.Boolean(string='Это общий email', help="Когда установлен, означет что этот рабочий email используется у нескольких сотрудников. При регистрации нового пользователя будет использоваться личная почта")
     personal_email = fields.Char(string='Личный email')
 
     passport_type = fields.Char(string='Вид удостоверения личности')
@@ -328,28 +332,104 @@ class HrEmployee(models.Model):
         template = self.env.ref('hr_adbook.hr_invitation_mail_templates')
         
         for record in self:
-            email_to = False
-            if record.work_email:
-                email_to = record.work_email
-            else:
-                email_to = record.personal_email
-
-            # email_from = 'noreply@tmenergo.ru'
+            email_to = record.get_registration_email()
+            
             if email_to:
-                # self.env['mail.thread'].message_post_with_template(
-                #     template.id,
-                #     model=record._name,
-                #     res_id=record.id,
-                #     composition_mode='mass_mail',
-                # )
                 email_values={
                    'email_to': email_to,
-                #    'email_from': email_from,
-                #    'object': record,
                 }
                 template.send_mail(record.id, force_send=True, email_values=email_values)
 
             else:
                 return False
 
-        
+    def get_registration_email(self):
+        """Возвращает адрес электронный почты для регистрации, рабочий (при условии наличии персонального адреса) или личный"""
+
+        self.ensure_one()
+        email = False
+        if self.work_email and not self.is_collective_work_email:
+            email = self.work_email
+        elif self.personal_email:
+            email = self.personal_email
+        return email
+
+
+
+    def action_update_user_and_partner_by_employee(self):
+        """Обновляет информацию в пользователях и партнерах из сотрудников"""
+
+        for record in self:
+            email = record.get_registration_email()
+            
+            mobile = record.mobile_phone if self.mobile_phone else ''
+            mobile += ' ' + self.mobile_phone2 if self.mobile_phone2 else ''
+
+            if record.user_id and email:
+                user_id = record.user_id
+                user_id.name = record.name
+                user_id.login = email
+                user_id.phone = record.ip_phone
+                user_id.mobile = mobile
+                user_id.image_1920 = record.image_1920
+                record.active = False if record.is_fired else True
+                user_id.active = False if record.is_fired else True
+                
+                if user_id.partner_id:
+                    partner_id = user_id.partner_id
+                    partner_id.name = record.name
+                    partner_id.parent_id = record.company_id.partner_id.id
+                    partner_id.company_id = record.company_id.id
+                    partner_id.company_type = 'person'
+                    partner_id.email = email
+                    partner_id.function = record.job_title
+                    partner_id.phone = record.ip_phone
+                    partner_id.mobile = mobile
+                    partner_id.employee = True
+                    partner_id.image_1920 = record.image_1920
+                    partner_id.active = False if record.is_fired else True
+
+
+
+    @api.model
+    def disabled_users_fired_employee(self):
+        """Отключает учетные записи уволенных сотрудников"""
+
+        empls = self.env['hr.employee'].sudo().search([
+            ('is_fired', '=', True),
+            ])
+        for empl in empls:
+            if empl.user_id:
+                if empl.user_id.active:
+                    empl.user_id.active = False
+                    if empl.user_id.partner_id:
+                        empl.user_id.partner_id.active = False      
+
+
+
+    # def test_work_email_by_name(self):
+    #     """Проверяет соответствует ли рабочий email ФИО сотрудника, возвращает Истина если соответствует"""
+    #     self.ensure_one()
+    #     if self.work_email:
+    #         surname = self.name.split(' ')[0]
+    #         surname = unidecode.unidecode('%s' % surname)
+    #         f = self.work_email.find(surname)
+    #         if f==0:
+    #             return True
+    #         else:
+    #             return False
+
+    #     return True
+
+    # def action_test_work_email_by_name(self):
+    #     records = self.search([])
+    #     for record in records:
+    #         if not record.test_work_email_by_name():
+    #             record.is_collective_work_email = True   
+    #         else:
+    #             record.is_collective_work_email = False   
+
+    # def action_set_all_is_collective_work_email_false(self):
+    #     records = self.search([])
+    #     for record in records:
+    #         record.is_collective_work_email = False   

@@ -38,7 +38,7 @@
                                                 <div class="input-group">
                                                     <input type="search" name="search" class="form-control o_search_text small" placeholder="Поиск: ФИО, тел, e-mail" aria-label="Search" t-att-value="search_term"/>
                                                     <div class="input-group-append">
-                                                        <button class="btn oe_search_button border-left" type="submit" aria-label="Search" title="Search">
+                                                        <button class="btn oe_wadbook_search_button border-left" type="submit" aria-label="Search" title="Search">
                                                             <i class="fa fa-search"/>
                                                         </button>
                                                     </div>

@@ -11,7 +11,7 @@ odoo.define('website_adbook.WadbookSearch', function (require) {
     publicWidget.registry.WadbookSearch = publicWidget.Widget.extend({
         template: 'website_adbook.wadbook_emploer_list',
         xmlDependencies: ['/website_adbook/static/src/xml/wadbook_emploer_list.xml'],
-        selector: '.oe_search_button',
+        selector: '.oe_wadbook_search_button',
         events: {
             'click': '_onClick',
         },

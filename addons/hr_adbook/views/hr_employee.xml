@@ -36,9 +36,15 @@
                 <field name="ip_phone" />
             </field>
 
+            <field name="work_email" position="after">
+                <field name="is_collective_work_email" />
+            </field>
+
             <field name="birthday" position="after">
                 <field name="age" />
             </field>
+
+            
             
             <xpath expr="//header" position="inside">
                 <button name="action_send_invitation_on_portal" string="Пригласить сотрудника на портал" type="object" groups="hr.group_hr_manager"/>
@@ -85,6 +91,7 @@
                     groups="hr.group_hr_user"
                     string="1с"
                 >
+                    
                     <field name="personal_email" />
                     <field name="number_1c" />
                     <field name="employment_type_1c" />
@@ -221,5 +228,16 @@
             </xpath>
 
         </field>
+    </record>
+
+    
+
+    <!-- Добавить пунк в действия -->
+    <record id="action_update_user_and_partner_by_employee" model="ir.actions.server">
+        <field name="name">Обновить пользователя и партнера</field>
+        <field name="model_id" ref="model_hr_employee" />
+        <field name="binding_model_id" ref="hr.model_hr_employee" />
+        <field name="state">code</field>
+        <field name="code">records.action_update_user_and_partner_by_employee()</field>
     </record>
 </odoo>

@@ -16,12 +16,16 @@ class HrEmployee(models.Model):
     @api.model
     def reg_create_user(self):
         self.ensure_one()
-        if self.work_email:
-            email = self.work_email
-        elif self.personal_email:
-            email = self.personal_email
-        else:
-            email = ''
+
+        email = self.get_registration_email()
+        if not email:
+            err = "Нет электронного адреса"
+            _logger.warning("Ошибка при создании пользователя  %s, ОШИБКА: %s" % (self.name, err))
+            raise ValueError(str(err))
+        if self.user_id:
+            err = "Пользователь уже зарегистрирован"
+            _logger.warning("Ошибка при создании пользователя  %s, ОШИБКА: %s" % (self.name, err))
+            raise ValueError(str(err))
 
         mobile = self.mobile_phone if self.mobile_phone else ''
         mobile += ' ' + self.mobile_phone2 if self.mobile_phone2 else ''
@@ -103,19 +107,6 @@ class HrEmployee(models.Model):
             user.karma = VALIDATION_KARMA_GAIN
 
 
-    @api.model
-    def disabled_users_fired_employee(self):
-        """Отключает учетные записи уволенных сотрудников"""
-
-        empls = self.env['hr.employee'].sudo().search([
-            ('is_fired', '=', True),
-            ])
-        for empl in empls:
-            if empl.user_id:
-                if empl.user_id.active:
-                    empl.user_id.active = False
-                    if empl.user_id.partner_id:
-                        empl.user_id.partner_id.active = False
 
 
     # @api.model
