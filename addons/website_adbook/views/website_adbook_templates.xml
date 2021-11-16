@@ -3,7 +3,7 @@
         <t t-set="body_classname" t-value="'o_wslides_body'"/>
         <t t-call="website.layout">
         
-            <div id="wrap" class="wrap o_wslides_wrap" contentEditable="False">
+            <div id="wrap" class="wrap o_wslides_wrap" >
                 <div class="o_adbook_header  position-relative text-white pb-0 pt-2 pt-md-1 p-2">
                     <div class="row">
                         <div class="adbook-icon col-12 col-md-4 col-lg-4 d-flex justify-content-center">
@@ -246,7 +246,7 @@
             
                 
                 <!-- <div class="container" contentEditable="True"> -->
-                <div class="container" contentEditable="true">
+                <div class="container">
                     <div class="oe_structure" />
                     <div class="p-2 mb-1 o_website_adbook_homepage bg-white">
                             Разместите блоки
