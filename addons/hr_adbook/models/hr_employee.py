@@ -4,8 +4,8 @@ from math import fabs
 
 from odoo import api, fields, models
 
-# import unidecode
-
+import unidecode
+# from trans import trans
 
 
 FLAGS = [
@@ -407,29 +407,32 @@ class HrEmployee(models.Model):
 
 
 
-    # def test_work_email_by_name(self):
-    #     """Проверяет соответствует ли рабочий email ФИО сотрудника, возвращает Истина если соответствует"""
-    #     self.ensure_one()
-    #     if self.work_email:
-    #         surname = self.name.split(' ')[0]
-    #         surname = unidecode.unidecode('%s' % surname)
-    #         f = self.work_email.find(surname)
-    #         if f==0:
-    #             return True
-    #         else:
-    #             return False
+    def test_work_email_by_name(self):
+        """Проверяет соответствует ли рабочий email ФИО сотрудника, возвращает Истина если соответствует"""
+        self.ensure_one()
+        if self.work_email:
+            surname = self.name.split(' ')[0]
+            surname = unidecode.unidecode('%s' % surname)
+            surname = surname.replace('\'', '')
+            f = self.work_email.find(surname)
+            if f==0:
+                return True
+            else:
+                return False
 
-    #     return True
+        return True
 
-    # def action_test_work_email_by_name(self):
-    #     records = self.search([])
-    #     for record in records:
-    #         if not record.test_work_email_by_name():
-    #             record.is_collective_work_email = True   
-    #         else:
-    #             record.is_collective_work_email = False   
+    def action_test_work_email_by_name(self):
+        """Действие. Проверяет все рабочии адреса на соответствие ФИО"""
+        records = self.search([])
+        for record in records:
+            if not record.test_work_email_by_name():
+                record.is_collective_work_email = True   
+            else:
+                record.is_collective_work_email = False   
 
-    # def action_set_all_is_collective_work_email_false(self):
-    #     records = self.search([])
-    #     for record in records:
-    #         record.is_collective_work_email = False   
+    def action_set_all_is_collective_work_email_false(self):
+        """Действие. Устанавливает у все сотрудников is_collective_work_email=False"""
+        records = self.search([])
+        for record in records:
+            record.is_collective_work_email = False   
