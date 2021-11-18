@@ -11,6 +11,7 @@
     'depends': ['website',],
     'data': [
         'views/assets.xml',
+        'views/mail_data.xml',
         
     ],
     "installable": True,

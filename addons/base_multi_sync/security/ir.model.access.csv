@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_base_multi_sync_server_manager,base.multi_sync_server,model_base_multi_sync_server,base.group_system,1,1,1,1
-access_base_multi_sync_obj_manager,base.multi_sync_obj,model_base_multi_sync_obj,base.group_system,1,1,1,1
-access_base_multi_sync_ignored_manager,base.multi_sync_ignored,model_base_multi_sync_ignored,base.group_system,1,1,1,1
-access_base_multi_sync_line_manager,base.multi_sync_line,model_base_multi_sync_line,base.group_system,1,1,1,1
-access_base_multi_sync_wizard_manager,base.multi_sync_wizard,model_base_multi_sync_wizard,base.group_system,1,1,1,1
-access_base_multi_sync_log_manager,base.multi_sync_log,model_base_multi_sync_log,base.group_system,1,1,1,1

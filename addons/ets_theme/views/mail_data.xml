@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <template id="message_notification_email_ets" inherit_id="mail.message_notification_email" customize_show="True" active="True">
+        <xpath expr="." position="replace">
+            <div>
+                <div t-if="has_button_access" itemscope="itemscope" itemtype="http://schema.org/EmailMessage">
+                    <div itemprop="potentialAction" itemscope="itemscope" itemtype="http://schema.org/ViewAction">
+                        <link itemprop="target" t-att-href="button_access['url']"/>
+                        <link itemprop="url" t-att-href="button_access['url']"/>
+                        <meta itemprop="name" t-att-content="button_access['title']"/>
+                    </div>
+                </div>
+
+
+
+                <div t-if="has_button_access or len(actions) &gt; 0 or not is_discussion"
+                        summary="o_mail_notification" style="padding: 0px; width:600px;">
+                <b>
+                
+                        <a t-if="has_button_access"
+                                t-att-href="button_access['url']"
+                                style="color:#0D4383;text-decoration: none;">
+                            <t t-esc="button_access['title']"/>
+                        </a>
+                        <t t-if="actions">
+                            <t t-foreach="actions" t-as="action">
+                                |
+                                <a t-att-href="action['url']" style="color:#0D4383;text-decoration: none;">
+                                    <t t-esc="action['title']"/>
+                                </a>
+                            </t>
+                        </t>
+                    </b>
+                
+                </div>
+                <div t-raw="message.body"/>
+                <ul t-if="tracking_values">
+                    <t t-foreach="tracking_values" t-as="tracking">
+                        <li><t t-esc="tracking[0]"/>: <t t-esc="tracking[1]"/> -&gt; <t t-esc="tracking[2]"/></li>
+                    </t>
+                </ul>
+                <div t-if="signature" t-raw="signature" style="font-size: 13px;"/>
+
+
+            </div>
+
+        </xpath>
+
+    </template>
+
+
+    <template id="forum_post_template_new_question_ets" inherit_id="website_forum.forum_post_template_new_question" customize_show="True" active="True">
+        <xpath expr="." position="replace">
+            <p style="line-height:28px;font-size:14px;">Новый вопрос <b t-esc="object.name"/> на <t t-esc="object.forum_id.name"/> был опубликован. Ссылка на вопрос :</p>
+            <b>
+                <a t-attf-href="/forum/#{slug(object.forum_id)}/#{slug(object)}" style="color:#0D4383;text-decoration: none;">
+                    Посмотреть вопрос
+                </a>
+            </b>
+        </xpath>
+
+    </template>
+
+    <template id="forum_post_template_new_answer_ets" inherit_id="website_forum.forum_post_template_new_answer" customize_show="True" active="True">
+        <xpath expr="." position="replace">
+            <p style="line-height:28px;font-size:14px;">Получен новый ответ на вопрос:
+                <br/>
+                <b> <t t-esc="object.name"/>. </b>
+                <br/>
+                Перейдите по ссылке для просмотра:
+            </p>
+            <b>
+                <a t-attf-href="/forum/#{slug(object.forum_id)}/#{slug(object)}" style="color:#0D4383;text-decoration: none;">
+                    Посмотреть ответ
+                </a>
+            </b>
+        </xpath>
+
+    </template>
+
+
+</odoo>
+

@@ -29,8 +29,8 @@
 
     # always loaded
     'data': [
-        'views/multi_sync_views.xml',
-        'wizard/multi_sync_wizard.xml',
+        'views/db_sync_views.xml',
+        'wizard/db_sync_wizard.xml',
         'views/menu.xml',
         'security/ir.model.access.csv',
 

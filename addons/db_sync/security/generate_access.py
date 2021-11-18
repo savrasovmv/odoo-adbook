@@ -1,11 +1,12 @@
 spisok = []
 # spisok.append(['adbook.branch','', 1])
-spisok.append(['base.multi_sync_server','', 1])
-spisok.append(['base.multi_sync_obj','', 1])
-spisok.append(['base.multi_sync_ignored','', 1])
-spisok.append(['base.multi_sync_line','', 1])
-spisok.append(['base.multi_sync_wizard','', 1])
-spisok.append(['base.multi_sync_log','', 1])
+spisok.append(['db.sync_server','', 1])
+spisok.append(['db.sync_model','', 1])
+spisok.append(['db.sync_model_field','', 1])
+spisok.append(['db.sync_model_field_ignored','', 1])
+spisok.append(['db.sync_obj','', 1])
+spisok.append(['db.sync_wizard','', 1])
+spisok.append(['db.sync_log','', 1])
 
 
 

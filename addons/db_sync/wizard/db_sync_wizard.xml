@@ -1,8 +1,8 @@
 <odoo>
 
-    <record id="base_multi_sync_view_wizard" model="ir.ui.view">
+    <record id="db_sync_view_wizard" model="ir.ui.view">
         <field name="name">Мастер Синхронизация БД</field>
-        <field name="model">base.multi_sync_wizard</field>
+        <field name="model">db.sync_wizard</field>
         <field name="priority">1</field>
         <field name="arch" type="xml">
             <form>
@@ -20,19 +20,19 @@
         </field>
     </record>
 
-    <record id="base_multi_sync_wizard_action" model="ir.actions.act_window">
+    <record id="db_sync_wizard_action" model="ir.actions.act_window">
         <field name="name">Синхронизация БД</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="res_model">base.multi_sync_wizard</field>
+        <field name="res_model">db.sync_wizard</field>
         <field name="binding_view_types">form</field>
         <field name="view_mode">form</field>
-        <field name="view_id" ref="base_multi_sync_view_wizard"/>
+        <field name="view_id" ref="db_sync_view_wizard"/>
         <field name="target">new</field>
     </record>
 
-    <record id="base_multi_sync_finish_wizard" model="ir.ui.view">
+    <record id="db_sync_finish_wizard" model="ir.ui.view">
         <field name="name">Синхронизация БД</field>
-        <field name="model">base.multi_sync_wizard</field>
+        <field name="model">db.sync_wizard</field>
         <field name="arch" type="xml">
             <form string="Synchronization Completed!" class="o_base_synchro_success">
                 <separator string="Синхронизация началась. Когда она завершиться, вам придет ответ."/>
