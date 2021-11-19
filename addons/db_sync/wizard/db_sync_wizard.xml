@@ -11,6 +11,7 @@
                     <field name="user_id"/>
                 </group>
                 <footer>
+                    
                     <button name="start_sync_action" string="Выполнить"
                             type="object" class="oe_highlight"/>
                     

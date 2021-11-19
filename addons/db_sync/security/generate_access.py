@@ -2,6 +2,7 @@ spisok = []
 # spisok.append(['adbook.branch','', 1])
 spisok.append(['db.sync_server','', 1])
 spisok.append(['db.sync_model','', 1])
+spisok.append(['db.sync_model_relation','', 1])
 spisok.append(['db.sync_model_field','', 1])
 spisok.append(['db.sync_model_field_ignored','', 1])
 spisok.append(['db.sync_obj','', 1])

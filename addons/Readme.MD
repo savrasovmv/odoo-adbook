@@ -25,3 +25,16 @@ _logger = logging.getLogger(__name__)
     	_logger.error("IT IS Error")
     	_logger.warning("IT IS warn")
     	_logger.critical("IT IS Critical")
+
+
+Tree цвета
+===========
+<tree decoration-danger="count_sync_field == 0">
+decoration-bf - shows the line in BOLD
+decoration-it - shows the line in ITALICS
+decoration-danger - shows the line in LIGHT RED
+decoration-info - shows the line in LIGHT BLUE
+decoration-muted - shows the line in LIGHT GRAY
+decoration-primary - shows the line in LIGHT PURPLE
+decoration-success - shows the line in LIGHT GREEN
+decoration-warning - shows the line in LIGHT BROWN

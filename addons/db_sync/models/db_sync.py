@@ -20,6 +20,37 @@ class DbSyncServer(models.Model):
         "db.sync_model", "server_id", "Модели", ondelete="cascade"
     )
 
+    def set_sequence_model_child(self, sequence):
+        for sync_model in self.sync_model_ids:
+            if sync_model.sequence>sequence:
+                if sync_model.relation_sync_model_ids:
+                    child = True
+                    for rel_model in sync_model.relation_sync_model_ids:
+                        pet = False
+                        for rel_rel in rel_model.relation_sync_model_ids:
+                            if rel_rel.id == sync_model.id:
+                                pet = True
+                                break
+                        if rel_model.sequence>sequence or pet:
+                            child = False
+                            break
+                    if child:
+                        sync_model.sequence = sequence + 10
+
+                    
+
+
+
+    def set_sequence_model(self):
+        for sync_model in self.sync_model_ids:
+            if not sync_model.relation_sync_model_ids:
+                sync_model.sequence = 1 
+            else:
+                sync_model.sequence = 1000
+        
+        self.set_sequence_model_child(1)
+
+
 
 class DbSyncModel(models.Model):
     """Модели БД для синхронизации"""
@@ -28,12 +59,13 @@ class DbSyncModel(models.Model):
     _description = "Модели синхронизации"
     _order = "sequence"
 
-    name = fields.Char("Наименование", required=True)
+    name = fields.Char("Наименование", related="ir_model_id.name", store=True)
+    model = fields.Char("Модель", related="ir_model_id.model", store=True)
     domain = fields.Char("Домен", required=True, default=[])
     server_id = fields.Many2one(
         "db.sync_server", "Сервер", ondelete="cascade", required=True
     )
-    model_id = fields.Many2one("ir.model", "Модель БД")
+    ir_model_id = fields.Many2one("ir.model", "Модель БД")
     field_by_search = fields.Char("Поля для поиска соответствия", required=True, default="name", help="Поля разделенные пробелами по которым будет идти поиск в начальной синхронизации")
     action = fields.Selection(
         [("Pull", "Pull"), ("Push", "Push"), ("PullPush", "PullPush")],
@@ -41,9 +73,14 @@ class DbSyncModel(models.Model):
         required=True,
         default="Push",
     )
-    sequence = fields.Integer("Порядок")
+    sequence = fields.Integer("Порядок",default=10)
+    count_sync_field = fields.Integer("Кол-во полей синхронизации", compute="_get_count_sync_field", store=True, default=0)
     active = fields.Boolean(default=True)
+    is_create = fields.Boolean("Создавать записи?", default=False, help="Если не установлен, записи этой модели не будут создавать на удаленном сервере, будет только синхронизация с имеющимися записями")
     sync_date = fields.Datetime("Последняя синхронизация")
+    relation_sync_model_ids = fields.One2many(
+        "db.sync_model_relation", "sync_model_id", "IDs зависит от моделей", ondelete="cascade"
+    )
     field_ids = fields.One2many(
         "db.sync_model_field", "sync_model_id", "IDs полей модели", ondelete="cascade"
     )
@@ -54,25 +91,43 @@ class DbSyncModel(models.Model):
         "db.sync_model_field_ignored", "sync_model_id", "Игнорируемые поля объектов"
     )
 
+    @api.depends('field_ids.is_sync')
+    def _get_count_sync_field(self):
+        """Расчет количество синхронизированных полей в модели"""
+        for record in self:
+            fields = record.field_ids.search([
+                ('is_sync', '=', True),
+                ('sync_model_id', '=', record.id),
+            ])
+            record.count_sync_field = len(fields)
+
+
     # @api.model
     def action_set_field_ids(self):
         self.field_ids.unlink()
         fields = self.env['ir.model.fields'].search([
-            ('model_id', '=', self.model_id.id)
+            ('model_id', '=', self.ir_model_id.id)
         ])
 
         for f in fields:
-            vals = {
-                'model_field_id': f.id,
-                'sync_model_id': self.id,
-            }
+            if f.name == 'name':
+                vals = {
+                    'is_sync': True,
+                    'ir_model_field_id': f.id,
+                    'sync_model_id': self.id,
+                }
+            else:
+                vals = {
+                    'ir_model_field_id': f.id,
+                    'sync_model_id': self.id,
+                }
             self.field_ids.create(vals)
 
     @api.model
     def get_sync_obj_ids(self, action=None):
         print("++++++++get_ids")
         domain = eval(self.domain)
-        model_obj = self.env[self.model_id.model]
+        model_obj = self.env[self.ir_model_id.model]
         if self.sync_date:
             w_date = domain + [("write_date", ">=", self.sync_date)]
             c_date = domain + [("create_date", ">=", self.sync_date)]
@@ -87,15 +142,74 @@ class DbSyncModel(models.Model):
         obj_rec = list(set(obj_rec)) #Удаляем дубликаты из списка
 
         return obj_rec
-        # result = [
-        #     (
-        #         r.get("write_date") or r.get("create_date"),
-        #         r.get("id"),
-        #         self.action,
-        #     )
-        #     for r in obj_rec.read(["create_date", "write_date"])
-        # ]
-        # return result
+
+    @api.model
+    def get_sync_field(self, action=None):
+        fields = self.field_ids.search([
+            ('is_sync', '=', True)
+        ])
+
+        return fields
+
+    def action_update_relation_model(self):
+        """Создания зависимостей от моделей"""
+        self.relation_sync_model_ids.unlink()
+        for field in self.field_ids:
+            if field.relation_sync_model_id:
+                self.relation_sync_model_ids.create({
+                    'sync_model_id': self.id,
+                    'relation_sync_model_id': field.relation_sync_model_id.id,
+                })
+
+
+    
+    def action_create_relation_model(self):
+        """Создать связи с зависимыми моделями в строках полей"""
+        fields = self.field_ids.search([
+            ('relation', '!=', ''),
+            ('is_sync', '=', True),
+        ])
+
+        for field in fields:
+            print("++++",field)
+            print("++++",field.ir_model_field_id)
+            res = self.env['db.sync_model'].search([
+                ('model', '=', field.relation)
+            ])
+            if res:
+                print("=======", res)
+                field.relation_sync_model_id = res.id
+            else:
+                print("-------",field.relation)
+                ir_model = self.env['ir.model'].search([
+                    ('model', '=', field.relation)
+                ])
+                if ir_model:
+                    vals = {
+                        'server_id': self.server_id.id,
+                        'ir_model_id': ir_model.id,
+                    }
+                    new_id = self.env['db.sync_model'].create(vals)
+                    field.relation_sync_model_id = new_id.id
+                    print("++++new_id", new_id)
+                else:
+                    print("Модель в ir.model не найдена")
+        
+        self.action_update_relation_model()
+
+class DbSyncModelRelation(models.Model):
+    """Зависимости Модели БД для синхронизации"""
+
+    _name = "db.sync_model_relation"
+    _description = "Зависимости Модели БД для синхронизации"
+    _order = "name"
+
+    sync_model_id = fields.Many2one("db.sync_model", "Модель синхронизации", required=True, ondelete="cascade")
+    relation_sync_model_id = fields.Many2one("db.sync_model", "Реляционная Модель синхронизации")
+
+    name = fields.Char("Наименование", related="relation_sync_model_id.name", store=True)
+    
+
 
 class DbSyncModelField(models.Model):
     """Поля Модели БД для синхронизации"""
@@ -104,16 +218,18 @@ class DbSyncModelField(models.Model):
     _description = "Поля Модели синхронизации"
     _order = "name"
 
-    name = fields.Char("Наименование", related="model_field_id.name")
-    model_field_id = fields.Many2one("ir.model.fields", "Поля модели БД")
-    ttype = fields.Selection(string='Тип', related="model_field_id.ttype")
-    field_description = fields.Char(string='Описание поля', related="model_field_id.field_description")
-    relation = fields.Char(string='Связь с моделью', related="model_field_id.relation")
+    name = fields.Char("Наименование", related="ir_model_field_id.name")
+    ir_model_field_id = fields.Many2one("ir.model.fields", "Поля модели БД")
+    relation_sync_model_id = fields.Many2one("db.sync_model", "Реляционная Модель синхронизации", store=True)
+    ttype = fields.Selection(string='Тип', related="ir_model_field_id.ttype", store=True)
+    field_description = fields.Char(string='Описание поля', related="ir_model_field_id.field_description", store=True)
+    relation = fields.Char(string='Связь с моделью', related="ir_model_field_id.relation", store=True)
     is_sync = fields.Boolean(string='Синхронизовать', default=False)
+    is_create = fields.Boolean(string='Создавать', default=False, help="Создавать ли запись в случает отсутствия")
 
     sync_model_id = fields.Many2one("db.sync_model", "Модель синхронизации", required=True, ondelete="cascade")
 
-
+    
 
 
 class DbSyncModelFieldIgnored(models.Model):
@@ -137,7 +253,7 @@ class DbSyncObj(models.Model):
     name = fields.Datetime(
         "Дата", required=True, default=lambda self: fields.Datetime.now()
     )
-    model_id = fields.Many2one("ir.model", "Модели БД", related="sync_model_id.model_id")
+    ir_model_id = fields.Many2one("ir.model", "Модели БД", related="sync_model_id.ir_model_id")
     sync_model_id = fields.Many2one("db.sync_model", "Модель синхронизации", required=True, ondelete="cascade")
     local_id = fields.Integer("Local ID", readonly=True)
     remote_id = fields.Integer("Remote ID", readonly=True)

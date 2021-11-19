@@ -83,6 +83,12 @@ class DbSyncWizard(models.TransientModel):
             return s.remote_id
         return False
 
+
+    def create_sync_vals(self, sync_model_id, obj_id):
+        list_sync_field = sync_model_id.get_sync_field()
+        for field in list_sync_field:
+            pass 
+
     
     
     def sync_obj(self, sync_model_id, obj_id):
@@ -91,6 +97,8 @@ class DbSyncWizard(models.TransientModel):
         _logger.debug("Синхронизация объекта %s",  obj_id)
         pool_dist = RPCProxy(self.server_id)
         s_obj = self.get_remote_id_by_local_id(sync_model_id, obj_id)
+
+        sync_field_id = sync_model_id.get_sync_field()
         if s_obj:
             pass
         else:
@@ -102,16 +110,16 @@ class DbSyncWizard(models.TransientModel):
             for field in list_field_by_search:
                 domain.append((field, '=', obj_id[field]))
 
-            remote_obj = pool_dist.get(sync_model_id.model_id.model).search(domain, limit=1)
+            remote_obj = pool_dist.get(sync_model_id.ir_model_id.model).search(domain, limit=1)
             print('remote_obj', remote_obj)
             if remote_obj:
                 new_id = remote_obj[0]
                 _logger.debug("Обновление объекта %s в удаленной БД с id= %s" % (obj_id, new_id))
-                pool_dist.get(sync_model_id.model_id.model).write([new_id], vals)
+                pool_dist.get(sync_model_id.ir_model_id.model).write([new_id], vals)
                 
             else:
                 _logger.debug("Создание нового объекта %s в удаленной БД " % (obj_id, ))
-                new_id = pool_dist.get(sync_model_id.model_id.model).create(vals)
+                new_id = pool_dist.get(sync_model_id.ir_model_id.model).create(vals)
                 _logger.debug("Создан новый объекта %s в удаленной БД с id = %s" % (obj_id, new_id))
 
 
@@ -131,7 +139,7 @@ class DbSyncWizard(models.TransientModel):
 
         pool_dist = RPCProxy(self.server_id)
         module = pool_dist.get("ir.module.module")
-        model_obj = sync_model_id.model_id.model
+        model_obj = sync_model_id.ir_model_id.model
         module_id = module.search(
             [("name", "ilike", "db_sync"), ("state", "=", "installed")]
         )

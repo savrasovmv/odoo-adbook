@@ -19,7 +19,17 @@
                             <field name="password" password="True"/>
                         </group>
                     </group>
+                    <div class="oe_button_box" name="button_box">
+                            <button name="set_sequence_model"
+                                type="object"
+                                class="oe_stat_button oe_edit_only"
+                                icon="fa-refresh" string="Упорядочить"
+                                
+                               >
+                            </button>
+                        </div>
                     <group>
+                        
                         <field name="sync_model_ids"/>
                     </group>
                 </sheet>
@@ -48,11 +58,14 @@
                     <group>
                         <group>
                             <field name="name"/>
+                            <field name="model"/>
+                            <field name="is_create"/>
                             <field name="domain"/>
                             <field name="server_id"/>
+                            <field name="count_sync_field"/>
                         </group>
                         <group>
-                            <field name="model_id"/>
+                            <field name="ir_model_id"/>
                             <field name="field_by_search"/>
                             <field name="action" />
                             <field name="sequence" />
@@ -71,23 +84,52 @@
                                 
                                >
                             </button>
+                               <button name="action_create_relation_model"
+                                type="object"
+                                class="oe_stat_button oe_edit_only"
+                                icon="fa-refresh" string="Связать модели"
+                                
+                               >
+                            </button>
                         </div>
                             <field name="field_ids">
                                 <tree editable="botton">
                                     <field name="name"/>
-                                    <field name="model_field_id"/>
+                                    <field name="ir_model_field_id"/>
                                     <field name="ttype"/>
                                     <field name="field_description"/>
                                     <field name="relation"/>
                                     <field name="is_sync"/>
+                                    <field name="is_create"/>
+                                    <field name="relation_sync_model_id"/>
 
                                 </tree>
                             </field>
 
                         </page>
+
+                        <page string="Зависимость"> 
+                            <field name="relation_sync_model_ids"/>
+
+                        </page>
                      </notebook>
                 </sheet>
             </form>
+        </field>
+    </record>
+
+    <record id="db_sync_model_view_tree" model="ir.ui.view">
+        <field name="name">db.sync_model.tree</field>
+        <field name="model">db.sync_model</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="count_sync_field == 0">
+                            <field name="name"/>
+                            <field name="model"/>
+                            <field name="server_id"/>
+                            <field name="count_sync_field"/>
+                            <field name="ir_model_id"/>
+                            <field name="sync_date" />
+            </tree>
         </field>
     </record>
 
