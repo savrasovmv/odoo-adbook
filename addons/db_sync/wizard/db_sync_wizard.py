@@ -49,8 +49,13 @@ class RPCProxy(object):
             self.server.server_url,
             self.server.server_port,
         )
-        rpc = ServerProxy(local_url)
-        return
+        try:
+            rpc = ServerProxy(local_url)
+            v = rpc.version()
+            return v
+        except:
+            return False
+        
 
 
 
@@ -203,12 +208,12 @@ class DbSyncWizard(models.TransientModel):
         _logger.debug("События Wizard начать синхронизацию")
 
         _logger.debug("Проверка доступности удаленного сервера %s", self.server_id.name)
-        try:
-            pool_dist = RPCProxy(self.server_id)
-            _logger.debug("Запрос версии сервера")
-            res = pool_dist.get('version')
+        pool_dist = RPCProxy(self.server_id)
+        _logger.debug("Запрос версии сервера")
+        res = pool_dist.test_connection()
+        if res:
             _logger.debug("Версия сервера %s", res)
-        except ValidationError as err:
+        else:
             _logger.warning("Ошибка подключения к удаленному серверу %s", self.server_id.name)
             log = self.env["db.sync_log"]
             
@@ -218,9 +223,21 @@ class DbSyncWizard(models.TransientModel):
                     "date": fields.Datetime.now(),
                     "server_id": self.server_id.id,
                     "result": "Ошибка подключения к удаленному серверу",
+                    "is_error": True
                 }
             )
-            return
+            self.result = "Ошибка подключения к удаленному серверу"
+            notification = {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': ('Прерванно'),
+                    'message': self.result,
+                    'type':'warning',  #types: success,warning,danger,info
+                    'sticky': False,  #True/False will display for few seconds if false
+                },
+            }
+            return notification
 
 
         threaded_sync = threading.Thread(

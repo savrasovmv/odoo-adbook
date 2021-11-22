@@ -309,3 +309,4 @@ class DbSyncLog(models.Model):
         "db.sync_server", "Сервер", required=True
     )
     result = fields.Text("Результат")
+    is_error = fields.Boolean(string='Ошибка?', default=False)

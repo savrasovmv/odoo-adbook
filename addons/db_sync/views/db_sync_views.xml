@@ -163,10 +163,11 @@
         <field name="name">db.sync_log.tree</field>
         <field name="model">db.sync_log</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree decoration-danger="is_error == True">
                 <field name="date"/>
                 <field name="name"/>
                 <field name="server_id"/>
+                <field name="is_error"/>
             </tree>
         </field>
     </record>
