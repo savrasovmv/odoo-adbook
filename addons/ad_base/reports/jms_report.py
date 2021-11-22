@@ -9,7 +9,7 @@ from datetime import date, timedelta, datetime
 
 class JMSReport(models.TransientModel):
     _name = "jms.report"
-    _description = "JWS отчеты"
+    _description = "JMS отчеты"
 
     name = fields.Char(u'Пользователь')
     date_start = fields.Date(string='Начало')
@@ -41,6 +41,9 @@ class JMSReport(models.TransientModel):
         
         formatDate = xlwt.easyxf('align: horiz left; borders: top_color black, bottom_color black, right_color black, left_color black,\
                                 left thin, right thin, top thin, bottom thin;', num_format_str='DD.MM.YYYY')
+        
+        formatDateTime = xlwt.easyxf('align: horiz left; borders: top_color black, bottom_color black, right_color black, left_color black,\
+                                left thin, right thin, top thin, bottom thin;', num_format_str='DD.MM.YYYY HH:MM')
         
         formatTime = xlwt.easyxf('align: horiz left; borders: top_color black, bottom_color black, right_color black, left_color black,\
                                 left thin, right thin, top thin, bottom thin;', num_format_str='HH:MM')
@@ -74,13 +77,16 @@ class JMSReport(models.TransientModel):
         users_list_id = self.env['jms.event_log'].sudo().read_group([
             ('date', '>=', self.date_start),
             ('date', '<=', self.date_end),
+            ('users_id', '!=', False),
         ], fields=['users_id'], groupby=['users_id'])
+
         
         users_list = []
         for data in users_list_id:
+            if data['users_id']:
                 d_id, obj = data['users_id']
                 users_list.append(d_id)
-        print(users_list)
+
         n = 3
         for user_id in users_list:
             current_date = self.date_start
@@ -130,11 +136,15 @@ class JMSReport(models.TransientModel):
 
                 if t_first:
                     t_first = t_first + timedelta(hours=5)
+                else:
+                    t_first = 0    
                 if t_last:
                     t_last = t_last + timedelta(hours=5)
                 else:
-                    t_last = ''
+                    t_last = 0
                 if len(event_list)>0:
+                    print("+++t_first", t_first)
+                    print("+++t_last", t_last)
                     n+=1
                     sheet.write(n, 0, current_date, formatDate)
                     sheet.write(n, 1, event_list[0].users_id.name, format3)
@@ -146,7 +156,51 @@ class JMSReport(models.TransientModel):
                 
                 current_date = current_date + timedelta(days=1)
            
-            
+
+        # Лист со всеми данными
+        sheet = workbook.add_sheet("Данные")
+        sheet.col(0).width = int(20 * 260)
+        sheet.col(1).width = int(20 * 260)
+        sheet.col(2).width = int(40 * 260)
+        sheet.col(3).width = int(40 * 260)
+        sheet.col(4).width = int(20 * 260)
+        sheet.col(5).width = int(40 * 260)
+      
+        sheet.write(0, 0, 'Дата', format1)
+        sheet.write(0, 1, 'Событие', format1)
+        sheet.write(0, 2, 'ФИО', format1)
+        sheet.write(0, 3, 'Должность', format1)
+        sheet.write(0, 4, 'Имя ПК', format1)
+        sheet.write(0, 5, 'Имя пользователя', format1)
+
+        event_list = self.env['jms.event_log'].sudo().search([
+            ('date', '>=', self.date_start),
+            ('date', '<=', self.date_end),
+        ], order='date asc')
+
+        n=0
+        for line in event_list:
+            date = line.date
+            if date:
+                date = date + timedelta(hours=5)
+            else:
+                date = 0
+
+            name = title = ''
+            users_id = line.users_id
+            if users_id:
+                name = users_id.name
+                title = users_id.title
+
+
+            n+=1
+            sheet.write(n, 0, date, formatDateTime)
+            sheet.write(n, 1, line.event_name, format3)
+            sheet.write(n, 2, name, format3)
+            sheet.write(n, 3, title, format3)
+            sheet.write(n, 4, line.pc_name, format3)
+            sheet.write(n, 5, line.name, format3)
+
 
 
 

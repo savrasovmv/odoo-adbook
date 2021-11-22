@@ -21,34 +21,52 @@ class DbSyncServer(models.Model):
     )
 
     def set_sequence_model_child(self, sequence):
+        """Проход по моделям и установка Порядка для зависимых моделий ниже от зависимых"""
+        child = False
         for sync_model in self.sync_model_ids:
+            # print("++++sync_model", sync_model.name)
             if sync_model.sequence>sequence:
                 if sync_model.relation_sync_model_ids:
-                    child = True
+                    
                     for rel_model in sync_model.relation_sync_model_ids:
+                        # print("++++rel_model", rel_model.name)
                         pet = False
-                        for rel_rel in rel_model.relation_sync_model_ids:
-                            if rel_rel.id == sync_model.id:
+                        #  Проверяем не петля ли, т.е не взаимозависимые модели
+                        for rel_rel in rel_model.relation_sync_model_id.relation_sync_model_ids:
+                            if rel_rel.sync_model_id.id == sync_model.id:
                                 pet = True
-                                break
-                        if rel_model.sequence>sequence or pet:
-                            child = False
-                            break
-                    if child:
-                        sync_model.sequence = sequence + 10
 
+                        
+                        # print("++++pet", pet)
+                        # print("++++rel_model.relation_sync_model_id.sequence", rel_model.relation_sync_model_id.sequence)
+                        # print("++++sync_model.sequence", sync_model.sequence)
+                        # Если у зависимой модели порядок меньше или равен порядку связанной и не петля, то увелииваем порядок
+                        if rel_model.relation_sync_model_id.sequence>=sync_model.sequence and not pet:
+                            # print("++++child=True")
+                            child = True
+                            sync_model.sequence = rel_model.sync_model_id.sequence + 10
+                            
+        if child:
+            return True
+        else:
+            return False
                     
 
 
 
     def set_sequence_model(self):
+        """Установка корням порядка 1 дочерним 10 и запуск прохода по дочерним"""
         for sync_model in self.sync_model_ids:
             if not sync_model.relation_sync_model_ids:
                 sync_model.sequence = 1 
             else:
-                sync_model.sequence = 1000
+                sync_model.sequence = 10
         
-        self.set_sequence_model_child(1)
+        n = 0
+        child = True
+        while child and n<1000:
+            child = self.set_sequence_model_child(1)
+            n+=1
 
 
 

@@ -62,16 +62,16 @@
               </group>
            </div>
            <footer states="choose">
-              <button string="Generate Report"
+              <button string="Сформировать"
                            class="btn-primary"
                            name="jms_report_wizard_action"
                            type="object"/>
-              <button string="Cancel"
+              <button string="Отмена"
                            class="btn-default"
                            special="cancel" />
            </footer>
            <footer states="get">
-              <button special="cancel" string="Cancel" class="oe_highlight" />
+              <button special="cancel" string="Закрыть" class="oe_highlight" />
            </footer>
         </form>
      </field>

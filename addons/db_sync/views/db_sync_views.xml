@@ -123,12 +123,13 @@
         <field name="model">db.sync_model</field>
         <field name="arch" type="xml">
             <tree decoration-danger="count_sync_field == 0">
-                            <field name="name"/>
-                            <field name="model"/>
-                            <field name="server_id"/>
-                            <field name="count_sync_field"/>
-                            <field name="ir_model_id"/>
-                            <field name="sync_date" />
+                <field name="sequence"  widget="handle"/>
+                <field name="name"/>
+                <field name="model"/>
+                <field name="server_id"/>
+                <field name="count_sync_field"/>
+                <field name="ir_model_id"/>
+                <field name="sync_date" />
             </tree>
         </field>
     </record>

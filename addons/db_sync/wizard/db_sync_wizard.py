@@ -44,6 +44,16 @@ class RPCProxy(object):
     def __init__(self, server):
         self.server = server
 
+    def test_connection(self):
+        local_url = "%s:%d/xmlrpc/2/common" % (
+            self.server.server_url,
+            self.server.server_port,
+        )
+        rpc = ServerProxy(local_url)
+        return
+
+
+
     def get(self, ressource):
         return RPCProxyOne(self.server, ressource)
 
@@ -166,7 +176,7 @@ class DbSyncWizard(models.TransientModel):
         _logger.debug("Начало синхронизации. Выборка моделей для синхронизации и их синхронизация")
 
         for sync_model_id in self.server_id.sync_model_ids:
-            _logger.debug("Начало синхронизации модели  %s", sync_model_id.name)
+            _logger.debug("Начало синхронизации модели  %s, порядок %s" % (sync_model_id.name, sync_model_id.sequence))
             self.sync_model(sync_model_id)
 
 
@@ -191,6 +201,27 @@ class DbSyncWizard(models.TransientModel):
         """События Wizard начать синхронизацию"""
 
         _logger.debug("События Wizard начать синхронизацию")
+
+        _logger.debug("Проверка доступности удаленного сервера %s", self.server_id.name)
+        try:
+            pool_dist = RPCProxy(self.server_id)
+            _logger.debug("Запрос версии сервера")
+            res = pool_dist.get('version')
+            _logger.debug("Версия сервера %s", res)
+        except ValidationError as err:
+            _logger.warning("Ошибка подключения к удаленному серверу %s", self.server_id.name)
+            log = self.env["db.sync_log"]
+            
+            log.create(
+                {
+                    "name": "Отчет о синхронизации",
+                    "date": fields.Datetime.now(),
+                    "server_id": self.server_id.id,
+                    "result": "Ошибка подключения к удаленному серверу",
+                }
+            )
+            return
+
 
         threaded_sync = threading.Thread(
             target=self.start_sync()

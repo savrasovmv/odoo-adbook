@@ -19,7 +19,7 @@
 
     <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
     <record id="jms_event_log_action" model="ir.actions.act_window">
-        <field name="name">JWS события</field>
+        <field name="name">JMS события</field>
         <field name="res_model">jms.event_log</field>
         <field name="view_mode">tree,form,pivot</field>
         <field name="help" type="html">

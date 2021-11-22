@@ -5,7 +5,7 @@ from odoo import fields, models, api
 
 class JMSEventLog(models.Model):
     _name = "jms.event_log"
-    _description = "JWS события"
+    _description = "JMS события"
     _order = "date desc"
 
     name = fields.Char(u'Пользователь')
