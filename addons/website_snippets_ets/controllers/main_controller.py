@@ -22,7 +22,7 @@ class WebsiteVideoWidget(http.Controller):
                             ('birthday_day', '=', date.day),
                             ('birthday_month', '=', date.month),
                             ('active', '=', True),
-                        ], order="birthday asc")
+                        ], order="name")
 
         employer_list = []
         for line in employers:
