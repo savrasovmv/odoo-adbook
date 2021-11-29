@@ -15,10 +15,10 @@ class WebsiteVideoWidget(http.Controller):
     @http.route(['/web/birthday/'], type='json', auth="user", website=True, sitemap=True)
     def get_birthday(self):
         """Возвращает сотрудников у которых ДР"""
-        print("++++++++++++++++++++++++")
         date = datetime.today()
 
         employers = http.request.env['hr.employee'].sudo().search([
+                            ('is_fired', '=', False),
                             ('birthday_day', '=', date.day),
                             ('birthday_month', '=', date.month),
                             ('active', '=', True),
