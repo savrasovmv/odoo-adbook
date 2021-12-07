@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="s_new_year" name="Новый год">
+    <section class="s_banner parallax s_parallax_is_fixed pt96 pb96" data-scroll-background-ratio="1">
+        <span class="s_parallax_bg oe_img_bg" style="background-image: url('/ets_theme_new_year/static/src/img/bg_new_year.jpeg'); background-position: 50% 0;"/>
+        <div class="container">
+            <div class="row s_nb_column_fixed">
+                <!-- <div class="col-lg-6 jumbotron rounded o_cc o_cc1 pt32 pb32 text_new_year" data-name="Box">
+                    <h1><font style="font-size: 62px;">С наступающим</font></h1>
+                    <h1><font style="font-size: 62px;">Новым годом!</font></h1>
+                    
+                </div> -->
+            </div>
+        </div>
+    </section>
+</template>
+
+</odoo>

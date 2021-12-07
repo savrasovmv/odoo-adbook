@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="website.s_image_new_year_image" model="ir.attachment">
+            <field name="public" eval="True"/>
+            <field name="name">s_image_new_year_image.gif</field>
+            <field name="type">url</field>
+            <field name="url">/ets_theme_new_year/static/src/ets_theme_new_year/static/img/new_year.gif</field>
+        </record>
+
+
+    </data>
+</odoo>
