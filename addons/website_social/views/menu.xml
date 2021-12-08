@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<odoo>
+
+     <menuitem name="Соц.сеть"
+            id="menu_website_social_root"
+            sequence="20"
+            parent="website.menu_website_configuration"
+            groups="website.group_website_designer">
+
+        <menuitem name="Сообщества"
+            id="menu_website_social_social"
+            action="social_social_action"
+            
+        />
+
+        <menuitem name="Посты"
+            id="menu_website_social_post"
+            action="social_post_action"
+            
+        />
+
+        <menuitem name="Комментарии"
+            id="menu_website_social_comments"
+            action="social_comments_action"
+            
+        />
+
+     
+    </menuitem>
+</odoo>

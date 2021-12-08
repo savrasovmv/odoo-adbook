@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<odoo>
+  
+
+    <!-- Configuration/Lead & Opportunities/Lost Reasons Menu -->
+    <record id="social_social_action" model="ir.actions.act_window">
+        <field name="name">Сообщества</field>
+        <field name="res_model">social.social</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p>
+             Создайте новую запись
+          </p>
+        </field>
+    </record>
+
+
+
+    <record id="social_post_action" model="ir.actions.act_window">
+        <field name="name">Посты</field>
+        <field name="res_model">social.post</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p>
+             Создайте новую запись
+          </p>
+        </field>
+    </record>
+
+
+
+    <record id="social_comments_action" model="ir.actions.act_window">
+        <field name="name">Комментарии</field>
+        <field name="res_model">social.comments</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p>
+             Создайте новую запись
+          </p>
+        </field>
+    </record>
+
+  
+   
+</odoo>
