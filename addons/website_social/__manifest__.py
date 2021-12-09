@@ -32,7 +32,9 @@
     'data': [
         'views/social_social_views.xml',
         'views/website_social.xml',
+        'views/website_social_social.xml',
         'views/menu.xml',
+        'views/assets.xml',
         'security/ir.model.access.csv',
 
     ],

@@ -15,7 +15,7 @@ class Social(models.Model):
     name = fields.Char(u'Наименование', required=True)
     subtitle = fields.Char('Подзаголовок', translate=True)
 
-    description = fields.Html(
+    description = fields.Text(
         "Описание", translate=True, sanitize=False,  # TDE FIXME: find a way to authorize videos
         help="Описание Сообщества, которое будет отображаться на странице Сообщества")
 
@@ -43,6 +43,16 @@ class Social(models.Model):
             record.social_post_count = len(record.social_post_ids)
 
 
+    
+    def _default_website_meta(self):
+        res = super(Social, self)._default_website_meta()
+        res['default_opengraph']['og:title'] = res['default_twitter']['twitter:title'] = self.name
+        res['default_opengraph']['og:description'] = res['default_twitter']['twitter:description'] = self.description
+        res['default_opengraph']['og:image'] = res['default_twitter']['twitter:image'] = self.env['website'].image_url(self, 'image_1024')
+        res['default_meta_description'] = self.description
+        return res
+
+
 
             
 
@@ -58,7 +68,7 @@ class SocialPost(models.Model):
     author_avatar = fields.Binary(related='author_id.image_128', string="Avatar", readonly=False)
     author_name = fields.Char(related='author_id.display_name', string="Автор ФИО", readonly=False, store=True)
     active = fields.Boolean('Активно', default=True)
-    content = fields.Html("Контент", required=True)
+    content = fields.Text("Контент", required=True)
     
     partner_id = fields.Many2one('res.partner', string='Для кого')
 
@@ -93,7 +103,7 @@ class SocialComments(models.Model):
     author_avatar = fields.Binary(related='author_id.image_128', string="Avatar", readonly=False)
     author_name = fields.Char(related='author_id.display_name', string="Автор ФИО", readonly=False, store=True)
     active = fields.Boolean('Активно', default=True)
-    content = fields.Html("Контент", required=True)
+    content = fields.Text("Контент", required=True)
     parent_id = fields.Many2one('social.comments', string='Комментарий', ondelete='cascade', readonly=True, index=True)
 
 

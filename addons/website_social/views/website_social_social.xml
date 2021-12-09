@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+    <!-- Page Index Основная страница со списком сообществ -->
+    <template id="social_index" name="Social Страница сообщества">
+        <t t-call="website_social.layout">
+
+            <div class="oe_structure oe_empty" id="oe_structure_forum_all_top">
+                <section class="s_cover parallax s_parallax_is_fixed bg-black-50 py-5" data-scroll-background-ratio="1" data-snippet="s_cover">
+                    <span class="s_parallax_bg oe_img_bg" t-attf-style="background-image: url('#{website.image_url(social, 'image_1920')}; background-position: 50% 0;"/>
+                    <div class="o_we_bg_filter bg-black-50"/>
+                    <div class="container">
+                        <div class="row s_nb_column_fixed">
+                            <div class="col-lg-12">
+                                <h1 class="o_default_snippet_text text-center text-white"><t t-esc="social.name"/></h1>
+                                <p class="lead o_default_snippet_text mb-0" style="text-align: center;">
+                                    <t t-esc="social.subtitle"/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div id="wrap" t-attf-class="container pt-3 pb-3 #{website_social_action}">
+                <div class="small"> Информация:</div>
+                 <hr />
+                <div class="">
+                    <t t-esc="social.description"/>
+                </div>
+                
+                <div class="column">
+                     <t t-foreach="post_list" t-as="post">
+                        <t t-call="website_social.post_block"/>
+
+
+                            
+                    </t>
+                    
+                </div>
+            </div>
+
+            <div class="oe_structure" id="oe_structure_website_forum_header_1"/>
+        </t>
+        
+    </template>
+
+
+
+
+    <template id="post_block" name="social Блок поста">
+        <div class="column mt-1 mb-4  p-2 ">
+                <hr/>
+          
+                <div class="mt-2 mb-2 " >
+                    <h6 class="text-decoration-none font-weight-bold mb-0 pb-0">
+                        <t t-esc="post.name"/>
+                    </h6>
+                    <small t-field="post.create_date" t-options='{"format": "d MMMM, yyyy"}'/>
+                   
+                </div>
+                <div class="mb-2 small" >
+                    <t t-esc="post.subtitle"/>
+                   
+                </div>
+                <div class="mb-2 " >
+                    <t t-esc="post.content"/>
+                   
+                </div>
+                               
+            <div >
+                <t t-call="website_social.post_author">
+                    <t t-set="additionnal_classes" t-value="'d-inline-flex mr-2'"/>
+                </t>
+            </div>
+            
+        </div>
+    </template>
+
+
+
+    <template id="post_author">
+        <div t-attf-class="o_not_editable align-items-center position-relative #{additionnal_classes or ''}">
+            <div t-if="post.author_avatar"
+                t-field="post.author_avatar"
+                
+                t-options='{"widget": "image", "class": "rounded-circle author_avatar " + "o_wblog_author_avatar mr-1"}' />
+            <div class="small font-weight-bold" style="line-height:1">
+                <h6 class="author_name"> <span t-esc="post.author_name"/> </h6>
+                <!-- <small t-field="post.create_date" t-options='{"format": "d MMMM, yyyy"}'/> -->
+            </div>
+        </div>
+    </template>
+
+
+
+    </data>
+</odoo>
+
