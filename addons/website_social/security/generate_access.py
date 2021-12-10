@@ -25,7 +25,7 @@ for name in spisok:
 		modul_name = name[1] + '.'
 	print('access_%(class_name)s_manager,%(name)s,%(modul_name)smodel_%(class_name)s,website.group_website_designer,1,1,1,1' % {'name':name[0], 'class_name': class_name, 'modul_name': modul_name})
 	if name[2]>0:
-		print('access_%(class_name)s_users,%(name)s,%(modul_name)smodel_%(class_name)s,,1,0,0,0'  % {'name':name[0], 'class_name': class_name, 'modul_name': modul_name})
+		print('access_%(class_name)s_users,%(name)s,%(modul_name)smodel_%(class_name)s,,1,1,1,1'  % {'name':name[0], 'class_name': class_name, 'modul_name': modul_name})
 for name in spisok_read:
 	class_name = name[0].replace('.','_')
 	modul_name = ''

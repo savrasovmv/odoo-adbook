@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<odoo>
+
+    <!-- Автоматические действия Отправить оповещение -->
+
+    <record id="create_social_post" model="base.automation">
+        <field name="name">Оповестить о новом посте</field>
+        <field name="model_id" ref="website_social.model_social_post"/>
+        <field name="trigger">on_create</field>
+        <field name="state">code</field>
+        <field name="code">
+# Выполнить создание задачи 
+#env['social.post'].sudo().action_send_notification_email(record)
+record.action_send_notification_email()
+
+        </field>
+    </record>
+
+
+
+</odoo>
+

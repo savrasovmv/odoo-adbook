@@ -30,6 +30,9 @@
                 <div class="">
                     <t t-esc="social.description"/>
                 </div>
+                <div class="col-md-offset-3 col-sm-offset-4 col-sm-8 col-md-7">
+                    <a class="mb-2 btn btn-primary" t-attf-href="/social/post/form/{{social.id}}">Добавить</a>
+                </div>
                 
                 <div class="column">
                      <t t-foreach="post_list" t-as="post">

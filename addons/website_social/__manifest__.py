@@ -25,6 +25,7 @@
     # any module necessary for this one to work correctly
     'depends': [
                 'base',
+                'base_automation',
                 'website',
                 ],
 
@@ -33,9 +34,13 @@
         'views/social_social_views.xml',
         'views/website_social.xml',
         'views/website_social_social.xml',
+        'views/website_social_post_form.xml',
+        'views/social_post_mail_templates.xml',
         'views/menu.xml',
         'views/assets.xml',
         'security/ir.model.access.csv',
+
+        'data/base_automation.xml'
 
     ],
     

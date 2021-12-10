@@ -57,18 +57,80 @@ class WebsiteSocial(http.Controller):
         }
 
         values['social_url'] = QueryURL('', ['social', ], social=social, search=search)
-
-        import hashlib
-        field = 'image_1920'
-        size=None
-        record = social
-        sudo_record = social
-        sha = hashlib.sha512(str(getattr(sudo_record, '__last_update')).encode('utf-8')).hexdigest()[:7]
-        size = '' if size is None else '/%s' % size
-        url =  '/web/image/%s/%s/%s%s?unique=%s' % (record._name, record.id, field, size, sha)
-        print("+++++++ URL", url)
+        
         
         return request.render("website_social.social_index", values)
+
+
+
+    @http.route(['/social/post/form/<int:social_id>/<int:post_id>',
+                '/social/post/form/<int:social_id>'
+                ], type='http', auth="user", website=True, sitemap=True)
+    def social_post_form(self, social_id=None, post_id=None):
+        """Страница Формы поста"""
+
+        if not social_id:
+            return request.render("website_social.404")
+
+        Social = request.env['social.social']
+        social = Social.search([
+            ('id', '=', social_id)
+        ], limit=1, order="create_date asc, id asc")
+
+        
+        if not social:
+            return request.render("website_social.404")
+
+        values = {
+            'social': social,
+            
+        }
+       
+        return request.render("website_social.social_post_form", values)
+
+
+
+    @http.route("/social/create/post/<int:social_id>", type="http", auth="user", website=True, csrf=True)
+    def social_create_post(self, social_id=False, **kw):
+        """Создания поста в сообществе, из данных формы"""
+
+        if not social_id:
+            return request.render("website_social.404")
+
+        Social = request.env['social.social']
+        social = Social.search([
+            ('id', '=', social_id)
+        ], limit=1, order="create_date asc, id asc")
+
+        
+        if not social:
+            return request.render("website_social.404")
+
+        
+
+        vals = {
+            "social_id": social_id,
+            "name": kw.get("name"),
+            "content": kw.get("content"),
+            "partner_id": int(kw.get("partner_id")),
+        }
+        post = request.env["social.post"].create(vals)
+        
+
+  
+        return werkzeug.utils.redirect("/social/%s" % str(social_id))
+
+
+    
+
+    @http.route('/social/get_partner', type='http', auth="user", methods=['GET'], website=True, sitemap=False)
+    def social_partner_read(self, query='', limit=25, **post):
+        data = request.env['res.partner'].search_read(
+            domain=[('name', '=ilike', (query or '') + "%")],
+            fields=['id', 'name'],
+            limit=int(limit),
+        )
+        return json.dumps(data)
 
         
         
