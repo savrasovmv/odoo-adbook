@@ -12,6 +12,9 @@ import json
 from odoo.tools import html2plaintext
 from datetime import datetime
 
+
+MAX_POST_PAGE = 5
+
 class WebsiteSocial(http.Controller):
 
     @http.route(['/social/'], type='http', auth="user", website=True, sitemap=True)
@@ -34,7 +37,9 @@ class WebsiteSocial(http.Controller):
         return request.render("website_social.index", values)
 
 
-    @http.route(['/social/<int:social_id>'], type='http', auth="user", website=True, sitemap=True)
+    @http.route(['/social/<int:social_id>',
+                '/social/<int:social_id>/page/<int:page>',
+                ], type='http', auth="user", website=True, sitemap=True)
     def social_social(self, social_id=None, page=1, search=None, **opt):
         """Страница Сообщества с постами"""
 
@@ -48,12 +53,23 @@ class WebsiteSocial(http.Controller):
 
         post_list = []
 
+        page_count = 1
+
         if len(social)>0:
-            post_list = social.social_post_ids
+            offset = (page - 1) * MAX_POST_PAGE
+            if social.social_post_count>0 and MAX_POST_PAGE>0:
+                page_count = social.social_post_count/MAX_POST_PAGE
+            print("++++++++page_count", page_count)
+            post_list = request.env['social.post'].search([
+                ('social_id', '=', social_id),
+            ], limit=MAX_POST_PAGE, offset=offset)
 
         values = {
             'social': social,
             "post_list": post_list,
+            "page": page,
+            "page_count": page_count,
+
         }
 
         values['social_url'] = QueryURL('', ['social', ], social=social, search=search)
@@ -112,7 +128,7 @@ class WebsiteSocial(http.Controller):
             "social_id": social_id,
             "name": kw.get("name"),
             "content": kw.get("content"),
-            "partner_id": int(kw.get("partner_id")),
+            "partner_id": int(kw.get("partner_id")) if kw.get("partner_id") else False,
         }
         post = request.env["social.post"].create(vals)
         

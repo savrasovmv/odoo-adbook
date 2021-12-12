@@ -30,8 +30,14 @@
                 <div class="">
                     <t t-esc="social.description"/>
                 </div>
-                <div class="col-md-offset-3 col-sm-offset-4 col-sm-8 col-md-7">
-                    <a class="mb-2 btn btn-primary" t-attf-href="/social/post/form/{{social.id}}">Добавить</a>
+                <div class="row p-2">
+                    <div class="col-md-offset-3 col-sm-offset-4 col-sm-8 col-md-7" style="flex: 1;">
+
+                        <a class="mb-2 btn btn-primary" t-attf-href="/social/post/form/{{social.id}}">Добавить</a>
+                    </div>
+                    <div class="d-flex " style="flex: 1; justify-content: flex-end;">
+                            <t t-call="website_social.nav_page_block"/>
+                    </div>
                 </div>
                 
                 <div class="column">
@@ -43,11 +49,37 @@
                     </t>
                     
                 </div>
+                <div class="d-flex " style="flex: 1; justify-content: flex-end;">
+                            <t t-call="website_social.nav_page_block"/>
+                    </div>
             </div>
 
             <div class="oe_structure" id="oe_structure_website_forum_header_1"/>
         </t>
         
+    </template>
+
+
+    <template id="nav_page_block" name="social Блок страницы постов">
+        <span class="navbar-text mr-3">Страницы:</span>
+        <ul class="pagination mt0 mb0">
+            <t t-set="i" t-value="int(page_count)"/>
+            <t t-foreach="range(i)" t-as="p">
+                <t t-set="num_page" t-value="p+1"/>
+                <li t-attf-class="page-item #{num_page == page and 'active'}"><a t-attf-href="/social/{{social.id}}/page/{{num_page}}" class="page-link"><t t-esc="num_page"/></a></li>
+                <!-- <div>
+                    <t t-if="num_page==page">
+                        <t t-esc="num_page"/>
+                    </t>
+                    <t t-else="">
+                        <a class="m-1" t-attf-href="/social/{{social.id}}/page/{{num_page}}"><t t-esc="num_page"/></a>
+                    </t>
+                </div> -->
+                    
+            </t>
+        </ul>
+            
+            
     </template>
 
 
