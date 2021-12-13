@@ -24,19 +24,21 @@
                 </section>
             </div>
 
-            <div id="wrap" t-attf-class="container pt-3 pb-3 #{website_social_action}">
-                <div class="small"> Информация:</div>
-                 <hr />
-                <div class="">
-                    <t t-esc="social.description"/>
-                </div>
-                <div class="row p-2">
-                    <div class="col-md-offset-3 col-sm-offset-4 col-sm-8 col-md-7" style="flex: 1;">
-
-                        <a class="mb-2 btn btn-primary" t-attf-href="/social/post/form/{{social.id}}">Добавить</a>
+            <div id="wrap" t-attf-class="container pt-3 pb-3 p-0 #{website_social_action} social_page_post">
+                <div class="social_page_head p-4">
+                    <div class="small"> Информация о сообществе:</div>
+                    <hr />
+                    <div class="">
+                        <t t-esc="social.description"/>
                     </div>
-                    <div class="d-flex " style="flex: 1; justify-content: flex-end;">
-                            <t t-call="website_social.nav_page_block"/>
+                    <div class="d-flex mt-4">
+                        <div class="p-0 col-md-offset-3 col-sm-offset-4 col-sm-8 col-md-7" style="flex: 1;">
+
+                            <a class="btn btn-primary" t-attf-href="/social/post/form/{{social.id}}">Добавить</a>
+                        </div>
+                        <div class="d-flex " style="flex: 1; justify-content: flex-end;">
+                                <t t-call="website_social.nav_page_block"/>
+                        </div>
                     </div>
                 </div>
                 
@@ -49,7 +51,7 @@
                     </t>
                     
                 </div>
-                <div class="d-flex " style="flex: 1; justify-content: flex-end;">
+                <div class="d-flex mt-4 p-4 bg-white" style="flex: 1; justify-content: flex-end;">
                             <t t-call="website_social.nav_page_block"/>
                     </div>
             </div>
@@ -61,7 +63,7 @@
 
 
     <template id="nav_page_block" name="social Блок страницы постов">
-        <span class="navbar-text mr-3">Страницы:</span>
+        <span class="navbar-text mr-3" style="color: grey;">Страницы:</span>
         <ul class="pagination mt0 mb0">
             <t t-set="i" t-value="int(page_count)"/>
             <t t-foreach="range(i)" t-as="p">
@@ -86,14 +88,20 @@
 
 
     <template id="post_block" name="social Блок поста">
-        <div class="column mt-1 mb-4  p-2 ">
-                <hr/>
+        <div class="column mt-4 pr-4 pl-4 p-2 o_social_post" t-att-postId='post.id'>
+                <!-- <hr/> -->
+            <div class="d-flex align-items-center">
+                <t t-call="website_social.post_author">
+                    <t t-set="additionnal_classes" t-value="'d-inline-flex mr-2'"/>
+                </t>
+                <small t-field="post.create_date" t-options='{"format": "d MMMM, yyyy"}'/>
+            </div>
           
-                <div class="mt-2 mb-2 " >
-                    <h6 class="text-decoration-none font-weight-bold mb-0 pb-0">
+                <div class="mt-2 mb-4 " >
+                    <h5 class="text-decoration-none font-weight-bold mb-0 pb-0">
                         <t t-esc="post.name"/>
-                    </h6>
-                    <small t-field="post.create_date" t-options='{"format": "d MMMM, yyyy"}'/>
+                    </h5>
+                    <!-- <small t-field="post.create_date" t-options='{"format": "d MMMM, yyyy"}'/> -->
                    
                 </div>
                 <div class="mb-2 small" >
@@ -105,12 +113,65 @@
                    
                 </div>
                                
-            <div >
-                <t t-call="website_social.post_author">
-                    <t t-set="additionnal_classes" t-value="'d-inline-flex mr-2'"/>
-                </t>
+
+            <div class="row p-2" >
+                <div class="social-like" >
+                    <div class="d-flex justify-content-center align-items-center">
+                        <!-- <t t-if="post.id in like_list">
+                            <div class="post-like">
+                                <i class="fa fa-heart"/>
+                                <span><t t-esc="post.like_count"/></span>
+                            </div>
+                        </t> -->
+                        <!-- <t t-else=""> -->
+                            <a t-attf-class="a_post_like_{{post.id}} #{post.id in like_list and 'post-like' or 'o_post_like_button'}" t-att-postId='post.id'>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <i t-attf-class="fa fa-heart-o"/>
+                                    <span t-attf-class="like_count_{{post.id}} pl-1"><t t-if="post.like_count>0" t-esc="post.like_count"/></span>
+                                </div>
+                            </a>
+                        <!-- </t> -->
+
+                        
+                    </div>
+                </div>
+                <div class="social-like">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <i t-attf-class="fa fa-comment-o"/>
+                        <span t-attf-class="comment_count_{{post.id}} pl-1"><t t-if="post.comments_count>0" t-esc="post.comments_count"/></span>
+                        
+                    </div>
+                </div>
+                
             </div>
+
+            <div class="d-flex align-items-center mb-2"> 
+                <textarea class="post-comment p-2" type="text" name="comment" placeholder="Введите текст комментария"/>
+                <a t-attf-class="post-comment-send pl-3 a_post_comment_{{post.id}} o_post_comment_send_button" t-att-postId='post.id'>
+                    <div class="post-comment-send d-flex justify-content-center align-items-center">
+                        <i t-attf-class=" fa fa-send-o"/>
+                    </div>
+                </a>
             
+            </div>
+
+            
+
+            
+        </div>
+    </template>
+
+
+    <template id="post_comments">
+        <div t-attf-class="o_not_editable align-items-center position-relative #{additionnal_classes or ''}">
+            <div t-if="post.author_avatar"
+                t-field="post.author_avatar"
+                
+                t-options='{"widget": "image", "class": "rounded-circle author_avatar " + "o_wblog_author_avatar mr-1"}' />
+            <div class="small font-weight-bold" style="line-height:1">
+                <h6 class="author_name"> <span t-esc="post.author_name"/> </h6>
+                <!-- <small t-field="post.create_date" t-options='{"format": "d MMMM, yyyy"}'/> -->
+            </div>
         </div>
     </template>
 

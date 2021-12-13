@@ -52,23 +52,34 @@ class WebsiteSocial(http.Controller):
         ], limit=1, order="create_date asc, id asc")
 
         post_list = []
-
+        like_list = []
         page_count = 1
 
         if len(social)>0:
             offset = (page - 1) * MAX_POST_PAGE
             if social.social_post_count>0 and MAX_POST_PAGE>0:
-                page_count = social.social_post_count/MAX_POST_PAGE
-            print("++++++++page_count", page_count)
+                page_count = social.social_post_count//MAX_POST_PAGE
+                if (social.social_post_count % MAX_POST_PAGE)>0:
+                    page_count += 1 
             post_list = request.env['social.post'].search([
                 ('social_id', '=', social_id),
             ], limit=MAX_POST_PAGE, offset=offset)
 
+            likes = request.env['social.post_like'].search([
+                ('social_post_id', 'in', post_list.ids),
+                ('create_uid', '=', request.env.user.id),
+            ])
+
+            like_list = [s.social_post_id.id for s in likes]
+
+            
         values = {
             'social': social,
             "post_list": post_list,
             "page": page,
             "page_count": page_count,
+            "like_list": like_list,
+
 
         }
 
@@ -135,6 +146,88 @@ class WebsiteSocial(http.Controller):
 
   
         return werkzeug.utils.redirect("/social/%s" % str(social_id))
+
+
+    
+    @http.route("/social/post/like/<int:post_id>", type="json", auth="user", website=True, csrf=True)
+    def social_post_like(self, post_id=False, **kw):
+        """Лайк поста"""
+
+        if not post_id:
+            return {
+                'result': 'error',
+                'data': 'Не верный ID поста'
+            }
+
+        Post = request.env['social.post']
+        post = Post.search([
+            ('id', '=', int(post_id))
+        ], limit=1, order="create_date asc, id asc")
+
+        
+        if not post:
+            return {
+                'result': 'error',
+                'data': 'Не верный ID поста'
+            }
+
+                
+        like = request.env["social.post_like"].create({'social_post_id': post.id })
+
+        if like:
+            return {
+                'result': 'success',
+            }
+
+        return {
+                'result': 'error',
+                'data': 'Ошибка создания лайка'
+            } 
+
+
+
+    @http.route("/social/post/comment/create/<int:post_id>", type="json", auth="user", website=True, csrf=True)
+    def social_post_like(self, post_id=False, content=False, **kw):
+        """Новый комментарий"""
+
+
+        if not post_id or not content:
+            return {
+                'result': 'error',
+                'data': 'Не верный ID поста или нет контента'
+            }
+
+        Post = request.env['social.post']
+        post = Post.search([
+            ('id', '=', int(post_id))
+        ], limit=1, order="create_date asc, id asc")
+
+        
+        if not post:
+            return {
+                'result': 'error',
+                'data': 'Не верный ID поста'
+            }
+
+        vals = {
+            "social_post_id": post.id,
+            "social_id": post.social_id.id,
+            "content": content,
+
+        }
+
+        comment = request.env["social.comments"].create(vals)
+        # comment = True
+
+        if comment:
+            return {
+                'result': 'success',
+            }
+
+        return {
+                'result': 'error',
+                'data': 'Ошибка создания комментария'
+            } 
 
 
     

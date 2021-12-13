@@ -1,7 +1,9 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_social_social_manager,social.social,model_social_social,website.group_website_designer,1,1,1,1
-access_social_social_users,social.social,model_social_social,,1,0,0,0
+access_social_social_users,social.social,model_social_social,,1,1,1,1
 access_social_post_manager,social.post,model_social_post,website.group_website_designer,1,1,1,1
-access_social_post_users,social.post,model_social_post,,1,0,0,0
+access_social_post_users,social.post,model_social_post,,1,1,1,1
+access_social_post_like_manager,social.post_like,model_social_post_like,website.group_website_designer,1,1,1,1
+access_social_post_like_users,social.post_like,model_social_post_like,,1,1,1,1
 access_social_comments_manager,social.comments,model_social_comments,website.group_website_designer,1,1,1,1
-access_social_comments_users,social.comments,model_social_comments,,1,0,0,0
+access_social_comments_users,social.comments,model_social_comments,,1,1,1,1

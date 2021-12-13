@@ -75,7 +75,9 @@ class SocialPost(models.Model):
     partner_id = fields.Many2one('res.partner', string='Для кого')
 
     social_comments_ids = fields.One2many('social.comments', 'social_post_id', string=u"Комментарии к посту")
-    social_comments_count = fields.Integer("Кол-во комментариев", compute='_compute_social_comments_count')
+    social_post_like_ids = fields.One2many('social.post_like', 'social_post_id', string=u"Комментарии к посту")
+    comments_count = fields.Integer("Кол-во комментариев", compute='_compute_comments_count')
+    like_count = fields.Integer("Кол-во лайков", compute='_compute_like_count')
 
 
     social_id = fields.Many2one('social.social', ondelete='cascade', string=u"Сообщество", required=True)
@@ -86,10 +88,15 @@ class SocialPost(models.Model):
             if line.users_id:
                 line.name = line.users_id.name 
 
-    @api.depends('social_comments_ids')
-    def _compute_social_comments_count(self):
+    @api.depends('social_post_like_ids')
+    def _compute_like_count(self):
         for record in self:
-            record.social_comments_count = len(record.social_comments_ids)
+            record.like_count = len(record.social_post_like_ids)
+
+    @api.depends('social_comments_ids')
+    def _compute_comments_count(self):
+        for record in self:
+            record.comments_count = len(record.social_comments_ids)
 
 
     def action_send_notification_email(self):
@@ -115,6 +122,15 @@ class SocialPost(models.Model):
 
                     template.send_mail(record.id, force_send=True, email_values=email_values)
                 
+
+class SocialPostLike(models.Model):
+    _name = "social.post_like"
+    _description = "Сообщества. Посты Лайки"
+    _order = 'id DESC'
+
+    name = fields.Many2one('res.partner', 'Автор', default=lambda self: self.env.user.partner_id)
+    social_post_id = fields.Many2one('social.post', ondelete='cascade', string=u"Пост", required=True)
+          
 
 
 

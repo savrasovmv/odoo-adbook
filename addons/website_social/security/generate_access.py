@@ -2,6 +2,7 @@ spisok = []
 # spisok.append(['adbook.branch','', 1])
 spisok.append(['social.social','', 1])
 spisok.append(['social.post','', 1])
+spisok.append(['social.post_like','', 1])
 spisok.append(['social.comments','', 1])
 
 
