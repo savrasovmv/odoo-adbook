@@ -53,6 +53,7 @@ class WebsiteSocial(http.Controller):
 
         post_list = []
         like_list = []
+        comment_list = []
         page_count = 1
 
         if len(social)>0:
@@ -72,6 +73,17 @@ class WebsiteSocial(http.Controller):
 
             like_list = [s.social_post_id.id for s in likes]
 
+            for post in post_list:
+                com = request.env['social.comments'].search([
+                    ('social_post_id', '=', post.id),
+                ], limit=3)
+
+                if len(com)>0:
+                    comment_list += com
+
+
+
+
             
         values = {
             'social': social,
@@ -79,6 +91,8 @@ class WebsiteSocial(http.Controller):
             "page": page,
             "page_count": page_count,
             "like_list": like_list,
+            "comment_list": comment_list,
+            
 
 
         }

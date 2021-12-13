@@ -61,7 +61,7 @@ odoo.define('website_social.Like', function (require) {
             console.log("_onClickSendComment", this.postId)
             console.log("this", this)
 
-            var comment = $("textarea[name='comment']").val();
+            var comment = $(`.p_comment_${postId}`).val();
             console.log("comment", comment)
 
             if (comment.length == 0) {
@@ -87,6 +87,7 @@ odoo.define('website_social.Like', function (require) {
                             //     elem.removeClass('o_post_like_button');
                             // }
                             // elem.addClass('post-like');
+                            location.reload();
 
                         } else {
                             alert(json_data['data'])
