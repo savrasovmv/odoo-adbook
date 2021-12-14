@@ -14,6 +14,9 @@ from datetime import datetime
 
 
 MAX_POST_PAGE = 5
+MAX_POST_COMMENT = 3
+
+
 
 class WebsiteSocial(http.Controller):
 
@@ -39,9 +42,13 @@ class WebsiteSocial(http.Controller):
 
     @http.route(['/social/<int:social_id>',
                 '/social/<int:social_id>/page/<int:page>',
+                '/social/<int:social_id>/post/<int:post_id>',
                 ], type='http', auth="user", website=True, sitemap=True)
-    def social_social(self, social_id=None, page=1, search=None, **opt):
-        """Страница Сообщества с постами"""
+    def social_social(self, social_id=None, page=1, post_id=None, search=None, is_post=False, **opt):
+        """Страница Сообщества с постами
+            is_post - признак что это страница поста
+        
+        """
 
         if not social_id:
             return request.render("website_social.404")
@@ -62,9 +69,22 @@ class WebsiteSocial(http.Controller):
                 page_count = social.social_post_count//MAX_POST_PAGE
                 if (social.social_post_count % MAX_POST_PAGE)>0:
                     page_count += 1 
-            post_list = request.env['social.post'].search([
-                ('social_id', '=', social_id),
-            ], limit=MAX_POST_PAGE, offset=offset)
+
+            if post_id:
+                # Если это страница поста
+                post_list = request.env['social.post'].search([
+                    ('social_id', '=', social_id),
+                    ('id', '=', post_id),
+                ], limit=1)
+                max_comment = None
+                page_count = 0
+                is_post = True
+            else:
+                # Если это страница сообщества
+                post_list = request.env['social.post'].search([
+                    ('social_id', '=', social_id),
+                ], limit=MAX_POST_PAGE, offset=offset)
+                max_comment = MAX_POST_COMMENT
 
             likes = request.env['social.post_like'].search([
                 ('social_post_id', 'in', post_list.ids),
@@ -76,7 +96,7 @@ class WebsiteSocial(http.Controller):
             for post in post_list:
                 com = request.env['social.comments'].search([
                     ('social_post_id', '=', post.id),
-                ], limit=3)
+                ], limit=max_comment)
 
                 if len(com)>0:
                     comment_list += com
@@ -92,6 +112,8 @@ class WebsiteSocial(http.Controller):
             "page_count": page_count,
             "like_list": like_list,
             "comment_list": comment_list,
+            "is_post": is_post,
+
             
 
 
@@ -201,7 +223,7 @@ class WebsiteSocial(http.Controller):
 
 
     @http.route("/social/post/comment/create/<int:post_id>", type="json", auth="user", website=True, csrf=True)
-    def social_post_like(self, post_id=False, content=False, **kw):
+    def social_post_comment_create(self, post_id=False, content=False, **kw):
         """Новый комментарий"""
 
 
