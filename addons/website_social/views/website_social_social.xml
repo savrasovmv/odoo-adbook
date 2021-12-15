@@ -111,6 +111,7 @@
                     <h5 class="text-decoration-none font-weight-bold mb-0 pb-0">
                          <a class="text-decoration-none" t-attf-href="/social/{{social.id}}/post/{{post.id}}">
                             <t t-esc="post.name"/>
+                            <t t-if="post.partner_id" t-esc="post.partner_id.name"/>
                         </a>
                     </h5>
                     <!-- <small t-field="post.create_date" t-options='{"format": "d MMMM, yyyy"}'/> -->
