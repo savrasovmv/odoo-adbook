@@ -8,10 +8,10 @@
         <t t-call="website_social.layout">
 
             <div class="oe_structure oe_empty" id="oe_structure_forum_all_top">
-                <section class="s_cover parallax s_parallax_is_fixed bg-black-50 py-5" data-scroll-background-ratio="1" data-snippet="s_cover">
+                <section class="s_cover parallax s_parallax_is_fixed social_bg_20 py-5" data-scroll-background-ratio="1" data-snippet="s_cover">
                     <span class="s_parallax_bg oe_img_bg" t-attf-style="background-image: url('#{website.image_url(social, 'image_1920')}; background-position: 50% 0;"/>
-                    <div class="o_we_bg_filter bg-black-50"/>
-                    <div class="container">
+                    <div class="o_we_bg_filter social_bg_20"/>
+                    <div class="container social_title">
                         <div class="row s_nb_column_fixed">
                             <div class="col-lg-12">
                                 <h1 class="o_default_snippet_text text-center text-white"><t t-esc="social.name"/></h1>
