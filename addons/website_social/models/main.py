@@ -76,7 +76,7 @@ class SocialPost(models.Model):
     subtitle = fields.Char('Подзаголовок', translate=True)
     author_id = fields.Many2one('res.partner', 'Автор', default=lambda self: self.env.user.partner_id)
     author_avatar = fields.Binary(related='author_id.image_128', string="Avatar", readonly=False)
-    author_name = fields.Char(related='author_id.display_name', string="Автор ФИО", readonly=False, store=True)
+    author_name = fields.Char(related='author_id.name', string="Автор ФИО", readonly=False, store=True)
     active = fields.Boolean('Активно', default=True)
     content = fields.Text("Контент", required=True)
     
