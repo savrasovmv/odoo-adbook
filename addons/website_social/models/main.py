@@ -23,6 +23,10 @@ class Social(models.Model):
 
     is_email_notification = fields.Boolean(string='Отправлять оповещения на почту?')
 
+    template_id = fields.Many2one(
+        'mail.template', 'Шаблон письма', index=True,
+        domain="[('model', '=', 'social.social')]")
+
     # background_image = fields.Binary("Изображение")
 
     # state = fields.Selection(selection=[
@@ -101,24 +105,25 @@ class SocialPost(models.Model):
 
     def action_send_notification_email(self):
         """Отправляет оповещение о новом посте"""
-        template = self.env.ref('website_social.social_post_mail_templates')
+        
         # record = self.search([('id', '=', record_id)])
-        print("+++++++++action_send_notification_email", self)
         for line in self:
+
             record = self.search([('id', '=', line.id)])
 
-            print("+++++++++record", record)
-            print("+++++++++record.social_id.is_email_notification", record.social_id.is_email_notification)
+            if record.social_id.template_id:
+                template = record.social_id.template_id
+            else:
+                template = self.env.ref('website_social.social_post_mail_templates')
+
+
             if record.social_id.is_email_notification:
-                print("+++++++++record.partner_id", record.partner_id)
                 email_to = record.partner_id.email
-                print("+++++++++email_to", email_to)
                 
                 if email_to:
                     email_values={
                     'email_to': email_to,
                     }
-                    print("+++++++++send_mail", email_to)
 
                     template.send_mail(record.id, force_send=True, email_values=email_values)
                 
