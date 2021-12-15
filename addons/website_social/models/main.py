@@ -19,6 +19,10 @@ class Social(models.Model):
         "Описание", translate=True, sanitize=False,  # TDE FIXME: find a way to authorize videos
         help="Описание Сообщества, которое будет отображаться на странице Сообщества")
 
+    description_form = fields.Html(
+        "Описание формы", translate=True, sanitize=False,  # TDE FIXME: find a way to authorize videos
+        help="Описание формы создания поста")
+
     social_post_count = fields.Integer("Посты", compute='_compute_social_post_count')
 
     is_email_notification = fields.Boolean(string='Отправлять оповещения на почту?')

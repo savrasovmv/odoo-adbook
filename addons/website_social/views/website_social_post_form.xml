@@ -3,7 +3,6 @@
     <data>
 
 
-    <!-- Page Index Основная страница со списком сообществ -->
     <template id="social_post_form" name="Social Форма создания поста">
         <t t-call="website_social.layout">
             <div id="wrap" class="container pt-3 pb-3 ">
@@ -18,17 +17,20 @@
                     enctype="multipart/form-data"
                 >
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="form-group">
+                        <div t-field="social.description_form"/>
+                    </div>
 
                     <div class="form-group">
                             <label class="control-label" for="name">
                                 Заголовок
                             </label>
-                            <input type="text" class="form-control" name="name" t-attf-value="Спасибо!" required="True"/>
+                            <input type="text" class="form-control" name="name" t-attf-value="#{name}" required="True"/>
                     </div>
 
                     <div class="form-group">
                             <label class="control-label" for="partner_id">
-                                Спасибо для:
+                                Получатель уведомления
                             </label>
                             <input type="text" class="form-control js_partner_m2o" name="partner_id" multiple="multiple"/>
                     </div>
