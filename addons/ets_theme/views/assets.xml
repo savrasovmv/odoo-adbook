@@ -8,6 +8,12 @@
             </xpath>
         </template>
 
+        <template id="assets_backend" name="ETS style" inherit_id="web.assets_backend">
+            <xpath expr="//link[last()]" position="after">
+                <link rel="stylesheet" type="text/scss" href="/ets_theme/static/src/scss/ets_backend.scss"/>
+            </xpath>
+        </template>
+
     </data>
 </odoo>
 
