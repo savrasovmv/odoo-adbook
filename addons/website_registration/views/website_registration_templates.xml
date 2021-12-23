@@ -55,7 +55,7 @@
                 <a t-attf-href="/web/reset_password?{{ keep_query() }}">Сбросить пароль</a>
             </div>
         </xpath>
-        <xpath expr="//div[@class('form-group', 'field-login')]" position="replace">
+        <xpath expr="//div[@class='form-group field-login']" position="replace">
             <div class="form-group field-login">
                 <label for="login">Логин</label>
                 <input type="text" placeholder="Логин" name="login" t-att-value="login" id="login" t-attf-class="form-control #{'form-control-sm' if form_small else ''}" required="required" autofocus="autofocus" autocapitalize="off"/>
