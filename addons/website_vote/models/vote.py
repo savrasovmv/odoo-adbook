@@ -30,7 +30,7 @@ class Vote(models.Model):
 
 
     description_text = fields.Text(
-        "Описание", 
+        "Описание (text)", 
         help="Описание Голосования в текстовом формате, которое будет отображаться на главной странице голосования",
         compute="get_description_text"
         )
