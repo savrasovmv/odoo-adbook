@@ -83,7 +83,7 @@ class SocialPost(models.Model):
     partner_id = fields.Many2one('res.partner', string='Для кого')
 
     social_comments_ids = fields.One2many('social.comments', 'social_post_id', string=u"Комментарии к посту")
-    social_post_like_ids = fields.One2many('social.post_like', 'social_post_id', string=u"Комментарии к посту")
+    social_post_like_ids = fields.One2many('social.post_like', 'social_post_id', string=u"Лайки постов")
     comments_count = fields.Integer("Кол-во комментариев", compute='_compute_comments_count')
     like_count = fields.Integer("Кол-во лайков", compute='_compute_like_count')
 
