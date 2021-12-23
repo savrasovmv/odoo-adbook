@@ -25,12 +25,12 @@ class Vote(models.Model):
     ], string='Тип')
 
     description = fields.Html(
-        "Описание", translate=True, sanitize=False,  # TDE FIXME: find a way to authorize videos
+        "Описание", 
         help="Описание Голосования, которое будет отображаться на странице голосования")
 
 
     description_text = fields.Text(
-        "Описание", translate=True, sanitize=False,  # TDE FIXME: find a way to authorize videos
+        "Описание", 
         help="Описание Голосования в текстовом формате, которое будет отображаться на главной странице голосования",
         compute="get_description_text"
         )
@@ -120,7 +120,7 @@ class VoteParticipant(models.Model):
     _description = "Зарегистрированные Участники"
     _order = "name"
 
-    name = fields.Char(u'Наименование', compute="_get_name", stote=True)
+    name = fields.Char(u'Наименование', compute="_get_name", store=True)
     users_id = fields.Many2one("res.users", string="Пользователь")
     employee_id = fields.Many2one("hr.employee", string="Сотрудник")
 
@@ -128,7 +128,7 @@ class VoteParticipant(models.Model):
 		ondelete='cascade', string=u"Голосования", required=True)
     
     
-    description = fields.Text( "Описание", translate=True, sanitize=False)
+    description = fields.Text( "Описание")
     number_item = fields.Integer(string='Число работ', compute='get_item', store=True)
 
     score = fields.Integer(string='Набранно голосов', compute='get_score', store=True)
