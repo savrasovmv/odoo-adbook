@@ -2,6 +2,7 @@ spisok = []
 spisok.append(['reg.reg','', 1])
 spisok.append(['reg.conditions','', 1])
 spisok.append(['reg.allowed_ip','', 1])
+spisok.append(['reg.activation','', 1])
 
 
 

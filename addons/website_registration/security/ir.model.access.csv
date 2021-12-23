@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_reg_reg_manager,reg.reg,model_reg_reg,base.group_system,1,1,1,1
 access_reg_conditions_manager,reg.conditions,model_reg_conditions,base.group_system,1,1,1,1
 access_reg_allowed_ip_manager,reg.allowed_ip,model_reg_allowed_ip,base.group_system,1,1,1,1
+access_reg_activation_manager,reg.activation,model_reg_activation,base.group_system,1,1,1,1
