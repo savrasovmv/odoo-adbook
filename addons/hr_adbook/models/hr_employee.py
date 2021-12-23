@@ -45,8 +45,8 @@ class HrEmployee(models.Model):
 
     # Возраст
     age = fields.Integer(string="Возраст", compute="_compute_age")
-    birthday_month = fields.Integer(string="Месяц рождения", compute="_compute_age", store=True)
-    birthday_day = fields.Integer(string="День месяца рождения", compute="_compute_age", store=True)
+    birthday_month = fields.Integer(string="Месяц рождения", compute="_compute_month", store=True)
+    birthday_day = fields.Integer(string="День месяца рождения", compute="_compute_month", store=True)
 
     is_fired = fields.Boolean(string='Уволен')
     
@@ -209,13 +209,19 @@ class HrEmployee(models.Model):
     def _compute_age(self):
         for record in self:
             age = 0
+            if record.birthday:
+                age = relativedelta(fields.Date.today(), record.birthday).years
+            record.age = age
+
+    @api.depends("birthday")
+    def _compute_month(self):
+        for record in self:
             birthday_month = 0
             birthday_day = 0
             if record.birthday:
                 age = relativedelta(fields.Date.today(), record.birthday).years
                 birthday_month = record.birthday.month
                 birthday_day = record.birthday.day
-            record.age = age
             record.birthday_month = birthday_month
             record.birthday_day = birthday_day
 
