@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Multi Sale Order Confirmation Wizard -->
+	<record id="hr_import_csv_wizard_view" model="ir.ui.view">
+        <field name="name">hr.import_csv.wizard.view</field>
+        <field name="model">hr.import_csv</field>
+        <field name="arch" type="xml">
+            <form string="Confirm" create="false" edit="false">
+                <div>
+                    <h3> Форма для импорта данных Подразделения и Сотрудники из csv фалов </h3>
+                    <p>
+                        Форматы (разделитель ;):<br/>
+                        Подрзделения: Наименование; guid; parent_guid;<br/>
+                        Сотрудники: guid; department_guid; ФИО; Должность; Подразделение_наименование; Пол; Дата рождения; Дата приема на работу; Вид занятости;<br/>
+
+                    </p>
+
+
+                </div>
+                
+                
+                <group>
+
+                    <field name="department_id"/>
+                    <field name="type"/>
+                    <field name="file"/>
+                </group>
+               
+                <notebook colspan="4">
+                    <page string="Комментарии">
+                        <field name="result" nolabel="1"/>
+                    </page>
+                </notebook> 
+                <footer>
+                    
+                    <button name="import_file_wizard_action" string="Import"
+                            type="object" class="oe_highlight"/>
+                    <button string="Отмена" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_import_wizard_action" model="ir.actions.act_window">
+        <field name="name">Импорт данных</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.import_csv</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="hr_import_csv_wizard_view"/>
+        <field name="target">new</field>
+        <!-- <field name="binding_model_id" ref="model_ad_employer"/> -->
+    </record>
+
+    
+
+    
+
+</odoo>

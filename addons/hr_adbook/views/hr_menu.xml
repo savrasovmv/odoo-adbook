@@ -65,6 +65,15 @@
             groups="hr.group_hr_manager"
             />
 
+        <menuitem
+            id="hr_menu_import_csv"
+            name="Импорт данных"
+            parent="hr_menu_personal_doc"
+            action="hr_import_wizard_action"
+            sequence="10"
+            groups="base.group_system"
+            />
+
 
 
 

@@ -240,7 +240,9 @@ class AdbookBuild(models.AbstractModel):
         print(department_list_ids)
         print(dep_list)
         for dep in dep_list:
-            print(dep.name)
+            print("dep.name", dep.name)
+            print("dep.branch_id.name", dep.branch_id.name)
+
 
             if not dep.hr_department_id:
                 dep.parent_id = dep.branch_id.id
@@ -282,6 +284,9 @@ class AdbookBuild(models.AbstractModel):
                         dep_id = self.env['adbook.department'].sudo().create(dep_vals)
                         print('             Создал ', dep_id)
                     
+
+                    print("++++++ current_dep", current_dep.name)
+                    print("++++++ parent_id", dep_id.name)
                     
                     current_dep.parent_id = dep_id.id
                     hr_parent_id = hr_parent_id.parent_id

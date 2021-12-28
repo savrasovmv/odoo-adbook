@@ -15,6 +15,10 @@
                 <separator/>
                 <filter string="Отключенные" name="inactive" domain="[('active', '=', False)]"/>
                 <filter string="Все" name="inactive" domain="['|',('active', '=', False), ('active', '=', True)]"/>
+
+                <searchpanel>
+                    <field name="branch_id" string="OU" icon="fa-users"/>
+                </searchpanel>
             </search>
         </field>
     </record>

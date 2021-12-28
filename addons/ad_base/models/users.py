@@ -181,27 +181,44 @@ class AdUsers(models.Model):
 
     def get_employee_by_name(self):
         for user in self:
-            empl = self.env['hr.employee'].search([
+            empl_list = self.env['hr.employee'].search([
                 ('name', '=', user.name),
                 '|',
                 ('active', '=', False), 
                 ('active', '=', True)
 
-            ], limit=1)
+            ])
 
-            if len(empl)>0:
-                user.employee_id = empl[0].id
-                user.birthday = empl[0].birthday
-                employee = self.env['hr.employee'].browse(empl[0].id)
-                if user.photo:
-                    employee.image_1920 = user.photo
-                # else:
-                #     employee.image_1920 = employee._default_image()
-                employee.users_id = user.id
-                employee.mobile_phone = user.phone
-                employee.mobile_phone2 = user.sec_phone
-                employee.ip_phone = user.ip_phone
-                employee.work_email = user.email
+            if len(empl_list)>0:
+                empl = empl_list[0]
+                if len(empl_list)>1:
+                    # Если сотрудник принят на несколько должностей, то связываем с Основное место работы
+                    search_empl = self.env['hr.employee'].search([
+                        ('name', '=', user.name),
+                        ('employment_type_1c', '=', 'Основное место работы'),
+                        '|',
+                        ('active', '=', False), 
+                        ('active', '=', True)
+
+                    ], limit=1)
+                    if len(search_empl)>0:
+                        empl = search_empl
+
+                user.employee_id = empl.id
+                user.birthday = empl.birthday
+            
+                # Для каждого найденого сотрудника меняем данные 
+                for empl in empl_list:
+                    employee = self.env['hr.employee'].browse(empl[0].id)
+                    if user.photo:
+                        employee.image_1920 = user.photo
+                    # else:
+                    #     employee.image_1920 = employee._default_image()
+                    employee.users_id = user.id
+                    employee.mobile_phone = user.phone
+                    employee.mobile_phone2 = user.sec_phone
+                    employee.ip_phone = user.ip_phone
+                    employee.work_email = user.email
 
             else:
                 user.employee_id = None

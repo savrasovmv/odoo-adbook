@@ -16,6 +16,7 @@
         "views/res_country.xml",
         "views/res_company.xml",
         "views/hr_personal_doc.xml",
+        "wizard/hr_import_wizard_views.xml",
         "views/hr_menu.xml",
         'security/ir.model.access.csv',
 
